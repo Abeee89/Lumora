@@ -1,0 +1,127 @@
+# PHASE 1 — PRODUCT DISCOVERY & REQUIREMENT ANALYSIS
+
+You are acting as a Senior Product Manager, Product Analyst, and Software Architect.
+
+We are planning a comprehensive Study Tracker  Learning Management & Personal Productivity Web Application.
+
+The application will help students and independent learners organize their learning activities, track study progress, manage learning materials, prepare for exams, and improve productivity.
+
+## Important Instructions
+
+- Work in PLANNING MODE only.
+- Do not write application code.
+- Do not create database migrations.
+- Do not install dependencies.
+- Do not implement UI components.
+- Focus exclusively on product discovery and requirement analysis.
+- Do not assume that every proposed feature must be included in the MVP.
+- Identify ambiguities, dependencies, risks, and conflicting requirements.
+- Make reasonable recommendations and document assumptions.
+- Ask questions only when a decision materially affects product direction or architecture.
+
+## Proposed Core Features
+
+Analyze the following features
+
+1. Study Activity Calendar
+2. Study Hours Tracking by Subject
+3. Daily Study Goals
+4. Pomodoro Timer and Stopwatch
+5. Daily and Monthly Statistics
+6. Notes and Revision Tools
+7. Drag-and-Drop Study Calendar
+8. AI-Generated Study Schedule
+9. Focus Timer and Ambient Audio
+10. Habit Streak and XP Gamification
+11. Exam Preparation Management
+12. Study Groups and Leaderboards
+13. REST API for External Integrations
+14. To-Do List and Priority Management
+
+You may recommend additional features that improve the product.
+
+## Tasks
+
+### 1. Product Understanding
+- Define the product vision.
+- Define the main problem being solved.
+- Identify target users and user personas.
+- Identify user needs and pain points.
+- Define the product's unique value proposition.
+
+### 2. Feature Analysis
+For every proposed feature
+- Explain its purpose.
+- Identify its main functionality.
+- Identify its dependencies.
+- Identify its complexity.
+- Identify its technical risks.
+- Recommend whether it belongs in MVP, Phase 2, or Phase 3.
+
+### 3. User Journey
+Describe the expected user journey
+- First-time user onboarding.
+- Creating subjects and topics.
+- Creating study plans.
+- Starting and completing study sessions.
+- Recording study progress.
+- Reviewing statistics.
+- Preparing for examinations.
+
+### 4. Product Scope
+Define
+- In-scope functionality.
+- Out-of-scope functionality.
+- MVP boundaries.
+- Future expansion opportunities.
+
+### 5. Business Rules
+Identify important product rules, including
+- Planned study time versus actual study time.
+- Study session completion.
+- Daily goal calculations.
+- XP earning rules.
+- Habit streak calculations.
+- Exam preparation progress.
+- Study schedule conflict handling.
+
+### 6. Risks and Recommendations
+Identify
+- Product risks.
+- Technical risks.
+- UX risks.
+- Scalability considerations.
+- Features that may be unnecessarily complex.
+
+## Required Documentation
+
+Create or update the following files
+
+docs01-product-discovery
+- PRODUCT-VISION.md
+- TARGET-USERS.md
+- USER-PERSONAS.md
+- USER-JOURNEYS.md
+- FEATURE-ANALYSIS.md
+- PRODUCT-SCOPE.md
+- BUSINESS-RULES.md
+- ASSUMPTIONS-AND-RISKS.md
+
+Also create
+- docsPROJECT-BRIEF.md
+- docsFEATURE-PRIORITIZATION.md
+
+## Final Output
+
+Provide
+1. Summary of the product.
+2. Recommended MVP features.
+3. Phase 2 and Phase 3 features.
+4. Important business rules.
+5. Identified risks.
+6. Decisions that require my approval.
+7. List of generated documentation.
+
+STOP AFTER COMPLETING THIS PHASE.
+
+Do not proceed to PRD, SDD, database design, or implementation until I review and approve the results.
