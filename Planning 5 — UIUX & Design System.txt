@@ -1,0 +1,146 @@
+# PHASE 5 — UI/UX DESIGN AND DESIGN SYSTEM
+
+Continue the Study Tracker project using all approved documentation.
+
+You are acting as a Senior UI/UX Designer and Design Systems Architect.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not implement React components.
+- Do not write CSS.
+- Do not generate application code.
+- Do not modify approved product requirements.
+- Focus on user experience, information architecture, and visual specifications.
+
+## 1. Design Direction
+
+Create a modern, clean, professional, and productivity-focused interface.
+
+The application should feel:
+- Minimal.
+- Intuitive.
+- Calm and focused.
+- Modern.
+- Responsive.
+- Accessible.
+- Consistent.
+
+Avoid excessive visual decoration and unnecessary dashboard widgets.
+
+## 2. Design System
+
+Define:
+- Color palette.
+- Typography.
+- Spacing scale.
+- Border radius.
+- Shadows.
+- Iconography.
+- Buttons.
+- Inputs.
+- Cards.
+- Dialogs.
+- Dropdowns.
+- Navigation.
+- Tables.
+- Toast notifications.
+- Empty states.
+- Loading states.
+- Error states.
+
+Consider light and dark themes.
+
+## 3. Information Architecture
+
+Define navigation and page hierarchy.
+
+Evaluate pages such as:
+- Dashboard.
+- Today.
+- Study Calendar.
+- Subjects.
+- Subject Details.
+- Study Sessions.
+- Study Goals.
+- Tasks.
+- Notes.
+- Flashcards.
+- Analytics.
+- Exams.
+- Study Groups.
+- Settings.
+
+Only include pages required by approved features.
+
+## 4. Screen Specifications
+
+For each page, document:
+- Purpose.
+- Primary user actions.
+- Main components.
+- Layout.
+- Information hierarchy.
+- Responsive behavior.
+- Loading state.
+- Empty state.
+- Error state.
+- Accessibility requirements.
+
+## 5. Key Interaction Design
+
+Specify:
+- Calendar drag-and-drop.
+- Timer controls.
+- Study session start/pause/resume/complete.
+- Task creation and prioritization.
+- Notes editing.
+- Flashcard review.
+- AI schedule review and approval.
+- XP and streak feedback.
+- Group interactions.
+
+## 6. Responsive Design
+
+Define behavior for:
+- Desktop.
+- Tablet.
+- Mobile.
+
+Do not simply shrink the desktop layout. Redesign navigation and complex interactions where necessary.
+
+## 7. Accessibility
+
+Follow WCAG 2.2 AA as a design target.
+
+Include:
+- Keyboard navigation.
+- Focus visibility.
+- Screen reader labels.
+- Color contrast.
+- Accessible forms.
+- Reduced motion.
+- Accessible charts.
+
+## Required Documentation
+
+Create:
+
+docs/05-ui-ux/
+- DESIGN-PRINCIPLES.md
+- DESIGN-SYSTEM.md
+- COLOR-TYPOGRAPHY.md
+- INFORMATION-ARCHITECTURE.md
+- NAVIGATION-STRUCTURE.md
+- PAGE-SPECIFICATIONS.md
+- COMPONENT-INVENTORY.md
+- INTERACTION-SPECIFICATIONS.md
+- RESPONSIVE-DESIGN.md
+- ACCESSIBILITY.md
+
+## Final Output
+
+Provide a complete design specification, page inventory, navigation hierarchy, and unresolved design decisions.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Do not implement the UI until I approve the design specifications.

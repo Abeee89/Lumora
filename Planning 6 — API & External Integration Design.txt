@@ -1,0 +1,112 @@
+# PHASE 6 — API AND EXTERNAL INTEGRATION DESIGN
+
+Continue the Study Tracker project using the approved PRD, SDD, database design, and UI/UX documentation.
+
+You are acting as a Senior Backend Architect and API Designer.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not implement endpoints.
+- Do not write application code.
+- Do not create database migrations.
+- Document API contracts and integration behavior only.
+
+## 1. API Strategy
+
+Determine which functionality requires:
+- Internal server-side functions.
+- REST API endpoints.
+- Third-party integrations.
+- Webhooks.
+- Background processing.
+
+Do not expose REST endpoints unnecessarily.
+
+## 2. API Specification
+
+For each required endpoint, define:
+- HTTP method.
+- URL.
+- Purpose.
+- Authentication.
+- Authorization.
+- Request parameters.
+- Request body.
+- Response schema.
+- Validation rules.
+- Error responses.
+- Rate limits.
+- Pagination strategy.
+
+## 3. API Modules
+
+Evaluate endpoints for:
+- Authentication.
+- User profile.
+- Subjects.
+- Topics.
+- Study plans.
+- Study sessions.
+- Goals.
+- Tasks.
+- Notes.
+- Flashcards.
+- Statistics.
+- Exams.
+- Study groups.
+- Leaderboards.
+- AI scheduling.
+
+## 4. AI Integration
+
+Define:
+- AI provider abstraction.
+- Prompt management.
+- Input validation.
+- Output schema.
+- Token and cost considerations.
+- Rate limiting.
+- Failure handling.
+- Privacy controls.
+- Schedule validation.
+
+AI-generated study schedules must be treated as recommendations. The backend must validate availability, duration, scheduling conflicts, and user constraints before accepting them.
+
+## 5. Security
+
+Specify:
+- Authentication.
+- Authorization.
+- API key management.
+- Rate limiting.
+- Input validation.
+- CORS.
+- CSRF protection where applicable.
+- Audit logging.
+- Data access boundaries.
+
+## 6. API Documentation
+
+Use OpenAPI where appropriate.
+
+Create:
+
+docs/06-api-integrations/
+- API-STRATEGY.md
+- API-CONVENTIONS.md
+- API-ENDPOINTS.md
+- API-SCHEMAS.md
+- API-ERRORS.md
+- API-SECURITY.md
+- AI-INTEGRATION.md
+- WEBHOOKS.md
+- EXTERNAL-INTEGRATIONS.md
+- OPENAPI-PLAN.md
+
+## Final Output
+
+Present the API architecture, endpoint inventory, integration strategy, and security considerations.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Wait for approval before proceeding to development planning.

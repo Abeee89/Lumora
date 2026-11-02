@@ -1,0 +1,181 @@
+# PHASE 3 — SYSTEM ARCHITECTURE & SOFTWARE DESIGN DOCUMENT
+
+Continue the Study Tracker project using the approved Phase 1 and Phase 2 documents.
+
+You are acting as a Senior Software Architect and Full-Stack Technical Lead.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not write application code.
+- Do not install packages.
+- Do not create migrations.
+- Do not generate implementation files.
+- Use approved PRD requirements as the source of truth.
+- Evaluate technology choices rather than blindly accepting defaults.
+
+## 1. Technology Stack Evaluation
+
+Evaluate and recommend suitable technologies for:
+
+- Frontend framework.
+- Programming language.
+- Styling and UI component system.
+- Backend architecture.
+- Database.
+- ORM.
+- Authentication.
+- Form validation.
+- State management.
+- Rich text editor.
+- Calendar and drag-and-drop.
+- Charts and analytics.
+- AI integration.
+- Background jobs and scheduling.
+- Audio playback.
+- API documentation.
+- Testing.
+- Deployment.
+
+Consider these as candidate technologies, not mandatory choices:
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- PostgreSQL
+- Drizzle ORM
+- Zod
+- Better Auth
+- Recharts
+- TipTap
+- dnd-kit
+- date-fns
+- Vitest
+- Playwright
+- OpenAPI
+
+For each important decision, explain:
+- Why it is appropriate.
+- Advantages.
+- Disadvantages.
+- Alternatives.
+- Long-term implications.
+
+## 2. Architecture Design
+
+Evaluate whether a modular monolith is appropriate.
+
+Define:
+- Overall system architecture.
+- Frontend architecture.
+- Backend architecture.
+- Data access layer.
+- Domain/service layer.
+- Authentication architecture.
+- AI integration architecture.
+- External API architecture.
+- Background processing.
+- File and media storage.
+- Logging and error handling.
+
+Avoid unnecessary microservices.
+
+## 3. Module Boundaries
+
+Define clear boundaries for:
+- Authentication.
+- User profile.
+- Subjects.
+- Topics.
+- Study plans.
+- Study sessions.
+- Calendar.
+- Goals.
+- Tasks.
+- Timer.
+- Analytics.
+- Notes.
+- Flashcards.
+- AI scheduling.
+- Gamification.
+- Exams.
+- Study groups.
+- API integrations.
+- Notifications.
+
+Specify module dependencies and prevent circular dependencies.
+
+## 4. Application Flows
+
+Design the main system flows:
+
+- User registration and login.
+- First-time onboarding.
+- Subject creation.
+- Study plan creation.
+- Study session lifecycle.
+- Timer lifecycle.
+- Daily goal calculation.
+- XP transaction.
+- Streak calculation.
+- AI schedule generation.
+- Exam preparation.
+- Group activity.
+- API authentication and request handling.
+
+## 5. Architecture Diagrams
+
+Create Mermaid diagrams for:
+- System context.
+- Container architecture.
+- Component architecture.
+- Main user flows.
+- Study session lifecycle.
+- AI schedule generation.
+- Authentication.
+- Deployment architecture.
+
+## 6. SDD Documentation
+
+Create:
+
+docs/03-architecture/
+- SDD.md
+- SYSTEM-ARCHITECTURE.md
+- TECHNOLOGY-DECISIONS.md
+- MODULE-BOUNDARIES.md
+- APPLICATION-FLOWS.md
+- SECURITY-ARCHITECTURE.md
+- ERROR-HANDLING.md
+- BACKGROUND-JOBS.md
+- DEPLOYMENT-ARCHITECTURE.md
+
+Create ADR records for significant architectural decisions:
+
+docs/adr/
+- ADR-001-technology-stack.md
+- ADR-002-database-selection.md
+- ADR-003-application-architecture.md
+- ADR-004-authentication.md
+- Additional ADRs when necessary.
+
+## 7. Architecture Quality Review
+
+Check:
+- Maintainability.
+- Type safety.
+- Data integrity.
+- Security.
+- Performance.
+- Modularity.
+- Testability.
+- Future extensibility.
+
+## Final Output
+
+Present the recommended architecture, technology stack, architectural trade-offs, and unresolved decisions.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Do not proceed to database design until I approve the architecture.

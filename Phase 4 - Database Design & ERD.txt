@@ -1,0 +1,159 @@
+# PHASE 4 — DATABASE DESIGN & ENTITY RELATIONSHIP DIAGRAM
+
+Continue the Study Tracker project using the approved PRD and System Architecture.
+
+You are acting as a Senior Database Architect and Data Engineer.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not create actual database migrations.
+- Do not execute SQL.
+- Do not implement ORM schemas.
+- Do not modify application code.
+- Design the database based on approved requirements.
+
+## 1. Database Selection
+
+Review the approved database choice.
+
+Evaluate:
+- Relational database suitability.
+- Transaction requirements.
+- Data consistency.
+- Indexing.
+- Query performance.
+- Future scalability.
+- Backup and restore.
+
+## 2. Entity Identification
+
+Identify all required entities.
+
+Consider:
+- Users.
+- User profiles.
+- Subjects.
+- Topics.
+- Study plans.
+- Study plan items.
+- Study sessions.
+- Daily goals.
+- Tasks.
+- Notes.
+- Flashcards.
+- Revision records.
+- Exams.
+- Exam subjects or topics.
+- Study groups.
+- Group memberships.
+- Group activities.
+- XP transactions.
+- User statistics.
+- Habits.
+- Habit records.
+- Notifications.
+- API keys.
+- External integrations.
+
+Only include entities justified by approved requirements.
+
+## 3. ERD Design
+
+Produce:
+- Conceptual ERD.
+- Logical ERD.
+- Physical ERD.
+
+Use Mermaid ER diagrams.
+
+Define:
+- Primary keys.
+- Foreign keys.
+- Relationships.
+- Cardinality.
+- Optional and required relationships.
+- Unique constraints.
+- Check constraints.
+- Delete behavior.
+- Update behavior.
+
+## 4. Data Dictionary
+
+For every table, specify:
+- Column name.
+- Data type.
+- Nullable status.
+- Default value.
+- Primary key / foreign key.
+- Constraints.
+- Description.
+
+## 5. Database Rules
+
+Pay special attention to:
+
+### Study Plans vs Study Sessions
+A planned study activity and an actual completed study session must be separate records.
+
+### Timer and Study Session
+Define how timer state is persisted and how duplicate or overlapping sessions are prevented.
+
+### XP
+Use an XP transaction ledger instead of relying only on a mutable total XP value.
+
+### Historical Data
+Define what happens to historical records when a subject, topic, or task is deleted.
+
+### Time Zones
+Define how timestamps and study dates are stored and calculated.
+
+### Statistics
+Identify which metrics are calculated dynamically and which may be aggregated.
+
+### Study Groups
+Define ownership, membership, visibility, and access constraints.
+
+## 6. Indexing and Performance
+
+Recommend indexes for:
+- Study session queries.
+- Calendar queries.
+- Subject statistics.
+- Task priority and status.
+- Flashcard revision.
+- Group leaderboard.
+- Search.
+- User-specific queries.
+
+## 7. Backup and Data Integrity
+
+Define:
+- Backup strategy.
+- Restore strategy.
+- Data export.
+- Referential integrity.
+- Transaction boundaries.
+- Data retention.
+
+## Required Documentation
+
+Create:
+
+docs/04-database/
+- DATABASE-DESIGN.md
+- CONCEPTUAL-ERD.md
+- LOGICAL-ERD.md
+- PHYSICAL-ERD.md
+- DATA-DICTIONARY.md
+- DATABASE-CONSTRAINTS.md
+- INDEXING-STRATEGY.md
+- DATA-LIFECYCLE.md
+- BACKUP-RESTORE.md
+
+## Final Output
+
+Explain the database structure, major relationships, important constraints, and unresolved decisions.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Wait for approval before proceeding to UI/UX Design.

@@ -1,0 +1,137 @@
+# PHASE 2 — PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+Continue working on the Study Tracker project using the approved documentation from Phase 1.
+
+You are acting as a Senior Product Manager and Requirements Engineer.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not write application code.
+- Do not implement the database.
+- Do not create UI components.
+- Treat Phase 1 documentation as the source of truth.
+- Do not silently change previously approved requirements.
+- If inconsistencies exist, report them before proceeding.
+
+## Tasks
+
+### 1. Functional Requirements
+
+Create detailed functional requirements for every approved feature.
+
+Each requirement must include:
+- Unique requirement ID (FR-XXX).
+- Feature name.
+- Description.
+- User story.
+- Acceptance criteria.
+- Priority (Must Have, Should Have, Could Have, Won't Have).
+- Dependencies.
+- Business rules.
+- Expected system behavior.
+- Error and edge cases.
+
+### 2. Non-Functional Requirements
+
+Define:
+- Performance.
+- Security.
+- Privacy.
+- Accessibility.
+- Reliability.
+- Maintainability.
+- Scalability.
+- Browser compatibility.
+- Responsive behavior.
+- Data integrity.
+- Backup and recovery.
+
+Assign unique IDs using NFR-XXX.
+
+### 3. User Roles and Permissions
+
+Determine the required roles, such as:
+- Guest (if applicable).
+- Registered user.
+- Group member.
+- Group administrator.
+- System administrator (only if necessary).
+
+Define permission boundaries for each role.
+
+### 4. Feature Specifications
+
+Specify detailed behavior for:
+- Dashboard.
+- Subjects and topics.
+- Study planning.
+- Study sessions.
+- Calendar.
+- Daily goals.
+- Timer.
+- Statistics.
+- Notes and revision.
+- AI schedule generation.
+- Ambient audio.
+- XP and streaks.
+- Exam preparation.
+- Study groups.
+- REST API.
+- Task management.
+
+Only specify features approved in Phase 1.
+
+### 5. Edge Cases
+
+Identify cases such as:
+- Timer interrupted by browser refresh.
+- Multiple active study sessions.
+- Overlapping study plans.
+- Missed daily goals.
+- Time zone changes.
+- Deleted subjects with historical sessions.
+- Invalid AI-generated schedules.
+- Duplicate XP transactions.
+- User leaving a study group.
+- Data synchronization conflicts.
+
+### 6. Requirement Traceability
+
+Create a traceability matrix connecting:
+- Product goals.
+- User needs.
+- Functional requirements.
+- Non-functional requirements.
+- Acceptance criteria.
+- Planned test cases.
+
+## Required Documentation
+
+Create:
+
+docs/02-requirements/
+- PRD.md
+- FUNCTIONAL-REQUIREMENTS.md
+- NON-FUNCTIONAL-REQUIREMENTS.md
+- USER-ROLES-AND-PERMISSIONS.md
+- ACCEPTANCE-CRITERIA.md
+- EDGE-CASES.md
+- REQUIREMENT-TRACEABILITY.md
+
+## Quality Requirements
+
+Requirements must be:
+- Specific.
+- Testable.
+- Unambiguous.
+- Consistent.
+- Traceable.
+- Implementation-independent wherever possible.
+
+## Final Output
+
+Summarize the completed requirements, identify unresolved decisions, and list all generated documents.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Wait for my approval before proceeding to System Architecture and SDD.
