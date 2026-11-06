@@ -158,7 +158,7 @@ Not present in the ERROR-HANDLING catalog (reconciliation 7 and 8). Names follow
 | `unsupported_api_version` | Authorization and not-found | 404 | no | A version prefix other than `v1` | `{ "supportedVersions": ["v1"] }` |
 | `idempotency_key_reused` | Conflict | 409 | no | Same key, different request hash | `{}` |
 | `request_in_progress` | Conflict | 409 | yes, after 1 s | Same key while the first request is running; `Retry-After: 1` | `{}` |
-| `name_conflict` | Conflict | 409 | no | Active subject, topic or group name clash, including subject restore (FR-010, FR-014) | `{ "field": "name", "conflictingId": "..." }` |
+| `name_conflict` | Conflict | 409 | no | Active subject or group name clash, including subject restore (FR-010, FR-014). Topics have no uniqueness rule (DATA-DICTIONARY `topics`); duplicates are only flagged in the TOP-03 preview | `{ "field": "name", "conflictingId": "..." }` |
 | `subject_archived` | Conflict | 409 | no | Write that references an archived subject (BR-029) | `{ "subjectId": "..." }` |
 | `export_not_ready` | Conflict | 409 | yes | Download while status is `running` (FR-132) | `{ "status": "running" }` |
 | `generation_in_progress` | Conflict | 409 | after completion | A pending AI request exists (EC-016) | `{ "requestId": "..." }` |
@@ -190,3 +190,59 @@ Not present in the ERROR-HANDLING catalog (reconciliation 7 and 8). Names follow
 
 The table below is generated from [API-ENDPOINTS.md](API-ENDPOINTS.md): each code with the endpoint IDs whose spec block lists it. Common errors (`unauthenticated`, `validation_failed`, `rate_limited`, `internal_error`, `csrf_rejected`, and `not_found` on `{id}` paths) are stated once in API-ENDPOINTS section 1 and are not repeated per endpoint.
 
+
+| Code | Endpoints whose Error responses row lists it |
+|---|---|
+| `account_locked` | AUTH-02 |
+| `age_confirmation_required` | AUTH-01 |
+| `ai_daily_limit_reached` | AI-04 |
+| `ai_provider_unavailable` | AI-04 |
+| `already_member` | GRP-10 |
+| `api_key_limit_reached` | KEY-02 |
+| `consent_required` | AI-04 |
+| `daily_total_exceeded` | SESS-03, SESS-04, PUB-13, PUB-14 |
+| `database_unavailable` | AUTH-01, AUTH-02, AUTH-03, AUTH-05, AUTH-06, SYS-01 |
+| `duplicate_email` | AUTH-01 |
+| `duration_out_of_range` | PLAN-02, PLAN-04, PUB-18, PUB-19 |
+| `exam_date_in_past` | EXAM-02, PUB-34 |
+| `exam_date_warning_confirmation_required` | PLAN-02, PLAN-04, PUB-18, PUB-19 |
+| `export_limit_reached` | PROF-05 |
+| `export_not_ready` | PROF-08 |
+| `generation_in_progress` | AI-04 |
+| `goal_out_of_range` | GOAL-02, GOAL-03 |
+| `group_full` | GRP-10 |
+| `idempotency_key_required` | PROF-05, SUBJ-02, TOP-02, TOP-03, EXAM-02, PLAN-02, SESS-03, TIM-02, TIM-05, TODO-02, NOTE-02, FLASH-02, FLASH-06, AI-04, AI-06, GRP-01, GRP-07, GRP-10, GRP-16, KEY-02, PUB-13 |
+| `idempotency_key_reused` | PROF-05, SUBJ-02, TOP-02, TOP-03, EXAM-02, PLAN-02, SESS-03, TIM-02, TIM-05, TODO-02, NOTE-02, FLASH-02, FLASH-06, AI-04, AI-06, GRP-01, GRP-07, GRP-10, GRP-16, KEY-02, PUB-03, PUB-08, PUB-13, PUB-18, PUB-24, PUB-29, PUB-34 |
+| `input_too_large` | TOP-03, NOTE-02, NOTE-04, AI-04, PUB-29, PUB-30 |
+| `internal_error` | SYS-01, PUB-37 |
+| `invalid_credentials` | AUTH-02, PROF-04 |
+| `invalid_cursor` | EXAM-01, SESS-01, TODO-01, NOTE-01, FLASH-01, NOTIF-01, PUB-01, PUB-06, PUB-11, PUB-22, PUB-27, PUB-32 |
+| `invalid_date_range` | PLAN-01, SESS-01, STAT-01, STAT-02, STAT-03, STAT-04, STAT-05, STAT-06, PUB-11, PUB-16 |
+| `invalid_page_size` | EXAM-01, SESS-01, TODO-01, NOTE-01, FLASH-01, NOTIF-01, PUB-01, PUB-06, PUB-11, PUB-22, PUB-27, PUB-32 |
+| `invalid_timezone` | AUTH-01, AUTH-03, PROF-02 |
+| `invite_expired` | GRP-10 |
+| `last_administrator` | GRP-11 |
+| `manual_entry_in_future` | SESS-03, SESS-04, PUB-13, PUB-14 |
+| `manual_entry_overlaps_session` | SESS-03, SESS-04, PUB-13, PUB-14 |
+| `manual_entry_too_long` | SESS-03, SESS-04, PUB-13, PUB-14 |
+| `name_conflict` | SUBJ-02, SUBJ-04, SUBJ-07, PUB-03, PUB-04, PUB-05b |
+| `not_found` | AUTH-08, PROF-07, PROF-08, SUBJ-03, TOP-01, TOP-04, EXAM-03, EXAM-05, EXAM-06, PLAN-03, SESS-02, TODO-01, TODO-02, TODO-03, TODO-04, TODO-05, TODO-06, NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05, NOTE-06, FLASH-01, FLASH-02, FLASH-03, FLASH-04, FLASH-06, GOAL-04, NOTIF-02, NOTIF-06, NOTIF-07, AI-04 |
+| `overlap_confirmation_required` | PLAN-02, PLAN-04, AI-06, PUB-18, PUB-19 |
+| `password_too_short` | AUTH-01, AUTH-06 |
+| `past_entry_read_only` | PLAN-04, PUB-19 |
+| `proposal_stale` | AI-06 |
+| `rate_limited` | PUB-37 |
+| `request_in_progress` | PROF-05, SUBJ-02, TOP-02, TOP-03, EXAM-02, PLAN-02, SESS-03, TIM-02, TIM-05, TODO-02, NOTE-02, FLASH-02, FLASH-06, AI-04, AI-06, GRP-01, GRP-07, GRP-10, GRP-16, KEY-02, PUB-03, PUB-08, PUB-13, PUB-18, PUB-24, PUB-29, PUB-34 |
+| `reset_token_invalid` | AUTH-06 |
+| `role_not_allowed` | GRP-04, GRP-05, GRP-07, GRP-08, GRP-09, GRP-12, GRP-13 |
+| `session_already_closed` | TIM-03, TIM-04, TIM-05, TIM-06 |
+| `stale_version` | PROF-02, SUBJ-04, SUBJ-06, SUBJ-07, TOP-05, TOP-07, TOP-08, EXAM-04, PLAN-04, PLAN-05, PLAN-06, SESS-04, SESS-05, TIM-03, TIM-04, TIM-05, TIM-08, TODO-04, TODO-06, NOTE-04, NOTE-06, FLASH-03, FLASH-04, NOTIF-04, GRP-04, PUB-04, PUB-05a, PUB-05b, PUB-09, PUB-10a, PUB-10b, PUB-14, PUB-15, PUB-19, PUB-20, PUB-21, PUB-25, PUB-26, PUB-30, PUB-31, PUB-35 |
+| `storage_unavailable` | PROF-08 |
+| `subject_archived` | SUBJ-04, TOP-02, TOP-03, EXAM-02, EXAM-04, PLAN-02, PLAN-04, SESS-03, SESS-04, TIM-02, TODO-02, TODO-04, NOTE-02, NOTE-04, NOTE-06, FLASH-02, FLASH-03, GOAL-03, PUB-08, PUB-13, PUB-14, PUB-18, PUB-19, PUB-24, PUB-25, PUB-29, PUB-34, PUB-35 |
+| `subject_has_running_session` | SUBJ-06, PUB-05a |
+| `timer_already_running` | TIM-02 |
+| `unauthenticated` | AUTH-04 |
+| `validation_failed` | EXAM-05, EXAM-06, PLAN-06 |
+| `version_required` | PROF-02, SUBJ-04, SUBJ-06, SUBJ-07, TOP-05, TOP-07, TOP-08, EXAM-04, PLAN-04, PLAN-05, PLAN-06, SESS-04, SESS-05, TIM-03, TIM-04, TIM-05, TIM-08, TODO-04, TODO-06, NOTE-04, NOTE-06, FLASH-03, FLASH-04, NOTIF-04, GRP-04, PUB-04, PUB-05a, PUB-05b, PUB-09, PUB-10a, PUB-10b, PUB-14, PUB-15, PUB-19, PUB-20, PUB-21, PUB-25, PUB-26, PUB-30, PUB-31, PUB-35 |
+
+Codes with no row above are emitted outside a spec block's Error row: `ai_no_valid_entries`, `ai_provider_timeout`, `api_key_invalid`, `api_key_revoked`, `csrf_rejected`, `email_delivery_failed`, `scope_missing`, `session_expired`, `session_revoked`, `unsupported_api_version`. `session_expired`, `session_revoked`, `unauthenticated`, `csrf_rejected` and `rate_limited` are in the common set (API-ENDPOINTS section 1). `api_key_invalid`, `api_key_revoked`, `scope_missing` and `unsupported_api_version` apply to every `/v1` endpoint. `ai_provider_timeout`, `ai_no_valid_entries` and `ai_provider_unavailable` also appear as `errorCode` in the AI-05 body; `email_delivery_failed` is a background job outcome (EXTERNAL-INTEGRATIONS).
