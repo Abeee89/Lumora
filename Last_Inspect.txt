@@ -1,0 +1,133 @@
+# PHASE 8 — FINAL DOCUMENTATION AUDIT AND IMPLEMENTATION READINESS
+
+You are acting as a Principal Software Architect, Senior QA Engineer, and Technical Reviewer.
+
+The Study Tracker planning documentation has been prepared.
+
+Your task is to conduct a comprehensive documentation audit before implementation begins.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not write application code.
+- Do not implement features.
+- Do not create database migrations.
+- Do not silently modify approved architecture or requirements.
+- Identify inconsistencies and recommend corrections.
+
+## 1. Documentation Completeness
+
+Review all documentation created in previous phases.
+
+Verify:
+- Product vision aligns with PRD.
+- Every approved feature has requirements.
+- Every requirement has acceptance criteria.
+- Every requirement maps to architecture and implementation milestones.
+- Database entities support the requirements.
+- ERD relationships are consistent.
+- UI pages support user journeys.
+- API endpoints match approved functionality.
+- Security requirements are covered.
+- Testing strategy covers critical workflows.
+
+## 2. Cross-Document Consistency
+
+Check for:
+- Conflicting terminology.
+- Duplicate requirements.
+- Missing requirements.
+- Undefined business rules.
+- Missing database relationships.
+- Unclear API behavior.
+- Unspecified error handling.
+- Inconsistent feature priorities.
+- Unresolved architectural decisions.
+
+## 3. Technical Risk Assessment
+
+Evaluate:
+- Database complexity.
+- AI integration costs and failure modes.
+- Timer reliability.
+- Calendar scheduling conflicts.
+- Time zone handling.
+- XP and leaderboard abuse.
+- Study group permissions.
+- Performance.
+- Data privacy.
+- Backup and restore.
+
+## 4. Security Review
+
+Check:
+- Authentication and authorization.
+- User data isolation.
+- Input validation.
+- API security.
+- File upload security if applicable.
+- Rate limiting.
+- Secret management.
+- Data retention.
+- Privacy requirements.
+
+## 5. Implementation Readiness
+
+Create a readiness checklist.
+
+Every critical requirement must have:
+- A clear specification.
+- An owner module.
+- A defined data model.
+- A UI/UX specification where applicable.
+- Acceptance criteria.
+- A testing approach.
+- An implementation milestone.
+
+## 6. Final Documentation
+
+Create or update:
+
+docs/
+- README.md
+- DOCUMENTATION-INDEX.md
+- IMPLEMENTATION-READINESS.md
+- FINAL-ARCHITECTURE-REVIEW.md
+- OPEN-DECISIONS.md
+- CHANGELOG.md
+
+Create a requirement traceability matrix linking requirements to:
+- Design documents.
+- Database entities.
+- API endpoints.
+- UI pages.
+- Implementation milestones.
+- Test cases.
+
+## 7. Final Report
+
+Provide:
+1. Documentation completeness percentage.
+2. Critical inconsistencies.
+3. Missing requirements.
+4. Technical risks.
+5. Security concerns.
+6. Recommended corrections.
+7. Outstanding decisions requiring approval.
+8. Final implementation sequence.
+9. Whether the project is ready for Build Mode.
+
+Do not claim 100% readiness if critical decisions remain unresolved.
+
+## Final Gate
+
+If critical issues remain:
+- List them.
+- Recommend corrections.
+- STOP and wait for approval.
+
+If all critical issues are resolved:
+- Present the final implementation readiness report.
+- Explain the recommended first implementation milestone.
+- Wait for explicit authorization to enter Build Mode.
+
+**DO NOT START BUILD MODE AUTOMATICALLY.**
