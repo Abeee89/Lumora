@@ -1,133 +1,120 @@
-# PHASE 8 — FINAL DOCUMENTATION AUDIT AND IMPLEMENTATION READINESS
+# LUMORA — APPROVED DOCUMENTATION CORRECTION
 
-You are acting as a Principal Software Architect, Senior QA Engineer, and Technical Reviewer.
+You are acting as a Senior Software Architect, Technical Documentation Engineer, and Requirements Engineer for the Lumora project.
 
-The Study Tracker planning documentation has been prepared.
+## Objective
 
-Your task is to conduct a comprehensive documentation audit before implementation begins.
+Apply the explicitly approved Owner Decision Matrix from the latest Phase 8 audit preparation to the existing Lumora documentation.
 
-## Important Instructions
-- PLANNING MODE ONLY.
-- Do not write application code.
-- Do not implement features.
-- Do not create database migrations.
-- Do not silently modify approved architecture or requirements.
-- Identify inconsistencies and recommend corrections.
+This task is strictly documentation correction. Do not implement application code.
 
-## 1. Documentation Completeness
+## Step 1 — Inspect the project
 
-Review all documentation created in previous phases.
+Inspect the following sources:
 
-Verify:
-- Product vision aligns with PRD.
-- Every approved feature has requirements.
-- Every requirement has acceptance criteria.
-- Every requirement maps to architecture and implementation milestones.
-- Database entities support the requirements.
-- ERD relationships are consistent.
-- UI pages support user journeys.
-- API endpoints match approved functionality.
-- Security requirements are covered.
-- Testing strategy covers critical workflows.
+- `Build Mode.md`
+- `README.md`
+- `DOCUMENTATION-INDEX.md`
+- `docs/FINAL-ARCHITECTURE-REVIEW.md`
+- `docs/IMPLEMENTATION-READINESS.md`
+- `docs/TRACEABILITY-MATRIX.md`
+- `docs/OPEN-DECISIONS.md`
+- All Phase 1–8 documentation
+- All ADR files
+- The latest approved Owner Decision Matrix and approval record
 
-## 2. Cross-Document Consistency
+Use the actual repository files as the source of truth. Do not assume that a previously discussed decision has been recorded.
 
-Check for:
-- Conflicting terminology.
-- Duplicate requirements.
-- Missing requirements.
-- Undefined business rules.
-- Missing database relationships.
-- Unclear API behavior.
-- Unspecified error handling.
-- Inconsistent feature priorities.
-- Unresolved architectural decisions.
+## Step 2 — Verify owner decisions
 
-## 3. Technical Risk Assessment
+Verify the explicit approval status of:
 
-Evaluate:
-- Database complexity.
-- AI integration costs and failure modes.
-- Timer reliability.
-- Calendar scheduling conflicts.
-- Time zone handling.
-- XP and leaderboard abuse.
-- Study group permissions.
-- Performance.
-- Data privacy.
-- Backup and restore.
+- C-1 through C-6
+- S-1 through S-5
+- M-1 through M-31
+- M00-A through M00-F
 
-## 4. Security Review
+For each decision, record:
 
-Check:
-- Authentication and authorization.
-- User data isolation.
-- Input validation.
-- API security.
-- File upload security if applicable.
-- Rate limiting.
-- Secret management.
-- Data retention.
-- Privacy requirements.
+- Finding ID
+- Selected option
+- Owner approval evidence
+- Approval date, if recorded
+- Affected documents
+- Required correction
+- Status
 
-## 5. Implementation Readiness
+If an option is not explicitly recorded, do not guess. Mark it as `OWNER DECISION REQUIRED`.
 
-Create a readiness checklist.
+## Step 3 — Apply corrections
 
-Every critical requirement must have:
-- A clear specification.
-- An owner module.
-- A defined data model.
-- A UI/UX specification where applicable.
-- Acceptance criteria.
-- A testing approach.
-- An implementation milestone.
+Use the approved resolution bundles:
 
-## 6. Final Documentation
+- B1 Authentication
+- B2 Foundation data/jobs
+- B3 Privacy/recovery/export
+- B4 Plan/timer correctness
+- B5 Product rules
+- B6 Public/API contracts
+- B7 Accessibility/UI
+- B8 Roadmap/testing
+- B9 Governance
 
-Create or update:
+Follow the dependency map and recommended correction order.
 
-docs/
-- README.md
-- DOCUMENTATION-INDEX.md
-- IMPLEMENTATION-READINESS.md
-- FINAL-ARCHITECTURE-REVIEW.md
-- OPEN-DECISIONS.md
-- CHANGELOG.md
+Preserve all existing requirement IDs, ADR IDs, milestone IDs, and decision IDs unless an approved decision explicitly requires a change.
 
-Create a requirement traceability matrix linking requirements to:
-- Design documents.
-- Database entities.
-- API endpoints.
-- UI pages.
-- Implementation milestones.
-- Test cases.
+## Step 4 — Documentation consistency
 
-## 7. Final Report
+Verify consistency across:
 
-Provide:
-1. Documentation completeness percentage.
-2. Critical inconsistencies.
-3. Missing requirements.
-4. Technical risks.
-5. Security concerns.
-6. Recommended corrections.
-7. Outstanding decisions requiring approval.
-8. Final implementation sequence.
-9. Whether the project is ready for Build Mode.
+- PRD and Functional Requirements
+- Business Rules and Edge Cases
+- Non-Functional Requirements
+- SDD and Architecture
+- ADRs
+- Database design and lifecycle
+- UI/UX specifications
+- API and integration contracts
+- Roadmap and milestones
+- Testing strategy and Definition of Done
+- Traceability and implementation readiness
 
-Do not claim 100% readiness if critical decisions remain unresolved.
+No contradictory requirement, schema, API contract, UI behavior, or milestone dependency may remain silently unresolved.
 
-## Final Gate
+## Step 5 — Governance
 
-If critical issues remain:
-- List them.
-- Recommend corrections.
-- STOP and wait for approval.
+Update:
 
-If all critical issues are resolved:
-- Present the final implementation readiness report.
-- Explain the recommended first implementation milestone.
-- Wait for explicit authorization to enter Build Mode.
+- `OPEN-DECISIONS.md`
+- `TRACEABILITY-MATRIX.md`
+- `IMPLEMENTATION-READINESS.md`
+- `FINAL-ARCHITECTURE-REVIEW.md`
+- `CHANGELOG.md`
+- `DOCUMENTATION-INDEX.md`
 
-**DO NOT START BUILD MODE AUTOMATICALLY.**
+Preserve the difference between globally blocking decisions and decisions that only block a future milestone.
+
+Do not mark an ADR as Accepted without explicit owner approval.
+
+## Restrictions
+
+- Documentation only.
+- No application code.
+- No package installation.
+- No database migrations or schema implementation.
+- No M00 technical experiments.
+- No Build Mode implementation.
+- Do not invent owner approval.
+- Do not delete historical decisions or audit findings.
+
+## Required output
+
+1. Approved Decision Verification Report
+2. Correction Log grouped by B1–B9
+3. Updated document inventory
+4. Remaining unresolved decisions
+5. Cross-document consistency report
+6. Recommended next action
+
+Stop and wait for owner review.
