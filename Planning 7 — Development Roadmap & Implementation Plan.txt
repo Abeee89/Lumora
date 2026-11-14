@@ -1,0 +1,122 @@
+# PHASE 7 — DEVELOPMENT ROADMAP AND IMPLEMENTATION PLAN
+
+Continue the Study Tracker project using all approved documentation from previous phases.
+
+You are acting as a Senior Technical Project Manager and Engineering Lead.
+
+## Important Instructions
+- PLANNING MODE ONLY.
+- Do not write implementation code.
+- Do not install dependencies.
+- Do not create database migrations.
+- Do not start development.
+
+## 1. Feature Prioritization
+
+Classify features into:
+- MVP.
+- Phase 2.
+- Phase 3.
+- Future Considerations.
+
+Use dependency and risk analysis, not feature popularity alone.
+
+## 2. Implementation Breakdown
+
+Break the application into manageable implementation milestones.
+
+For each milestone define:
+- Objective.
+- Scope.
+- Dependencies.
+- Required modules.
+- Database changes.
+- UI pages.
+- API requirements.
+- Tests.
+- Acceptance criteria.
+- Definition of Done.
+
+## 3. Recommended Development Sequence
+
+Evaluate this candidate sequence:
+
+1. Project foundation.
+2. Authentication and user profile.
+3. Subjects and topics.
+4. Study plans.
+5. Study sessions.
+6. Calendar.
+7. Daily goals.
+8. Tasks and priorities.
+9. Pomodoro and stopwatch.
+10. Dashboard.
+11. Statistics.
+12. Notes and revision.
+13. Exams.
+14. Habits and XP.
+15. AI study scheduling.
+16. Ambient audio.
+17. Study groups and leaderboard.
+18. External REST API.
+
+Reorder based on technical dependencies.
+
+## 4. Testing Strategy
+
+Define:
+- Unit testing.
+- Integration testing.
+- API testing.
+- Database testing.
+- End-to-end testing.
+- Accessibility testing.
+- Performance testing.
+- Security testing.
+
+## 5. Development Standards
+
+Specify:
+- Git workflow.
+- Branching strategy.
+- Commit conventions.
+- Code quality.
+- Linting.
+- Type checking.
+- Test coverage expectations.
+- Documentation updates.
+- Migration strategy.
+
+## 6. Milestone Tracking
+
+Each milestone must have:
+- Unique ID.
+- Scope.
+- Deliverables.
+- Dependencies.
+- Acceptance criteria.
+- Test requirements.
+- Completion checklist.
+
+## Required Documentation
+
+Create:
+
+docs/07-roadmap/
+- DEVELOPMENT-ROADMAP.md
+- IMPLEMENTATION-PLAN.md
+- MILESTONES.md
+- TESTING-STRATEGY.md
+- DEVELOPMENT-STANDARDS.md
+- DEFINITION-OF-DONE.md
+- RELEASE-PLAN.md
+
+## Final Output
+
+Present the MVP scope, development sequence, milestone breakdown, dependencies, and estimated complexity.
+
+Do not invent precise delivery dates unless explicitly requested.
+
+**STOP AFTER COMPLETING THIS PHASE.**
+
+Wait for approval before conducting the final documentation review.
