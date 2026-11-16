@@ -1,0 +1,88 @@
+# PROMPT 05 — MILESTONE TESTING & BUG FIXING
+
+Execute focused testing for the current milestone.
+
+Read:
+- Milestone acceptance criteria.
+- Testing strategy.
+- Definition of Done.
+- Current implementation plan.
+- Existing test reports.
+
+### TASK 1 — UNIT TESTING
+
+Test relevant:
+- Business logic.
+- Utility functions.
+- Validation schemas.
+- Calculations.
+- Domain rules.
+
+### TASK 2 — INTEGRATION TESTING
+
+Test relevant:
+- Database operations.
+- Service interactions.
+- API behavior.
+- Authentication.
+- Authorization.
+- Data relationships.
+
+### TASK 3 — UI TESTING
+
+Test:
+- Rendering.
+- Forms.
+- User interactions.
+- Loading states.
+- Error states.
+- Empty states.
+- Responsive behavior.
+
+### TASK 4 — ACCEPTANCE TESTING
+
+Verify every acceptance criterion for the current milestone.
+
+Classify each criterion:
+- PASS.
+- FAIL.
+- BLOCKED.
+- NOT APPLICABLE.
+
+### TASK 5 — QUALITY CHECKS
+
+Run the project's actual commands for:
+- Type checking.
+- Linting.
+- Unit tests.
+- Integration tests.
+- Relevant end-to-end tests.
+- Production build if appropriate.
+
+### TASK 6 — BUG FIXING
+
+Fix issues introduced by the current milestone.
+
+Do not:
+- Hide failing tests.
+- Remove valid assertions just to make tests pass.
+- Skip tests without documenting why.
+- Modify unrelated functionality unnecessarily.
+
+After fixing issues, rerun affected tests.
+
+### OUTPUT
+
+Provide:
+- Test cases.
+- Expected results.
+- Actual results.
+- PASS/FAIL/BLOCKED status.
+- Bugs discovered.
+- Bugs fixed.
+- Remaining issues.
+- Commands executed.
+
+Do not claim completion when critical acceptance criteria fail.
+
+Stop and report the testing results.

@@ -1,0 +1,73 @@
+# PROMPT 04 — FRONTEND & BACKEND INTEGRATION
+
+Execute the integration tasks for the current milestone.
+
+### OBJECTIVE
+
+Connect the frontend implementation with the real backend and database functionality.
+
+### TASK 1 — DATA INTEGRATION
+
+- Connect frontend pages to documented APIs or approved server-side data access.
+- Replace temporary mock data where real data is required.
+- Implement loading states.
+- Implement error states.
+- Implement empty states.
+- Handle successful responses.
+
+### TASK 2 — FORM INTEGRATION
+
+Verify:
+- Form submission.
+- Server-side validation.
+- Validation error presentation.
+- Successful data persistence.
+- Duplicate submission handling.
+- User feedback.
+
+### TASK 3 — AUTHENTICATION & AUTHORIZATION
+
+Verify:
+- Protected page behavior.
+- Authenticated API requests.
+- User-specific data.
+- Ownership enforcement.
+- Unauthorized access handling.
+
+### TASK 4 — DATA CONSISTENCY
+
+Verify:
+- Frontend and backend schemas match.
+- API responses are handled correctly.
+- Database records are persisted correctly.
+- Related records are updated consistently.
+- Date and timezone behavior follows the approved design.
+
+### TASK 5 — ERROR HANDLING
+
+Handle:
+- Network failures.
+- Server errors.
+- Invalid input.
+- Unauthorized requests.
+- Missing records.
+- Conflict responses.
+- Unexpected failures.
+
+### TASK 6 — INTEGRATION TESTING
+
+Run relevant integration tests and verify the complete feature workflow.
+
+Do not introduce undocumented API changes.
+
+### OUTPUT
+
+Report:
+- Integrated functionality.
+- API connections.
+- Data flow.
+- Error handling.
+- Integration test results.
+- Remaining issues.
+
+Stop after completing the integration scope.

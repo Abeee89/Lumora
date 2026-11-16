@@ -1,0 +1,80 @@
+# PROMPT 06 — MILESTONE COMPLETION & DOCUMENTATION
+
+Complete the current milestone after its implementation and focused testing.
+
+### TASK 1 — DOCUMENTATION UPDATE
+
+Update only relevant documentation:
+
+- Implementation notes.
+- As-built architecture.
+- Database documentation.
+- API documentation.
+- Environment variable documentation.
+- Testing documentation.
+- Known issues.
+- Relevant ADRs when approved decisions change.
+
+Do not rewrite unrelated planning documents.
+
+### TASK 2 — IMPLEMENTATION RECORD
+
+Record:
+- What was implemented.
+- How it works.
+- Important files.
+- Database changes.
+- API changes.
+- Important technical decisions.
+- Deviations from approved specifications.
+
+### TASK 3 — TEST RESULTS
+
+Record actual:
+- Unit test results.
+- Integration test results.
+- UI test results.
+- Type checking.
+- Linting.
+- Build results where applicable.
+
+### TASK 4 — COMPLETION REPORT
+
+Use this format:
+
+# Milestone Completion Report
+
+## 1. Milestone Information
+- ID:
+- Name:
+- Status:
+
+## 2. Implemented Functionality
+
+## 3. Files Created
+
+## 4. Files Modified
+
+## 5. Database Changes
+
+## 6. API Changes
+
+## 7. Testing Results
+
+## 8. Acceptance Criteria
+
+## 9. Known Limitations
+
+## 10. Remaining Tasks
+
+## 11. Documentation Updated
+
+## 12. Recommended Next Milestone
+
+### IMPORTANT
+
+Do not start the next milestone automatically.
+
+Do not perform a comprehensive project audit.
+
+Wait for explicit user approval before proceeding.

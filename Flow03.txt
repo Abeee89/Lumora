@@ -1,0 +1,97 @@
+# PROMPT 03 — FRONTEND IMPLEMENTATION
+
+Execute the approved frontend tasks for the current milestone.
+
+Read:
+- Approved milestone implementation plan.
+- Design principles.
+- Design system.
+- Information architecture.
+- Navigation structure.
+- Page specifications.
+- Interaction specifications.
+- Responsive design.
+- Accessibility specifications.
+- Component inventory.
+
+### TASK 1 — PAGE IMPLEMENTATION
+
+Create or update only the pages required by the current milestone.
+
+Follow:
+- Approved page layouts.
+- Navigation structure.
+- Component specifications.
+- Typography.
+- Colors.
+- Spacing.
+- Responsive behavior.
+
+### TASK 2 — COMPONENT IMPLEMENTATION
+
+Implement reusable components where appropriate.
+
+Follow the approved component inventory.
+
+Avoid creating unnecessary abstractions or duplicate components.
+
+### TASK 3 — USER INTERACTIONS
+
+Implement the required:
+- Forms.
+- Buttons.
+- Filters.
+- Dialogs.
+- Navigation.
+- User interactions.
+- Validation feedback.
+- Loading states.
+- Empty states.
+- Error states.
+- Success feedback.
+
+### TASK 4 — RESPONSIVENESS
+
+Verify:
+- Desktop layout.
+- Tablet layout.
+- Mobile layout.
+- Navigation behavior.
+- Overflow handling.
+- Form usability.
+
+### TASK 5 — ACCESSIBILITY
+
+Follow the approved accessibility specifications.
+
+Ensure:
+- Semantic HTML.
+- Accessible labels.
+- Keyboard navigation.
+- Visible focus states.
+- Appropriate contrast.
+- Accessible validation feedback.
+
+### TASK 6 — FRONTEND VERIFICATION
+
+Run:
+- Type checking.
+- Linting.
+- Relevant component tests.
+- Relevant UI tests.
+
+Do not use hardcoded demonstration data when real application data is required.
+
+Do not implement future milestone pages.
+
+### OUTPUT
+
+Report:
+- Pages implemented.
+- Components created or modified.
+- Interactions implemented.
+- Responsive behavior.
+- Tests executed.
+- Known limitations.
+
+Stop after completing the approved frontend scope.
