@@ -1,0 +1,67 @@
+# PROMPT 10 — PRODUCTION DEPLOYMENT
+
+Execute production deployment only after the user explicitly approves the deployment plan.
+
+### PRECONDITIONS
+
+Verify:
+- Final audit is approved.
+- Critical issues are resolved.
+- Production build succeeds.
+- Production environment is available.
+- Credentials and permissions are configured.
+- Database backup strategy is ready.
+- Rollback strategy is ready.
+
+If any required precondition is missing, stop.
+
+### DEPLOYMENT STEPS
+
+1. Configure production infrastructure.
+2. Configure production database.
+3. Execute approved migrations.
+4. Deploy background worker if required.
+5. Deploy the web application.
+6. Configure production environment variables.
+7. Configure domain and DNS.
+8. Configure HTTPS.
+9. Configure authentication callbacks.
+10. Verify production connectivity.
+
+### POST-DEPLOYMENT SMOKE TEST
+
+Verify:
+- Homepage.
+- Authentication.
+- Protected routes.
+- Database connectivity.
+- Core application features.
+- Timer behavior if applicable.
+- Background jobs if applicable.
+- Data export.
+- Monitoring.
+- Backup configuration.
+
+### ROLLBACK
+
+If a critical deployment failure occurs:
+- Stop further deployment actions.
+- Identify the cause.
+- Follow the approved rollback strategy.
+- Do not perform destructive database rollback without approval.
+- Report the incident and current system state.
+
+### FINAL REPORT
+
+Provide:
+- Deployment status.
+- Production URL.
+- Hosting information.
+- Database status.
+- Worker status.
+- Smoke test results.
+- Known issues.
+- Backup status.
+- Rollback readiness.
+
+Never claim successful deployment without verification.

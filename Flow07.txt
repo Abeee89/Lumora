@@ -1,0 +1,65 @@
+# PROMPT 07 — FULL APPLICATION TESTING
+
+The approved implementation milestones have been completed.
+
+Perform comprehensive testing of the complete Study Tracker application.
+
+Read:
+- PRD.
+- SDD.
+- Database documentation.
+- API documentation.
+- UI/UX documentation.
+- Testing strategy.
+- Definition of Done.
+- All milestone completion reports.
+
+### TESTING SCOPE
+
+1. Full user journey.
+2. Unit testing.
+3. Integration testing.
+4. API testing.
+5. End-to-end testing.
+6. Responsive UI testing.
+7. Accessibility testing.
+8. Performance testing.
+9. Security testing.
+10. Database integrity testing.
+
+### USER JOURNEY
+
+Test the complete workflow defined in the approved requirements, starting from user registration and ending with the relevant data export or other final MVP workflow.
+
+### BUG MANAGEMENT
+
+For each discovered issue, record:
+- Issue ID.
+- Description.
+- Severity.
+- Reproduction steps.
+- Expected behavior.
+- Actual behavior.
+- Affected feature.
+- Fix status.
+
+Fix critical and high-priority defects before release.
+
+### OUTPUT
+
+Create:
+
+`docs/08-quality-assurance/FULL-APPLICATION-TEST-REPORT.md`
+
+Include:
+- Test coverage.
+- Test execution results.
+- Failed tests.
+- Known bugs.
+- Performance results.
+- Security findings.
+- Remaining blockers.
+
+Do not start deployment automatically.
+
+Stop and report the results.

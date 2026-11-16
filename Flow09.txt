@@ -1,0 +1,84 @@
+# PROMPT 09 — DEPLOYMENT PREPARATION
+
+Prepare the Study Tracker application for production deployment.
+
+Read:
+- Approved deployment architecture.
+- Release plan.
+- Environment documentation.
+- Database migration strategy.
+- Backup and restore strategy.
+- Full application testing report.
+- Final audit report.
+
+### TASK 1 — PRODUCTION BUILD
+
+Verify:
+- Production build succeeds.
+- Type checking succeeds.
+- Linting succeeds.
+- Required environment variables are documented.
+- No secrets are committed.
+- No development-only configuration is used in production.
+
+### TASK 2 — DATABASE PREPARATION
+
+Prepare:
+- Production database configuration.
+- Migration execution procedure.
+- Database connection configuration.
+- Backup strategy.
+- Restore strategy.
+
+Never run destructive production migrations without explicit approval.
+
+### TASK 3 — APPLICATION HOSTING
+
+Identify the approved:
+- Application hosting.
+- Database hosting.
+- Background worker hosting if required.
+- Domain.
+- DNS.
+- HTTPS configuration.
+
+Do not select paid services or incur costs without user approval.
+
+### TASK 4 — ENVIRONMENT VARIABLES
+
+Create or update `.env.example`.
+
+Document variable names and purposes.
+
+Never include real secrets.
+
+### TASK 5 — DEPLOYMENT DOCUMENTATION
+
+Create:
+
+- `docs/09-deployment/DEPLOYMENT-GUIDE.md`
+- `docs/09-deployment/PRODUCTION-ENVIRONMENT.md`
+- `docs/09-deployment/ROLLBACK-GUIDE.md`
+- `docs/09-deployment/PRODUCTION-SMOKE-TEST.md`
+
+### TASK 6 — DEPLOYMENT CHECKLIST
+
+Provide a checklist for:
+- Infrastructure.
+- Database.
+- Application.
+- Worker.
+- Domain.
+- HTTPS.
+- Authentication callbacks.
+- Monitoring.
+- Backups.
+- Rollback.
+
+### OUTPUT
+
+Present the deployment readiness report.
+
+Do not deploy yet.
+
+Wait for explicit user approval.

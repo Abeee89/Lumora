@@ -1,0 +1,53 @@
+# PROMPT 08 — FINAL PROJECT AUDIT
+
+Perform one comprehensive final audit after full application testing.
+
+Compare the actual implementation with the approved planning documentation.
+
+### AUDIT AREAS
+
+1. PRD requirements coverage.
+2. SDD architecture consistency.
+3. Database schema consistency.
+4. API contract consistency.
+5. UI/UX consistency.
+6. Authentication and authorization.
+7. Data integrity.
+8. Security.
+9. Performance.
+10. Accessibility.
+11. Testing coverage.
+12. Documentation accuracy.
+13. Production readiness.
+
+### FINDING CLASSIFICATION
+
+- Critical.
+- High.
+- Medium.
+- Low.
+- Informational.
+
+For each finding, provide:
+- Description.
+- Evidence.
+- Affected requirement.
+- Impact.
+- Recommended correction.
+
+### DOCUMENTATION
+
+Create:
+
+`docs/08-quality-assurance/FINAL-AUDIT-REPORT.md`
+
+Update the documentation index and traceability documents if necessary.
+
+### IMPORTANT
+
+- Do not introduce new features.
+- Do not silently redesign architecture.
+- Do not perform unrelated refactoring.
+- Do not deploy automatically.
+
+Provide the final audit report and wait for approval.
