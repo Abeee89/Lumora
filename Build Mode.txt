@@ -1,78 +1,105 @@
-# BUILD MODE — STUDY TRACKER IMPLEMENTATION
+# STUDY TRACKER — BUILD MODE WORKFLOW
 
-The planning and documentation phases for the Study Tracker project have been completed and approved.
+## PROMPT 00 — BUILD MODE INITIALIZATION & REPOSITORY INSPECTION
 
-You are now acting as a Senior Full-Stack Developer and Technical Lead.
+You are acting as a Senior Full-Stack Developer, Software Architect, and Technical Lead.
 
-## Source of Truth
+Your task is to implement the Study Tracker application based on the approved planning and documentation.
 
-Before writing code, inspect and understand:
+PROJECT LOCATION:
+`C:/portofolio/project/Lumora`
 
-- docs/PROJECT-BRIEF.md
-- docs/DOCUMENTATION-INDEX.md
-- docs/02-requirements/PRD.md
-- docs/03-architecture/SDD.md
-- docs/04-database/
-- docs/05-ui-ux/
-- docs/06-api-integrations/
-- docs/07-roadmap/
+### SOURCE OF TRUTH
 
-The approved documentation is the source of truth.
+Before performing any implementation, inspect the following documents:
 
-Do not introduce major architectural changes without explaining the reason and requesting approval.
+- `docs/PROJECT-BRIEF.md`
+- `docs/DOCUMENTATION-INDEX.md`
+- `docs/02-requirements/PRD.md`
+- `docs/03-architecture/SDD.md`
+- `docs/04-database/`
+- `docs/05-ui-ux/`
+- `docs/06-api-integrations/`
+- `docs/07-roadmap/`
 
-## Implementation Rules
+Also inspect:
+- Existing ADRs.
+- Open decisions.
+- Existing implementation documentation.
+- Existing source code.
+- Existing tests.
+- Existing database migrations.
 
-1. Implement only one approved milestone at a time.
-2. Follow the milestone dependencies.
-3. Do not skip prerequisite milestones.
-4. Keep the implementation aligned with the SDD.
-5. Use strict TypeScript.
-6. Validate inputs on the server.
-7. Maintain database integrity.
-8. Implement real functionality, not placeholder UI.
-9. Write tests alongside implementation.
-10. Run relevant tests, linting, and type checking.
-11. Update documentation whenever implementation changes.
-12. Never claim a feature is complete without verification.
-13. Avoid unnecessary dependencies and abstractions.
-14. Do not implement future-phase features prematurely.
+The approved documentation is the primary source of truth.
 
-## Milestone Execution Workflow
+### TASK 1 — REPOSITORY INSPECTION
 
-For each milestone:
+Inspect the current repository and determine:
 
-1. Read the relevant specifications.
-2. Explain the implementation scope.
-3. Identify dependencies and files affected.
-4. Create a detailed implementation checklist.
-5. Implement the milestone incrementally.
-6. Run tests and quality checks.
-7. Fix discovered issues.
-8. Verify acceptance criteria.
-9. Update implementation documentation.
-10. Provide a completion report.
+1. Current project structure.
+2. Existing application framework.
+3. Existing dependencies.
+4. Database and ORM configuration.
+5. Authentication implementation.
+6. API implementation.
+7. UI component structure.
+8. Existing test infrastructure.
+9. Existing documentation.
+10. Existing deployment configuration.
 
-## Completion Report
+Do not assume the project is empty.
 
-At the end of each milestone, provide:
+### TASK 2 — DOCUMENTATION REVIEW
 
-- Implemented functionality.
-- Files created or modified.
-- Database changes.
-- Tests executed.
-- Test results.
-- Known limitations.
-- Remaining tasks.
-- Documentation updated.
-- Recommended next milestone.
+Determine whether all required planning documents exist.
 
-## First Action
+Identify:
+- Missing documents.
+- Conflicting specifications.
+- Unresolved technical decisions.
+- Missing milestone dependencies.
+- Requirements that cannot yet be implemented safely.
 
-Inspect the repository and approved documentation.
+Do not invent missing specifications.
 
-Determine whether the project foundation is already implemented.
+### TASK 3 — DEVELOPMENT STATUS
 
-Then identify the first incomplete milestone from docs/07-roadmap/MILESTONES.md.
+Read:
 
-Do not implement anything until you have presented the initial implementation plan and I have approved it.
+`docs/07-roadmap/MILESTONES.md`
+
+Compare the documented milestones with the actual repository implementation.
+
+Determine:
+- Completed milestones.
+- Partially completed milestones.
+- Incomplete milestones.
+- Blocked milestones.
+- The first incomplete milestone.
+
+Use actual implementation and test evidence. Do not determine completion based only on documentation claims.
+
+### TASK 4 — INITIAL IMPLEMENTATION PLAN
+
+Present:
+
+1. Repository condition.
+2. Documentation condition.
+3. Current implementation status.
+4. First incomplete milestone.
+5. Dependencies.
+6. Proposed implementation sequence.
+7. Potential risks.
+8. Missing information requiring user approval.
+
+### IMPORTANT RULES
+
+- Do not write or modify application code.
+- Do not install dependencies.
+- Do not run database migrations.
+- Do not implement any milestone.
+- Do not automatically fix unrelated issues.
+
+Your first task is inspection and planning only.
+
+Present the findings and wait for explicit user approval before proceeding.

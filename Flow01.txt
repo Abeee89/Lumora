@@ -1,0 +1,93 @@
+# PROMPT 01 — MILESTONE PLANNING
+
+Execute the milestone explicitly approved by the user.
+
+Before implementation, read the relevant documentation and previous milestone reports.
+
+### OBJECTIVE
+
+Create a detailed and practical implementation plan for the requested milestone.
+
+### TASK 1 — REQUIREMENTS ANALYSIS
+
+Identify:
+- Related PRD requirements.
+- Related functional requirements.
+- Related acceptance criteria.
+- Relevant architecture specifications.
+- Relevant database entities.
+- Relevant API endpoints.
+- Relevant UI/UX specifications.
+- Milestone dependencies.
+
+### TASK 2 — SCOPE DEFINITION
+
+Clearly identify:
+
+**In scope:**
+Features and functionality that must be implemented.
+
+**Out of scope:**
+Features belonging to future milestones or phases.
+
+### TASK 3 — TECHNICAL BREAKDOWN
+
+Identify the required changes in:
+
+- Database.
+- Backend.
+- API.
+- Frontend.
+- UI components.
+- Authentication and authorization.
+- Tests.
+- Documentation.
+
+Only include areas relevant to the milestone.
+
+### TASK 4 — IMPLEMENTATION CHECKLIST
+
+Break implementation into small, logical tasks.
+
+For every task, provide:
+- Task ID.
+- Description.
+- Dependencies.
+- Expected files.
+- Expected outcome.
+- Verification method.
+
+### TASK 5 — IMPLEMENTATION ORDER
+
+Determine the safest implementation sequence.
+
+Avoid implementing dependent features before their prerequisites.
+
+### TASK 6 — RISK ANALYSIS
+
+Identify potential:
+- Database risks.
+- Data integrity risks.
+- Security risks.
+- Integration risks.
+- Performance risks.
+- Compatibility risks.
+
+### OUTPUT
+
+Present:
+1. Milestone objective.
+2. Requirements mapping.
+3. Scope.
+4. Dependencies.
+5. Technical breakdown.
+6. Implementation checklist.
+7. Testing strategy.
+8. Expected documentation changes.
+9. Risks and unresolved decisions.
+
+### IMPORTANT
+
+Do not implement code yet.
+
+Wait for explicit approval of the implementation plan.

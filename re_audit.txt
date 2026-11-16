@@ -1,0 +1,60 @@
+# LUMORA — FINAL DOCUMENTATION READINESS AUDIT
+
+Perform a strict read-only audit of the corrected Lumora documentation.
+
+## Sources
+
+Inspect the complete current documentation from Phase 1 through Phase 8, including all ADRs, governance documents, database design, UI/UX, API contracts, roadmap, milestones, testing strategy, and the approved Owner Decision Record.
+
+## Audit objectives
+
+1. Verify every Critical finding C-1 through C-6.
+2. Verify every Major finding M-1 through M-31.
+3. Verify every Supplemental finding S-1 through S-5.
+4. Verify M00-A through M00-F specifications and acceptance criteria.
+5. Verify every approved decision is reflected consistently in all affected documents.
+6. Verify all requirement-to-design-to-implementation-to-test traceability.
+7. Verify migration order, module ownership, dependency graph, and milestone gates.
+8. Verify no unresolved global blocker is incorrectly classified as a minor issue.
+
+## Readiness rules
+
+Use only these statuses:
+
+- PASS
+- PARTIAL
+- FAIL
+- NOT APPLICABLE
+
+A finding is PASS only when its resolution is evidenced in the actual documentation.
+
+Do not count a heading, reference, or generic statement as proof of implementation readiness.
+
+Do not treat planned tests as executed tests.
+
+Do not treat a proposed ADR as an accepted ADR.
+
+## Required reports
+
+- `docs/FINAL-ARCHITECTURE-REVIEW.md`
+- `docs/IMPLEMENTATION-READINESS.md`
+- `docs/TRACEABILITY-MATRIX.md`
+- `docs/OPEN-DECISIONS.md`
+
+Also produce a concise audit summary with:
+
+- Resolved findings
+- Partially resolved findings
+- Unresolved findings
+- Global blockers
+- Milestone-specific blockers
+- M00 authorization prerequisites
+- Build Mode authorization recommendation
+
+## Restrictions
+
+Read-only audit. Do not modify documentation, code, dependencies, migrations, or configuration.
+
+Do not authorize M00 or Build Mode.
+
+Stop and wait for explicit owner approval.

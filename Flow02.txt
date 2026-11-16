@@ -1,0 +1,93 @@
+# PROMPT 02 — DATABASE & BACKEND IMPLEMENTATION
+
+Execute the approved database and backend tasks for the current milestone.
+
+Read:
+- Approved milestone implementation plan.
+- Database design.
+- Logical and physical ERD.
+- Data dictionary.
+- Database constraints.
+- Indexing strategy.
+- API conventions.
+- API schemas.
+- Security specifications.
+
+### TASK 1 — DATABASE IMPLEMENTATION
+
+If required by the milestone:
+
+- Create or update database schema.
+- Create migrations.
+- Implement relationships and foreign keys.
+- Implement indexes.
+- Implement database constraints.
+- Follow the approved ID strategy.
+- Follow the approved timestamp and timezone strategy.
+- Preserve existing data.
+
+Do not introduce undocumented schema changes.
+
+### TASK 2 — BACKEND IMPLEMENTATION
+
+Implement the required:
+
+- Domain logic.
+- Service layer.
+- Repository layer if specified.
+- Server-side validation.
+- Business rules.
+- Authorization.
+- Ownership checks.
+- Error handling.
+- Transaction handling.
+
+### TASK 3 — API IMPLEMENTATION
+
+If required:
+
+- Implement documented endpoints.
+- Follow approved request schemas.
+- Follow approved response schemas.
+- Apply authentication.
+- Apply authorization.
+- Implement documented pagination.
+- Implement idempotency where required.
+- Follow the error response convention.
+
+### TASK 4 — SECURITY
+
+Ensure:
+- Server-side validation.
+- User ownership enforcement.
+- No unauthorized data access.
+- No exposed secrets.
+- No unsafe database operations.
+- No trusting client-supplied ownership information.
+
+### TASK 5 — BACKEND VERIFICATION
+
+Run relevant:
+- Database tests.
+- Migration checks.
+- Unit tests.
+- Service tests.
+- API tests.
+- Type checking.
+
+Fix failures caused by the current implementation.
+
+### OUTPUT
+
+Report:
+- Files created or modified.
+- Database changes.
+- API changes.
+- Business logic implemented.
+- Tests executed.
+- Actual test results.
+- Known limitations.
+
+Do not implement unrelated frontend features.
+
+Stop after completing the approved backend scope and wait for the next instruction.
