@@ -1,17 +1,66 @@
 # Lumora Requirement Traceability Matrix
 
-> Status: Generated in Phase 8 from the planning documents (still pending owner approval). It links every functional requirement to its design documents, owning module, database tables, API endpoints, UI pages, implementation milestone, acceptance criteria and planned test cases.
+> Status: Phase 8 trace index, pending owner approval. All 164 FRs have API/mechanism, milestone, acceptance-criterion and planned-test identifiers. Design and entity links are inherited by exact FR group, not yet requirement-specific. Two UI links are unsupported. This matrix is navigation evidence, not implementation readiness.
 
 ## How to read this matrix
 
 - One row per functional requirement (164 rows, FR-001 to FR-226; FR-133 does not exist by design).
-- **Module** comes from the FR range in [MODULE-BOUNDARIES.md](03-architecture/MODULE-BOUNDARIES.md) section 2. **Tables** are the tables the owning module owns ([DATA-DICTIONARY.md](04-database/DATA-DICTIONARY.md) section 19). Mapping is at module level: a requirement may read tables owned by other modules through their public interfaces.
+- **Owner, design and entity context** is inherited from the exact FR-set table below. Entity lists are candidate owned/read sets at capability level, not proof that every listed entity supports every FR.
 - **Endpoints** come from [API-ENDPOINTS.md](06-api-integrations/API-ENDPOINTS.md) section 2. `server component`, `client only`, `job` and `composition` mean the requirement has no dedicated endpoint by design.
-- **Pages** come from the `Requirements` and `Phase` lines of [PAGE-SPECIFICATIONS.md](05-ui-ux/PAGE-SPECIFICATIONS.md) and the table in [INFORMATION-ARCHITECTURE.md](05-ui-ux/INFORMATION-ARCHITECTURE.md). Page lists are expanded from FR ranges, so a page may be listed for a requirement where only a neighbouring requirement in the same range applies (for example FR-004 on sign-up). FR-073 (goal-met chip on A-2) and FR-139 (app shell) are not cited by any page spec; they were placed by this audit.
+- **Pages** come from the `Requirements` and `Phase` lines of [PAGE-SPECIFICATIONS.md](05-ui-ux/PAGE-SPECIFICATIONS.md) and [INFORMATION-ARCHITECTURE.md](05-ui-ux/INFORMATION-ARCHITECTURE.md). Range-expanded page lists remain candidates until the page cites the individual FR. FR-073 and FR-139 are explicit gaps, not audit-created placements.
 - **Milestone** comes from the `Scope (FR/NFR)` line of [MILESTONES.md](07-roadmap/MILESTONES.md). A second milestone in brackets completes a later part of the same requirement (for example the endpoint side in M02 and the wizard UI in M13).
 - **AC / TC**: acceptance criteria are in [ACCEPTANCE-CRITERIA.md](02-requirements/ACCEPTANCE-CRITERIA.md); test case IDs are planned, named after the criterion (`AC-FR-001-1` becomes `TC-FR-001-1`). No test code exists yet.
 - Requirement text: [FUNCTIONAL-REQUIREMENTS.md](02-requirements/FUNCTIONAL-REQUIREMENTS.md). Product goal and user need links, and the NFR to AC to TC chain, stay in [REQUIREMENT-TRACEABILITY.md](02-requirements/REQUIREMENT-TRACEABILITY.md).
-- Regenerated checks run in Phase 8: all 164 FRs have at least one AC, endpoint-coverage row, module, page and milestone; no FR is mapped to a milestone of a different phase.
+- Verified at audit basis `8e9ef3c`: all 164 FRs have at least one AC, API/mechanism row, candidate owner and milestone; no FR is mapped to a milestone of a different phase.
+
+## Coverage result
+
+Flow00 requires six trace dimensions per FR, or 984 cells.
+
+| Dimension | Explicit requirement-specific coverage | Notes |
+|---|---:|---|
+| Design document | 0 / 164 | Inherited group context only |
+| Database entity or reasoned `N/A` | 0 / 164 | Inherited candidate entity sets only |
+| API endpoint or mechanism | 164 / 164 | Structural coverage; contract conflicts remain |
+| UI page or reasoned `N/A` | 162 / 164 | FR-073 and FR-139 lack source-backed UI homes |
+| Milestone | 164 / 164 | Several milestone contracts are impossible as written |
+| Planned test identifier | 164 / 164 | Aliases only; no executable test specifications |
+| **Strict total** | **654 / 984 (66.5%)** | Does not measure correctness or approval |
+
+Known trace defects:
+
+- FR-063 is cited by PAGE-SPECIFICATIONS but is undefined.
+- Nine edge-case rows in REQUIREMENT-TRACEABILITY end with literal ellipses.
+- FR-201 was incorrectly grouped under Notifications in the initial matrix; it is now grouped under Study groups.
+- Candidate page lists are range-expanded and can include neighbouring requirements without direct page citations.
+- NFR-to-roadmap evidence is incomplete; planned TC identifiers are not test designs.
+
+## Trace context by exact FR set
+
+Every matrix row inherits the matching context below. This supplies navigation but does not replace per-FR entity validation during correction.
+
+| FR IDs | Candidate owner | Design references | Candidate owned/read entities |
+|---|---|---|---|
+| FR-001..005, 008 | Authentication | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [SECURITY-ARCHITECTURE](03-architecture/SECURITY-ARCHITECTURE.md), [ADR-004](adr/ADR-004-authentication.md) | users, auth_accounts, auth_sessions, auth_verifications, auth_audit_events |
+| FR-006, 007, 009, 130..132, 134..139 | User profile | [SYSTEM-ARCHITECTURE](03-architecture/SYSTEM-ARCHITECTURE.md), [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [DATA-LIFECYCLE](04-database/DATA-LIFECYCLE.md) | user_profiles, data_exports, account_deletion_log; reads goals/timer for orchestration |
+| FR-010..014 | Subjects | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md) | subjects |
+| FR-015..019 | Topics | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md) | topics |
+| FR-020..023 | Dashboard composition | [SYSTEM-ARCHITECTURE](03-architecture/SYSTEM-ARCHITECTURE.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | reads daily_goal_history, timer_runs, plan_entries, todos |
+| FR-024, 080..089 | Analytics | [SYSTEM-ARCHITECTURE](03-architecture/SYSTEM-ARCHITECTURE.md), [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md) | reads study_sessions, study_session_days, topics, daily_goal_history, plan_entries |
+| FR-030..038, 065..069 | Study plans | [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [ADR-006](adr/ADR-006-time-and-timezone-handling.md) | plan_entries; reads exams and session aggregates |
+| FR-040..049 | Study sessions | [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [ADR-011](adr/ADR-011-idempotency-and-concurrency.md) | study_sessions, study_session_days; reads timer runs, plans, topics, notes |
+| FR-050..059, 180..184 | Timer | [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [BACKGROUND-JOBS](03-architecture/BACKGROUND-JOBS.md) | timer_runs, timer_run_segments, timer_settings |
+| FR-060..062 | Calendar | [SYSTEM-ARCHITECTURE](03-architecture/SYSTEM-ARCHITECTURE.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | reads study_session_days, study_sessions, plan_entries |
+| FR-070..074 | Goals | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md) | daily_goal_history, subject_goals; reads study_session_days |
+| FR-090..096 | Tasks | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | todos |
+| FR-100..104 | Notes | [ADR-007](adr/ADR-007-notes-markdown-and-sanitization.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | notes |
+| FR-107..112 | Flashcards | [SYSTEM-ARCHITECTURE](03-architecture/SYSTEM-ARCHITECTURE.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | flashcards, card_reviews, flashcard_settings |
+| FR-120..128 | Exams | [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md) | exams, exam_topics; reads topics |
+| FR-150..154 | Notifications | [BACKGROUND-JOBS](03-architecture/BACKGROUND-JOBS.md), [EXTERNAL-INTEGRATIONS](06-api-integrations/EXTERNAL-INTEGRATIONS.md) | notification_preferences, notifications, push_subscriptions; reads plan_entries |
+| FR-160..177 | Gamification | [BACKGROUND-JOBS](03-architecture/BACKGROUND-JOBS.md), [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md) | user_gamification, daily_evaluations, xp_ledger; reads sessions/goals/todos |
+| FR-190..198 | AI scheduling | [ADR-010](adr/ADR-010-ai-integration-adapter.md), [AI-INTEGRATION](06-api-integrations/AI-INTEGRATION.md) | ai_consents, ai_generation_requests; reads exams, topics, plan_entries, sessions |
+| FR-200..212 | Study groups | [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [API-SECURITY](06-api-integrations/API-SECURITY.md) | groups, group_members, group_invites, group_reports; reads ranked session aggregates |
+| FR-220..226 | API integrations | [ADR-008](adr/ADR-008-api-strategy.md), [OPENAPI-PLAN](06-api-integrations/OPENAPI-PLAN.md) | api_keys; reads/writes public resource entities through owning modules |
 
 ## Summary by module
 
@@ -32,10 +81,10 @@
 | Notes | 5 | M11 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 | Flashcards | 6 | P2-04 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 | Exams | 9 | M04, P2-05 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
-| Notifications | 6 | P2-01, P3-02 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
+| Notifications | 5 | P2-01 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 | Gamification | 13 | P2-02, P2-03 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 | AI scheduling | 9 | P3-01 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
-| Study groups | 12 | P3-02 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
+| Study groups | 13 | P3-02 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 | API integrations | 7 | P3-03 | [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) |
 
 ## Matrix
@@ -70,7 +119,7 @@ Tables: user_profiles, data_exports, account_deletion_log
 | FR-136 | Guided first session | Should / MVP | composition: PROF-03 plus TIM-02 and TIM-05 | A-1 | M13 | AC-FR-136-1..4 | TC-FR-136-1..4 |
 | FR-137 | Choose primary goal in onboarding | Should / MVP | PROF-01, PROF-02, PROF-03 | A-1 | M02 (+M13) | AC-FR-137-1..4 | TC-FR-137-1..4 |
 | FR-138 | Light, dark and system theme | Should / MVP | PROF-01, PROF-02 | A-15 | M02 | AC-FR-138-1..4 | TC-FR-138-1..4 |
-| FR-139 | Responsive layout | Should / MVP | client only: No data contract | App shell | M01 | AC-FR-139-1..4 | TC-FR-139-1..4 |
+| FR-139 | Responsive layout | Should / MVP | client only: No data contract | **Gap: no page cites FR-139** | M01 | AC-FR-139-1..4 | TC-FR-139-1..4 |
 
 ### Subjects
 
@@ -204,7 +253,7 @@ Tables: daily_goal_history, subject_goals
 | FR-070 | Set the daily goal | Must / MVP | GOAL-01, GOAL-02 | A-1, A-15 | M08 | AC-FR-070-1..4 | TC-FR-070-1..4 |
 | FR-071 | Set per-subject daily goals | Should / MVP | GOAL-01, GOAL-03, GOAL-04 | A-8 | M08 | AC-FR-071-1..4 | TC-FR-071-1..4 |
 | FR-072 | Show daily goal progress | Must / MVP | GOAL-05 | A-2, A-5 | M08 | AC-FR-072-1..4 | TC-FR-072-1..4 |
-| FR-073 | Show goal-met state | Must / MVP | GOAL-05 | A-2 | M08 | AC-FR-073-1..4 | TC-FR-073-1..4 |
+| FR-073 | Show goal-met state | Must / MVP | GOAL-05 | **Gap: no page cites FR-073** | M08 | AC-FR-073-1..4 | TC-FR-073-1..4 |
 | FR-074 | Apply goal changes from today forward | Must / MVP | GOAL-01, GOAL-02 | A-2, A-15 | M08 | AC-FR-074-1..4 | TC-FR-074-1..4 |
 
 ### Tasks
@@ -273,7 +322,6 @@ Tables: notification_preferences, notifications, push_subscriptions
 | FR-152 | In-app notifications | Could / 2 | NOTIF-01, NOTIF-02 | B-4 | P2-01 | AC-FR-152-1..3 | TC-FR-152-1..3 |
 | FR-153 | Browser push opt-in | Could / 2 | NOTIF-05, NOTIF-06, NOTIF-07; delivery by push job | B-4 | P2-01 | AC-FR-153-1..3 | TC-FR-153-1..3 |
 | FR-154 | Reminder preferences | Could / 2 | NOTIF-03, NOTIF-04 | B-4 | P2-01 | AC-FR-154-1..3 | TC-FR-154-1..3 |
-| FR-201 | Invite members to a group | Won't / 3 | GRP-07, GRP-08, GRP-09 | C-3, C-5 | P3-02 | AC-FR-201-1..4 | TC-FR-201-1..4 |
 
 ### Gamification
 
@@ -318,6 +366,7 @@ Tables: groups, group_members, group_invites, group_reports
 | FR | Requirement | Priority / Phase | Endpoints or mechanism | Pages | Milestone | AC | Planned TC |
 |---|---|---|---|---|---|---|---|
 | FR-200 | Create a study group | Won't / 3 | GRP-01, GRP-02 | C-3 | P3-02 | AC-FR-200-1..3 | TC-FR-200-1..3 |
+| FR-201 | Invite members to a group | Won't / 3 | GRP-07, GRP-08, GRP-09 | C-3, C-5 | P3-02 | AC-FR-201-1..4 | TC-FR-201-1..4 |
 | FR-202 | Join a group | Won't / 3 | GRP-10 | C-5 | P3-02 | AC-FR-202-1..3 | TC-FR-202-1..3 |
 | FR-203 | Leave a group | Won't / 3 | GRP-11 | C-4 | P3-02 | AC-FR-203-1..4 | TC-FR-203-1..4 |
 | FR-204 | Remove a group member | Won't / 3 | GRP-12 | C-4 | P3-02 | AC-FR-204-1..4 | TC-FR-204-1..4 |

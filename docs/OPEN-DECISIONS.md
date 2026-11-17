@@ -1,51 +1,104 @@
 # Open Decisions
 
-> Status: Created in Phase 8. Each item needs an explicit owner decision. "Recommended" is this audit's proposal, not an approved decision. Nothing here was applied to the approved documents.
+> Status: Phase 8 decision register. Every row is **OPEN**. Recommendations are audit proposals, not approved requirements. A decision closes only when the named owner, approval date, baseline version and evidence link are recorded.
 
-Priority: **Blocker** stops Build Mode or a named milestone. **Before Mx** must be settled before that milestone starts. **Later** can wait for its phase.
+Priority rules:
 
-## A. Blockers before any build
+- Global: blocks approval of the planning baseline or any product implementation.
+- Spike: blocks the named M00 experiment, not unrelated documentation work.
+- Before Mx: blocks only that milestone and anything that depends on it.
+- Future: may wait until its release phase.
 
-| ID | Decision | Recommended | Blocks | Source |
+Source identifiers below resolve within [PRD](02-requirements/PRD.md), [functional requirements](02-requirements/FUNCTIONAL-REQUIREMENTS.md), [non-functional requirements](02-requirements/NON-FUNCTIONAL-REQUIREMENTS.md), [acceptance criteria](02-requirements/ACCEPTANCE-CRITERIA.md), [SDD](03-architecture/SDD.md), [module boundaries](03-architecture/MODULE-BOUNDARIES.md), [database documents](04-database/DATA-DICTIONARY.md), [UI specifications](05-ui-ux/PAGE-SPECIFICATIONS.md), [API endpoints](06-api-integrations/API-ENDPOINTS.md), [API security](06-api-integrations/API-SECURITY.md), [milestones](07-roadmap/MILESTONES.md) and the [documentation index](DOCUMENTATION-INDEX.md).
+
+## A. Global baseline decisions
+
+| ID | Decision | Recommended correction | Owner / gate | Source |
 |---|---|---|---|---|
-| D-01 | Approve the planning set and PRD resolutions I-1..I-8 (U-1); record approval and date; mark ADR-001..011 Accepted | Approve after the corrections in D-02 to D-07 are applied | Build Mode | PRD.md:289-308; SDD.md:178; ADR headers |
-| D-02 | Google account linking policy (finding C-2): link only to an email-verified account, or on link force sign-out of password sessions and a password reset | Require verified email before linking; add an email verification step or treat Google as the verifier and revoke existing password sessions | M02 | API-ENDPOINTS.md:265; ADR-004 |
-| D-03 | Plan actuals composition (C-3): who joins sessions to plan entries | Adapter or Analytics read model; FR-036 actuals and `done` move to M06 | M05 | IMPLEMENTATION-PLAN.md:114; MILESTONES.md:241 |
-| D-04 | Account purge delay (C-5) | 24 hours as in DATABASE-DESIGN, hard cap 5 days; restate backup bound as delay plus 30 days if the cap is raised | M14 | NFR-031; DATABASE-DESIGN.md:217 |
-| D-05 | Default daily goal (C-6) and `idempotency_keys` placement (C-4) | Derived default at read time (no row means 120); create `idempotency_keys` in M02 | M01, M02 | MILESTONES.md:129; API-ENDPOINTS.md:210 |
-| D-06 | Hosting vendor U-A1 (gate G1); PostgreSQL 15+ with `btree_gist` and pooler mode must be criteria | Choose against DEPLOYMENT-ARCHITECTURE section 8 plus those two criteria | M00(d), M01 | DEVELOPMENT-ROADMAP.md:188 |
-| D-07 | Product name: planning prompts say "Study Tracker", documents say Lumora | Lumora | Build Mode wording | Build Mode.txt |
+| OD-G01 | Approval framework and baseline | Approve only a corrected versioned baseline; record owner, date and accepted ADRs | Product owner / Global | PRD section 10; SDD section 13; ADR headers |
+| OD-G02 | MVP identity: planning plus planned-versus-actual is central or optional | Make FR-030..038 Must, or remove the differentiator from the MVP vision | Product owner / Global | PRODUCT-VISION; FEATURE-PRIORITIZATION; FR-030..038 |
+| OD-G03 | Study-day boundary | Simplest MVP: fixed midnight boundary; defer configurable rollover, or define allocation against rollover consistently | Product owner / Global | BR-014; FR-009; FR-047; EC-009 |
+| OD-G04 | Pomodoro focus interval versus saved study session | Save one session per focus interval; keep breaks and cycle count in timer state | Product owner / Global | USER-JOURNEYS journey 4; PRD timer state; FR-050 |
+| OD-G05 | Phase boundaries for topic weight and exam coverage | Move weight/readiness effects to Phase 2; use one source of topic coverage | Product owner / Global | FR-016; FR-019; FR-122; FR-126..128 |
+| OD-G06 | Owner-approved defaults and thresholds | Replace unsupported settled wording with proposed defaults; approve each registered default or an explicit bulk set | Product owner / Global | PRD U-1..U-9; all NFR thresholds |
+| OD-G07 | Trace evidence standard | Require explicit per-FR design and entity links or reasoned `N/A`; repair FR-063, unsupported UI homes and truncated EC rows | Architecture owner / Global | TRACEABILITY-MATRIX; REQUIREMENT-TRACEABILITY |
+| OD-G08 | Product name | Use Lumora; update prompt-derived references when owner approves | Product owner / Global wording | Build Mode.txt; README |
 
-## B. Before the owning MVP milestone
+## B. M00 spike decisions
 
-| ID | Decision | Recommended | Before | Source |
+| ID | Decision | Recommended correction | Owner / gate | Source |
 |---|---|---|---|---|
-| D-08 | Email provider U-A2; minimum age U-6 (16+); auth library spike U-A4 (Better Auth callback path, UUIDv7) | Keep 16+; run the spike in M00 | M02 | IMPLEMENTATION-PLAN.md:120-128 |
-| D-09 | CSRF mechanism wording and rate-limit backend in SECURITY-ARCHITECTURE, ADR-008, TECHNOLOGY-DECISIONS | Origin check with `Sec-Fetch-Site` fallback; Postgres limiter from MVP | M02 | M-16, M-17 |
-| D-10 | Audit event types CR-1 (keys, AI consent, export) so the M02 CHECK is final | Add the event types now | M02 | API-SECURITY.md:156-164 |
-| D-11 | Topic weight: MVP or Phase 2; single weight column | One column on topics; readiness reads it in Phase 2 | M03 | M-1 |
-| D-12 | Exam archive: automatic only (remove "archive" from A-13) or add FR and endpoint; job wording | Automatic, derived state | M04 | M-11 |
-| D-13 | "Past" plan entry definition; heartbeat during pause; late-stop lazy close | End time for missed, start time for edit lock; pause keeps heartbeats; add lazy close | M05, M07 | M-4, M-5, M-13 |
-| D-14 | Offline timer behaviour (queue vs retry); Pomodoro break start; mini-bar Stop; desktop mini-bar; tab title cadence; drag reorder in MVP | Retry only, no queue; break starts after explicit tap; no Stop on mini-bar; one-line desktop mini-bar rule; per-second title; buttons in MVP | M07 | M-28, M-29, M-31 |
-| D-15 | Pomodoro pause per phase (store remaining time or tag segments) | Add `phase_remaining_seconds` | M07 | M-12 |
-| D-16 | Export lifetime and snapshot time | 48 h, snapshot at job start | M14 | M-9 |
-| D-17 | Retention jobs ownership (M-10) and CI stages 5, 6, 9, 10, 11 (M-25) | Assign to M01 (stages and cleanup for its tables) and M14 | M01 | M-10, M-25 |
-| D-18 | DST gap and overlap rule for plan entries and reminders | Non-existent local times shift forward; repeated hour uses the first occurrence | M05 | EC-006 |
-| D-19 | Incident and privacy runbook; legal pages (U-D5); error tracking U-A7; backup second provider | Draft before release | M15 | M-24 |
-| D-20 | Calendar goal-met flag and A-5 label (FR-073); streak opt-out FR or removal | Add flag to day payloads; add FR for opt-out or drop it | M08, M09 | M-31 |
-| D-21 | Dependency graph edges M10, M11 to M14; E2E scenarios list; timer accuracy tests; NFR-061 scope | Apply | M01 planning | M-2, M-3, M-26, M-27 |
+| OD-S01 | M00 charter and authorization | Approve a throwaway evidence-only charter with no production schema or user-facing code | Product owner / M00 | MILESTONES M00; IMPLEMENTATION-READINESS section 6 |
+| OD-S02 | Authentication library | Accept Better Auth only if the spike proves callback, lockout, UUID and session requirements; otherwise use the documented fallback | Architecture owner / M00 | U-A4; ADR-004 |
+| OD-S03 | Same-email account linking | Require verified ownership, or explicit merge with session revocation and credential recovery | Security owner / M00, M02 | FR-003; AUTH-03; finding C-03 |
+| OD-S04 | Hosting and PostgreSQL platform | Select a vendor supporting PostgreSQL 15+, `btree_gist`, HA, PITR, pooler mode and worker connections | Operations owner / vendor-dependent M00 checks, M01 | U-A1; ADR-009; DEPLOYMENT-ARCHITECTURE |
+| OD-S05 | Transactional email provider and one-time secret delivery | Select provider/region/DPA; place encrypted short-lived link payloads in the outbox and erase after delivery | Product and security owners / M00, M02 | U-A2; EXTERNAL-INTEGRATIONS; AUTH-05; GRP-07 |
+| OD-S06 | Timer calibration evidence | Measure server offset, background throttling and wrong-clock behavior; record an explicit client algorithm | Architecture owner / M00 evidence, M07 contract | NFR-052; NFR-090; U-A5 |
 
-## C. Phase 2 and Phase 3
+## C. MVP milestone decisions
 
-| ID | Decision | Recommended | Before | Source |
+| ID | Decision | Recommended correction | Owner / gate | Source |
 |---|---|---|---|---|
-| D-22 | Gate G3 owner decision, level formula U-2 | Use PRD default | P2-03 | DEVELOPMENT-ROADMAP.md:190 |
-| D-23 | XP compensation after a capped award; `user_gamification` creation and backfill | Compensate awarded amount only; create at registration, backfill in P2-02 | P2-02 | M-6, M-14 |
-| D-24 | NOTIF-05 push endpoint SSRF guard | Host allow-list | P2-01 | M-20 |
-| D-25 | G4 and AI: attempts ceiling, global monthly spend ceiling, terminal status for timeouts, `proposal_stale` reasons, consent wording U-4 (legal), provider U-A3, AI request columns | Add ceilings; `failed` with `ai_provider_timeout`; legal wording | P3-01 | M-21 |
-| D-26 | Group privacy: opaque `memberId`, admin step-down, leaderboard history clamp, admin concurrency lock, week boundary, cap U-3, invite email binding | As in M-22 and M-7 | P3-02 | M-22 |
-| D-27 | Public API: PUB-01..PUB-37 scope and 39 operations, wire code fixes, OpenAPI tooling, G5, rate limit U-9 | Edit documents; choose tooling | P3-03 | M-18, M-19 |
+| OD-M01 | Signup profile fields | Add validated display name to signup or define a nullable/initial-value policy | Product owner / M02 | SignUpInput; user_profiles.display_name |
+| OD-M02 | Minimum age and Google age confirmation | Confirm 16+; use a same-origin POST or post-callback confirmation before account creation | Product and legal owners / M02 | U-6; FR-003; AUTH-03 |
+| OD-M03 | Default daily goal | Missing goal row means 120; create the first row only when Goals ships | Product owner / M02, M08 | BR-013; AUTH-01; daily_goal_history |
+| OD-M04 | `idempotency_keys` migration placement | Move table creation to M02, or add its user FK only after users exist | Architecture owner / M01 | MILESTONES M01/M02; DATA-DICTIONARY |
+| OD-M05 | CSRF and cookies | Use exact Origin plus `Sec-Fetch-Site` fallback, define SameSite explicitly and test that mechanism | Security owner / M02 | API-SECURITY; SECURITY-ARCHITECTURE; TESTING-STRATEGY |
+| OD-M06 | Shared rate limiting and proxy trust | Use PostgreSQL from MVP; settle trusted proxy hops and failure behavior | Security and operations owners / M01, M02 | API-SECURITY; ADR-008; U-A1 |
+| OD-M07 | Audit-event and secret operations | Finalize event types before the CHECK; add rotation, revocation and leak-response ownership | Security owner / M01, M02 | API-SECURITY CR-1; SECURITY-ARCHITECTURE |
+| OD-M08 | Plan actuals owner | Compose in Analytics or an adapter read model; move FR-036 completion to M06 or M12 | Architecture owner / M05 | MODULE-BOUNDARIES; MILESTONES M05 |
+| OD-M09 | Plan status and history | Restrict deletion to upcoming entries; define `done`; use end time for missed and start time for edit lock | Product owner / M05 | BR-028; FR-032..036 |
+| OD-M10 | Future-plan timezone and DST input | Choose anchored or moving plans; define gap shift/rejection and repeated-hour offset | Product owner / M05 | ADR-006; FR-037; EC-006 |
+| OD-M11 | Plan warning concurrency | Recompute under one per-user lock and require a conflict fingerprint | Architecture owner / M05 | APPLICATION-FLOWS; DATABASE-DESIGN |
+| OD-M12 | Timer phase state machine | Define atomic lazy `AdvancePhase`, waiting states and paused remaining time | Product and architecture owners / M07 | FR-050..059; TIM-01..08; timer tables |
+| OD-M13 | Timer heartbeat and idle closure | Define paused heartbeat; lazily close stale runs before every read/command at the authoritative timestamp | Architecture owner / M07 | FR-046; FR-052; TIM-06 |
+| OD-M14 | Timer/session locking and terminal idempotency | Use one per-user lock for timer and session mutations; persist discarded stop outcomes | Architecture owner / M06, M07 | ADR-011; DATABASE-DESIGN |
+| OD-M15 | Offline timer commands | Do not queue Pause/Stop without a trusted event-time protocol; retry reads/heartbeats only | Product owner / M07 | INTERACTION-SPECIFICATIONS; FR-054; EC-028 |
+| OD-M16 | Export manifest, snapshot and lifetime | Export all owned data using a versioned manifest; snapshot at job start; expire after one consistent 48-hour window | Product and privacy owners / M14 | FR-130..132; NFR-032; export docs |
+| OD-M17 | Account purge and durable deletion intent | Write external durable intent at request time; purge live data within 5 days or revise NFR-031 | Privacy owner / M14 | NFR-031; DATA-LIFECYCLE; BACKUP-RESTORE |
+| OD-M18 | Queue backup and restore replay | Back up queue state or retain durable incomplete-effect records through the recovery horizon | Operations owner / M01, M15 | ADR-005; BACKUP-RESTORE; outbox lifecycle |
+| OD-M19 | Recovery environment and availability | Use an isolated production-controlled recovery environment; require HA/failover or lower 99.5% | Operations owner / M01, M15 | DEPLOYMENT-ARCHITECTURE; BACKUP-RESTORE; U-5 |
+| OD-M20 | CI, cleanup jobs and dependency graph | Assign all CI stages and one cleanup job/index per retention rule; add M07 to M11 and M10/M11 to M14 edges | Architecture owner / M01 | BACKGROUND-JOBS; DATA-LIFECYCLE; roadmap |
+| OD-M21 | Critical test evidence | Add named auth, timer, deletion, restore, isolation, browser, breakpoint and load tests with owners | QA owner / each milestone | TESTING-STRATEGY; ACCEPTANCE-CRITERIA |
+| OD-M22 | Incident, privacy and processor rules | Define breach response, staff access, processor region/DPA/retention and report retention | Privacy and operations owners / M15 | SECURITY-ARCHITECTURE; DATA-LIFECYCLE |
+| OD-M23 | Error-tracking and backup operators | Select U-A7; name backup provider and two operators; test secret and PII scrubbing | Operations owner / M15 | U-A7; BACKUP-RESTORE section 8 |
 
-## D. Proposals awaiting default approval
+## D. UI direction decisions
 
-PRD U-2 (level formula), U-3 (50 reviews per day, group cap 20), U-4 (5 AI generations per day), U-5 (99.5% availability, RPO 24 h, RTO 8 h), U-7 (manual entry overlap rejected), U-8 (notes conflict UX), U-9 (60 requests per minute per key). Every NFR threshold is "proposed". Approving the defaults in bulk is acceptable if the owner agrees.
+These source IDs remain open and must be recorded individually. Navigation and assets cannot be treated as approved defaults.
+
+| ID | Decision | Recommended correction | Owner / gate | Source |
+|---|---|---|---|---|
+| U-D1 | App logo and icon | Keep text wordmark and honest placeholder until supplied | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D2 | Brand palette | Approve or replace; rerun contrast checks | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D3 | Typeface and licensing | Approve self-hosted Atkinson or system fallback | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D4 | Pomodoro auto-start and sound | No auto-start; approve one licensed chime and mute behavior | Product owner / M07 | DESIGN-PRINCIPLES section 5 |
+| U-D5 | Terms, privacy and AI consent copy | Supply legally reviewed pages/copy before links or AI consent ship | Legal owner / M15, P3-01 | DESIGN-PRINCIPLES section 5 |
+| U-D6 | Help/contact channel | Omit from MVP unless an operated channel exists | Product owner / M13 | DESIGN-PRINCIPLES section 5 |
+| U-D7 | Landing-page depth | Keep minimal entry page; no fabricated marketing content | Product owner / M13 | DESIGN-PRINCIPLES section 5 |
+| U-D8 | Additional routes | Approve only routes backed by pages and milestones | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D9 | Week start | Monday, aligned across calendar/statistics/group rules | Product owner / M09 | DESIGN-PRINCIPLES section 5 |
+| U-D10 | Mobile tab bar | Approve after navigation ordering and destination audit | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D11 | Icon library dependency | Approve Phosphor only if relevant icons and bundle/license checks pass | Product owner / M01 | DESIGN-PRINCIPLES section 5 |
+| U-D12 | Subject colors | Approve values/names after contrast verification | Product owner / M03 | DESIGN-PRINCIPLES section 5 |
+| U-D13 | Notes search/tagging | Exclude; no requirement exists | Product owner / M11 | DESIGN-PRINCIPLES section 5 |
+| U-D14 | PWA install UI | Exclude until a PWA requirement is approved | Product owner / Phase 2 | DESIGN-PRINCIPLES section 5 |
+
+## E. Phase 2 and Phase 3 decisions
+
+| ID | Decision | Recommended correction | Owner / gate | Source |
+|---|---|---|---|---|
+| OD-F01 | PWA scope and architecture U-A6 | Add requirements and acceptance criteria, or remove PWA from committed scope | Product owner / Phase 2 | PRODUCT-SCOPE; U-A6 |
+| OD-F02 | Flashcard/reminder dependency and daily review counting | Align dependency; count distinct cards or attempts explicitly; return next due date | Product owner / P2-04 | FEATURE-ANALYSIS; FR-109..112 |
+| OD-F03 | Streak opt-out and XP sequencing | Add an FR/UI if opt-out is required; define row creation, cross-day award and net compensation | Product owner / P2-02, P2-03 | roadmap; FR-160..177 |
+| OD-F04 | Push delivery and SSRF defense | Approve Web Push/VAPID; allow-list providers and validate DNS/IP at send time | Security owner / P2-01 | Push approach; NOTIF-05..07 |
+| OD-F05 | AI prerequisites and selected topics | Decide whether 28 days of history is required; add selected `topicIds` consistently | Product owner / P3-01 | FEATURE-ANALYSIS; FR-190/198; AI-04 |
+| OD-F06 | AI provider, consent, attempt and spend limits | Select U-A3; legal review U-4; cap attempts and global spend; define one terminal-state table | Product, legal and finance owners / P3-01 | AI-INTEGRATION; U-A3; U-4 |
+| OD-F07 | Group moderation and privacy | Name triage owner/workflow; expose opaque member IDs and aggregate-only study data | Product and privacy owners / P3-02 | FR-209; group API/security |
+| OD-F08 | Group week, cap, invites and administration | Choose one timezone/week key; enforce cap 20; bind invites; lock role transitions | Product owner / P3-02 | FR-201..212; U-3 |
+| OD-F09 | Public API operation matrix | Define exact write surface, pagination exception if any, and 39-operation PUB-01..37 inventory | Product owner / P3-03 | FR-220..226; OPENAPI-PLAN |
+| OD-F10 | Public API wire codes and tooling | Choose canonical codes and OpenAPI generator/diff/reference tooling | Architecture owner / P3-03 | API-ERRORS; requirements; U-9 |
+
+## F. Proposed defaults awaiting approval
+
+PRD U-2 (level formula), U-3 (review limit 50 and group cap 20), U-4 (five AI generations per day plus legal consent), U-5 (99.5% availability, RPO 24 hours, RTO 8 hours), U-7 (manual overlap rejection), U-8 (notes conflict UX), U-9 (60 public requests per minute), all numeric NFR targets, and all I-1..I-8 resolutions remain proposed. Bulk approval is acceptable only when the approval record names the exact baseline and list.

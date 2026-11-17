@@ -2,7 +2,7 @@
 
 Lumora is a web application where learners plan study time, study with a timer, record sessions and compare actual effort with the plan. The planning prompts call it "Study Tracker"; the documents use Lumora.
 
-> Status: Planning complete through Phase 8. The Phase 8 audit found six critical issues. No code or migration exists. Build Mode has not been authorized. See [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md).
+> Status: Phase 8 audit complete; the planning baseline remains unapproved and has build-blocking inconsistencies. No application code or migration exists. Build Mode has not been authorized. See [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md).
 
 ## Reading order
 
@@ -18,10 +18,10 @@ Full list: [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md). Change history: [CH
 
 ## Key numbers
 
-164 functional requirements (98 MVP), 62 non-functional requirements, 32 business rules, 28 edge cases, 595 acceptance criteria, 19 modules, 41 tables, 125 internal and 39 public API operations, 16 MVP milestones, 7 Phase 2 and 3 Phase 3 milestones.
+80 Markdown documents: 73 baseline planning documents and 7 Phase 8 governance documents. The baseline defines 164 functional requirements (98 MVP), 62 non-functional requirements, 32 business rules, 28 edge cases, 595 functional acceptance criteria, 19 modules, 41 tables, 125 internal and 39 public API operations, 16 MVP milestones, 7 Phase 2 milestones and 3 Phase 3 milestones.
 
 ## Conventions
 
 - IDs: FR, NFR, BR, EC, AC-FR-xxx-n, planned TC-FR-xxx-n, endpoint prefixes such as AUTH-01, pages PU, SY, A, B, C.
 - Numeric values not fixed by Phase 1 are proposals until approved.
-- Document headers say "Proposal, pending approval" until the owner records approval.
+- Header wording varies, but no document has repository evidence of owner approval. Approval requires an owner, date, baseline version and decision record.

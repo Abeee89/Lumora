@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Status: Created in Phase 8. Every document below is still marked "Proposal, pending approval" in its own header until the owner records approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md), D-01).
+> Status: Updated by the Phase 8 audit. This index covers 80 Markdown documents: 73 baseline planning documents and 7 Phase 8 governance documents. Header wording varies, but none has repository evidence of owner approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md), D-01).
 
 Product name in all documents: Lumora (the planning prompts call it "Study Tracker").
 
@@ -13,7 +13,7 @@ Product name in all documents: Lumora (the planning prompts call it "Study Track
 | [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) | Readiness checklist, gates, first milestone |
 | [FINAL-ARCHITECTURE-REVIEW.md](FINAL-ARCHITECTURE-REVIEW.md) | Audit findings, risks, security review |
 | [OPEN-DECISIONS.md](OPEN-DECISIONS.md) | Decisions awaiting owner approval |
-| [TRACEABILITY-MATRIX.md](TRACEABILITY-MATRIX.md) | FR to module, tables, endpoints, pages, milestone, AC, TC |
+| [TRACEABILITY-MATRIX.md](TRACEABILITY-MATRIX.md) | FR trace links, coverage method and known trace gaps |
 | [CHANGELOG.md](CHANGELOG.md) | Documentation change log |
 
 ## Root

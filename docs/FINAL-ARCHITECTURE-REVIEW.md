@@ -1,149 +1,184 @@
-# Final Architecture Review (Phase 8 Documentation Audit)
+# Final Architecture Review
 
-> Status: Audit result. Planning mode only: no application code, no migrations, and no approved document was edited. Corrections are recommendations that need owner approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md)).
+> Audit date: 2026-11-17. Basis: commit `8e9ef3c` plus the working-tree documentation state. Planning mode only. No application code, migration, requirement decision or architecture decision was implemented or approved.
 
-## 1. Method and scope
+## 1. Scope and method
 
-- 73 planning documents under `docs/` were audited (PROJECT-BRIEF, FEATURE-PRIORITIZATION, 01 to 07 folders, ADR-001 to ADR-011).
-- Mechanical checks (scripted, repeatable) covered every requirement ID, business rule, edge case, NFR, endpoint ID, page ID and milestone scope line.
-- Five read-only reviewers audited slices in parallel: requirements, database, API, UI/UX, architecture and roadmap. Each finding cites `file:line` from the reviewer. The author spot-checked the critical items against the sources (results in section 3).
-- Findings are labelled CRITICAL (blocks Build Mode or makes an approved milestone impossible or unsafe), MAJOR (wrong implementation likely unless fixed before the owning milestone), MINOR (wording, count or citation drift).
+- Audited 80 Markdown documents: 73 baseline planning documents and 7 Phase 8 governance documents.
+- Reviewed product discovery, PRD, FR/NFR/AC coverage, architecture, ADRs, ERDs, data lifecycle, UI/UX, API contracts, security, roadmap, testing and release gates.
+- Ran six independent read-only domain reviews: requirements, architecture/data, UI, API, security/roadmap and final-deliverable traceability.
+- Cross-checked 164 FRs, 62 NFRs, 32 BRs, 28 ECs, 595 functional ACs, 164 API operations, 19 modules, 41 tables and 26 milestones.
+- Verified every repository-relative Markdown link under `docs/`; no target file was missing at audit time.
+- Severity: Critical blocks baseline approval, creates a security/privacy failure, or makes a milestone impossible. High must close before its owning milestone. Medium is consistency or evidence debt.
 
-## 2. Completeness metrics
+## 2. Documentation completeness
 
-| Check | Result | Basis |
+### 2.1 Result
+
+**Documentation completeness: 66.5%** against the six Flow00 trace dimensions.
+
+Formula: `654 explicit requirement-specific cells / (164 FRs x 6 dimensions) = 66.5%`.
+
+| Dimension | Coverage | Qualification |
+|---|---:|---|
+| Design document | 0 / 164 | Capability-level inheritance exists; no per-FR evidence |
+| Database entity or reasoned `N/A` | 0 / 164 | Capability-level candidate sets exist; no per-FR validation |
+| API endpoint or mechanism | 164 / 164 | Structural only; several contracts conflict |
+| UI page or reasoned `N/A` | 162 / 164 | FR-073 and FR-139 have no source-backed page mapping |
+| Milestone | 164 / 164 | Several assignments cannot meet their ACs |
+| Planned test identifier | 164 / 164 | Aliases only; executable test specifications: 0 |
+
+The seven required Phase 8 files exist. Their existence is 100%; their trace content is not. Approval evidence is `0 / 80`, so no percentage can make the project implementation-ready.
+
+### 2.2 Verified structural counts
+
+| Item | Result |
+|---|---:|
+| Unique FRs | 164, including 98 MVP |
+| MVP priority split | 54 Must, 44 Should |
+| Functional ACs | 595, exact ID coverage for all FRs |
+| NFRs / NFR AC rows | 62 / 62 |
+| Planned TC aliases | 667 including 10 E2E aliases |
+| Internal / public API operations | 125 / 39 |
+| Milestones | 16 MVP, 7 Phase 2, 3 Phase 3 |
+| Approved documents | 0 |
+
+### 2.3 Completeness by artifact
+
+| Audit question | Result | Basis |
 |---|---|---|
-| Functional requirements with acceptance criteria | 164 / 164 | `AC-FR-xxx-n` present for every FR (595 criteria) |
-| FRs in REQUIREMENT-TRACEABILITY | 164 / 164 | |
-| FRs with an API-ENDPOINTS coverage row | 164 / 164 | 137 endpoint, 15 job, 5 server component, 5 client only, 2 composition |
-| FRs assigned to a module | 164 / 164 | MODULE-BOUNDARIES section 2 (FR-020 to FR-023 are dashboard composition) |
-| FRs assigned to a milestone | 164 / 164 | MILESTONES scope lines; no FR sits in a milestone of a different phase |
-| FRs with a page or UI home | 164 / 164 | FR-073 and FR-139 are not cited by any page spec; placement given in the matrix |
-| Business rules BR-001..BR-032 defined and cited | 32 / 32 | no undefined citations |
-| Edge cases EC-001..EC-028 defined and cited | 28 / 28 | |
-| NFRs with an acceptance row | 62 / 62 | NFR-033, 082, 100, 101, 102 are cited by no FR or milestone scope line (architecture docs cover them) |
-| Endpoints with a spec block | 164 / 164 | 125 internal (83 MVP, 16 Phase 2, 26 Phase 3) and 39 public |
-| FR-063 | cited, not defined | PAGE-SPECIFICATIONS line 240 cites a requirement that does not exist (FR-133 is absent by design; FR-063 is not noted as such) |
+| Product vision aligns with PRD | Fail | Planned-versus-actual is central in the vision but optional in the MVP requirements |
+| Every approved feature has requirements | Blocked | No feature baseline is approved; proposed PWA and backward planning lack FRs |
+| Every FR has acceptance criteria | Structural pass | All 164 FRs have AC IDs; semantic and phase defects remain |
+| Requirements map to architecture/milestones | Partial | Candidate owners/milestones exist; dependency direction and milestone timing conflict |
+| Database entities and ERDs support requirements | Fail | Missing state, relationships, ownership constraints and restore semantics |
+| UI pages support journeys | Fail | Missing controls/states and interaction-target contradictions |
+| API operations match functionality | Fail | Auth, timer, AI, groups and public API contracts drift from FRs/UI/data |
+| Security requirements are covered | Fail | Critical auth, deletion, CSRF, limiter, SSRF and secret-flow gaps |
+| Testing covers critical workflows | Fail | Planned aliases exist; executable critical-path designs do not |
 
-Linkage completeness is 100% for the items above. That is a structural measure only. It is not a readiness measure: 13 of 164 FRs (92% clean; MVP 85 of 98, 87% clean) sit under a CRITICAL finding (section 3), and all 73 documents still carry "Proposal, pending approval".
+## 3. Critical inconsistencies
 
-## 3. Critical findings (block Build Mode)
-
-| ID | Finding | Evidence | Recommended correction |
+| ID | Finding | Evidence | Required correction |
 |---|---|---|---|
-| C-1 | No approval is recorded. Build Mode says planning is "completed and approved"; every ADR is `Proposed`, every document header says "Proposal, pending approval", and SDD.md line 10 says nothing is final until the owner approves. PRD U-1 (approve I-1..I-8) is open. | ADR-001..011 lines 3 and 7; SDD.md:10, :178; PRD.md:289-308; Build Mode.txt line 3 | Owner records approval of the corrected set. Then mark ADRs Accepted and change document headers to Approved with a date. Not done by this audit. |
-| C-2 | Account pre-hijack. AUTH-01 creates an account with no email-ownership check (`email_verified` stays false and no endpoint sets it). Google sign-in then signs in to an existing account with the same email "regardless" and keeps its password. An attacker who registers a victim's email retains access after the victim uses Google. Verified by the author. | API-ENDPOINTS.md:265; FUNCTIONAL-REQUIREMENTS.md:58 (AC-FR-003-2); API-STRATEGY.md:119 (no verification endpoint); DATA-DICTIONARY.md:26 | Decide linking policy before M02: require verified email before linking, or on link revoke existing password sessions and require password reset. Record in ADR-004 and amend FR-003 and AUTH-03. |
-| C-3 | M05 cannot pass its acceptance criteria. M05 scope includes FR-036 (actuals from linked sessions, AC-FR-036-1 needs 75 linked minutes) but sessions arrive in M06. Study plans (rank 6) may not depend on Study sessions (rank 7). PLAN-01 and PLAN-03 return `actualSeconds`. The composition direction is deferred to the SDD and is still open. | MILESTONES.md:241-243; MODULE-BOUNDARIES.md:37; API-ENDPOINTS.md:945-946, :973; IMPLEMENTATION-PLAN.md:114 | Decide the composition owner (adapter or Analytics read model). Move FR-036 actuals and the `done` status into M06 (or M12) in the scope lists. |
-| C-4 | Migration order is impossible. M01 migrates `idempotency_keys` with `user_id -> users(id)`; `users` is created in M02. Milestones must apply from an empty database. | MILESTONES.md:129, :164; DATA-DICTIONARY.md:624-628; DEFINITION-OF-DONE.md:30 | Move `idempotency_keys` to M02 or add its FK in M02. Check `outbox_events` and `rate_limit_counters` carry no user FK (they do not). |
-| C-5 | The deletion privacy promise cannot be met with the configurable purge window. NFR-031 requires live purge within 30 days and backups within 35 days. Backups are kept 30 days. IMPLEMENTATION-PLAN and BACKGROUND-JOBS allow a 30-day grace, which leaves data in backups for up to about 60 days. DATABASE-DESIGN and DATA-LIFECYCLE default to 24 hours and call a longer window schema-free. Reported independently by three reviewers. | NON-FUNCTIONAL-REQUIREMENTS.md:39; BACKUP-RESTORE.md:15-19; BACKGROUND-JOBS.md:25, :48; IMPLEMENTATION-PLAN.md:108; DATABASE-DESIGN.md:217; DATA-LIFECYCLE.md:67 | Cap the purge delay at 5 days or less, or restate NFR-031 as grace period plus 30 days. Needed before M14. |
-| C-6 | Registration writes data owned by a later milestone. AUTH-01 "creates the default daily goal of 120 minutes", but `daily_goal_history` arrives in M08 and Authentication (rank 1) cannot call Goals (rank 12). | API-ENDPOINTS.md:210, :224; MILESTONES.md:~306-313; DATA-DICTIONARY.md:403-413; DATA-LIFECYCLE.md:28 | Specify a derived default (no row means 120, BR-013) and remove the insert from AUTH-01 and the dictionary note. |
+| C-01 | No approved baseline exists. PRD calls Phase 1 approved while every source remains proposed; all ADRs are Proposed. | [PRD](02-requirements/PRD.md), [SDD](03-architecture/SDD.md), [ADRs](adr/) | Create an owner decision record; correct findings first; record owner, date, baseline and accepted ADRs. |
+| C-02 | Core product rules conflict. Planning is the primary differentiator but FR-030..038 are waivable. Study-day rollover conflicts with midnight splitting and frozen local dates. MVP topic-weight ACs require Phase 2 readiness. | [PRODUCT-VISION](01-product-discovery/PRODUCT-VISION.md), [BUSINESS-RULES](01-product-discovery/BUSINESS-RULES.md), [FUNCTIONAL-REQUIREMENTS](02-requirements/FUNCTIONAL-REQUIREMENTS.md) | Decide MVP identity, one day-boundary model and one phase-correct exam model; align PRD, FRs, ACs and journeys. |
+| C-03 | Pomodoro has no coherent lifecycle. Documents disagree whether a focus end saves a session, starts a break or waits for user input. No server phase-advance command or paused remaining time exists. | [USER-JOURNEYS](01-product-discovery/USER-JOURNEYS.md), [APPLICATION-FLOWS](03-architecture/APPLICATION-FLOWS.md), [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md) | Define one server-authoritative state machine, waiting states, phase advancement, pause persistence and session creation boundary. |
+| C-04 | Same-email Google linking permits account pre-hijack. Password registration does not verify email; AUTH-03 signs into an existing same-email account. OAuth age proof, signup display name and Google deletion reauthentication are also incomplete. | FR-003 in [FUNCTIONAL-REQUIREMENTS](02-requirements/FUNCTIONAL-REQUIREMENTS.md), AUTH-01/03 and PROF-04 in [API-ENDPOINTS](06-api-integrations/API-ENDPOINTS.md), [API-SCHEMAS](06-api-integrations/API-SCHEMAS.md) | Require verified ownership or a secure explicit merge; define age proof, required profile fields and single-use deletion reauthentication. |
+| C-05 | Deletion and backup promises cannot both hold. A 30-day purge delay plus 30-day backup retention can retain data about 60 days. A pending request can disappear on restore because durable intent is written only after purge. | NFR-031 in [NON-FUNCTIONAL-REQUIREMENTS](02-requirements/NON-FUNCTIONAL-REQUIREMENTS.md), [DATA-LIFECYCLE](04-database/DATA-LIFECYCLE.md), [BACKUP-RESTORE](04-database/BACKUP-RESTORE.md) | Write durable deletion intent at request time; cap live purge at 5 days or change the stated backup deadline; test restore at all request/purge boundaries. |
+| C-06 | Timer/session concurrency can lose or inflate data. Lazy idle close, shared locks, discarded-stop replay, break pause state and edited-timer ranking are undefined. | [DATABASE-DESIGN](04-database/DATABASE-DESIGN.md), [ADR-011](adr/ADR-011-idempotency-and-concurrency.md), [BACKGROUND-JOBS](03-architecture/BACKGROUND-JOBS.md) | Use one per-user lock for all time mutations, lazily expire stale runs, persist every terminal outcome and define immutable ranked duration. |
+| C-07 | Milestones cannot satisfy their own gates. M01 creates an FK-bearing table before users, M02 claims onboarding/dashboard ACs delivered in M13 and writes a Goals table delivered in M08, and M05 claims actuals before sessions exist. | [MILESTONES](07-roadmap/MILESTONES.md), [MODULE-BOUNDARIES](03-architecture/MODULE-BOUNDARIES.md), [DEFINITION-OF-DONE](07-roadmap/DEFINITION-OF-DONE.md) | Move schema and AC ownership to the milestone where dependencies exist; derive default goal; repair dependency edges. |
+| C-08 | Recovery can lose already-relayed jobs. Logical fallback excludes queue data, replay selects only unrelayed rows and outbox rows expire before the backup horizon. Ordinary staging is also specified for production restore drills. | [BACKUP-RESTORE](04-database/BACKUP-RESTORE.md), [DATA-LIFECYCLE](04-database/DATA-LIFECYCLE.md), [DEPLOYMENT-ARCHITECTURE](03-architecture/DEPLOYMENT-ARCHITECTURE.md) | Back up queue state or retain durable completion records; use an isolated recovery environment; require HA if 99.5% remains. |
+| C-09 | UI specifications fail required functional and accessibility gates. Auth, timer, CRUD, settings and AI screens disagree with APIs; controls/states are missing; dark destructive contrast, sticky focus clearance, heading semantics, live regions and affordances fail. | [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md), [INTERACTION-SPECIFICATIONS](05-ui-ux/INTERACTION-SPECIFICATIONS.md), [ACCESSIBILITY](05-ui-ux/ACCESSIBILITY.md), [DESIGN-SYSTEM](05-ui-ux/DESIGN-SYSTEM.md) | Correct the named page contracts and re-run R-03, R-23, R-25, R-26, R-27, R-32, R-34, R-38 and R-39 checks. |
+| C-10 | Security contracts are incomplete or contradictory. CSRF docs name different mechanisms; in-memory limits conflict with two web instances; queued one-time email links have no recoverable secret design; push accepts arbitrary HTTPS targets; AI failures can spend without quota. | [SECURITY-ARCHITECTURE](03-architecture/SECURITY-ARCHITECTURE.md), [API-SECURITY](06-api-integrations/API-SECURITY.md), [EXTERNAL-INTEGRATIONS](06-api-integrations/EXTERNAL-INTEGRATIONS.md), [AI-INTEGRATION](06-api-integrations/AI-INTEGRATION.md) | Select one tested CSRF protocol, shared limiter, encrypted outbox secret flow, push SSRF guard and AI attempt/global spend ceilings. |
+| C-11 | Traceability overclaims completeness. Design/entity evidence is inherited rather than per-FR, FR-063 is undefined, two UI homes lack source support and nine EC rows are truncated. The Phase 8 matrix now marks these gaps and corrected its initial FR-201 grouping. | [TRACEABILITY-MATRIX](TRACEABILITY-MATRIX.md), [REQUIREMENT-TRACEABILITY](02-requirements/REQUIREMENT-TRACEABILITY.md), [PAGE-SPECIFICATIONS](05-ui-ux/PAGE-SPECIFICATIONS.md) | Add per-FR evidence or reasoned `N/A`; repair source references and regenerate counts. |
+| C-12 | Critical workflows lack executable test designs. TC IDs are aliases, not cases; timer accuracy, hostile linking, deletion/restore, tenant isolation, browser/device and full-capacity evidence is absent. | [TESTING-STRATEGY](07-roadmap/TESTING-STRATEGY.md), [ACCEPTANCE-CRITERIA](02-requirements/ACCEPTANCE-CRITERIA.md) | Add named cases with level, fixture, owner, milestone and evidence artifact before each owning milestone closes. |
 
-## 4. Major findings
+## 4. Missing and undefined requirements
 
-### Requirements and product
+| Gap | Effect | Recommendation |
+|---|---|---|
+| PWA is committed to Phase 2 but has no requirement | Scope cannot be accepted or tested | Add FR/NFR/ACs or remove PWA from committed scope |
+| Backward planning from exams appears in discovery/journeys but has no FR | Journey has no implementable contract | Add a requirement or mark the journey future/out of scope |
+| Success metrics lack event definitions, formulas, owners and retention | D7 retention, activation and adherence cannot be measured | Add a privacy-reviewed analytics requirement or remove the metrics |
+| Group moderation has no role, triage owner, access rule, SLA or sanction flow | Abuse reports are stored but unoperated | Define the workflow before P3-02 or remove reporting |
+| Plan local-time DST gaps/overlaps and timezone changes are undefined | Plans/reminders can move or duplicate | Define anchored versus moving plans and gap/overlap behavior |
+| Timer server-offset, paused heartbeat, lazy close and phase-advance rules are absent | Core loop can drift, overcount or stall | Add normative rules and timer ACs |
+| Export does not enumerate all owned profile/settings/goal/consent data | NFR-032 and BR-032 are not met | Create a versioned exhaustive export manifest |
+| Incident response and processor retention/region/DPA rules are absent | Privacy and breach operations are undefined | Add an operational privacy/security runbook before release |
+| Streak opt-out exists only in roadmap | Milestone promises unrequired UI | Add FR/UI/ACs or remove it |
+| External-image consent behavior for note preview is missing | Markdown preview can leak IP/referrer data | Block external images by default and require explicit load action |
 
-| ID | Finding | Evidence | Correction |
-|---|---|---|---|
-| M-1 | Topic weight is an MVP Must (FR-015), AC-FR-016-1 asserts readiness uses it, but readiness is Phase 2. Weight is stored twice (`topics.weight`, `exam_topics.weight`) and it is undefined which feeds readiness. | FUNCTIONAL-REQUIREMENTS.md:255, :274, :1726, :1735; DATA-DICTIONARY.md:161, :193; MILESTONES.md:223 | Keep one weight column; drop the readiness clause from the MVP AC. |
-| M-2 | MVP end-to-end scenarios omit goals, plan overlap, manual entry, idle auto-close, lockout, account deletion and purge, to-dos and note sanitization. AC-E2E-02 needs M12 statistics but TESTING-STRATEGY places it fully at M07. | ACCEPTANCE-CRITERIA.md:689-698; TESTING-STRATEGY.md:129, :134; MILESTONES.md:290, :407 | Add scenarios; assign AC-E2E-02 completion to M12. |
-| M-3 | NFR-061 requires a test for every BR; the MVP definition of done excludes only BR-017..BR-022, though BR-024 and BR-027 are Phase 2. | NON-FUNCTIONAL-REQUIREMENTS.md:73; ACCEPTANCE-CRITERIA.md:659, :708 | Scope NFR-061 to applicable rules. |
-| M-4 | Heartbeat during pause: FR-052 says "while running"; TIM-06 says "while a timer exists". A pause over 30 minutes either auto-closes at pause start or never. | FUNCTIONAL-REQUIREMENTS.md:779; API-ENDPOINTS.md:1238; APPLICATION-FLOWS.md:215 | Decide and state in FR-052, TIM-06 and the flow. |
-| M-5 | "Past" plan entry: FR-035 uses start time, FR-033 implies end time. An in-progress entry can be marked missed. | FUNCTIONAL-REQUIREMENTS.md:476-480, :509-514 | Missed uses end time; edit lock uses start time. |
-| M-6 | XP compensation after a capped award is undefined (could deduct more than was awarded). | FUNCTIONAL-REQUIREMENTS.md:2229 (FR-177), FR-173 | Compensate only the amount actually awarded. Phase 2. |
-| M-7 | Group week boundary defined three ways (group week by UTC, member zone, "group-agreed"). | BACKGROUND-JOBS.md:64; DATABASE-DESIGN.md R5; FUNCTIONAL-REQUIREMENTS.md:2610 | Use each session's frozen `local_date` (API-CONVENTIONS section 15 already says so); edit FR-207 and BACKGROUND-JOBS. |
-| M-8 | PROJECT-BRIEF and FEATURE-PRIORITIZATION omit Dashboard, Study planning, onboarding and PWA that the PRD scopes; PWA has no FR. | FEATURE-PRIORITIZATION.md:7-30; PROJECT-BRIEF.md; PRD.md:59-60, :84 | Align the brief or mark PRD I-1 and I-7 approved. |
+Exact duplicate FR IDs were not found. Semantic overlap remains between FR-036 and FR-085. Terminology drift includes readiness/topic coverage, to-do/task, delete/archive, running/active timer and read-only calendar with mutation controls.
 
-### Data and jobs
+## 5. Data and ERD consistency
 
-| ID | Finding | Evidence | Correction |
-|---|---|---|---|
-| M-9 | Export file lifetime: 24 h in BACKGROUND-JOBS, SYSTEM-ARCHITECTURE, SECURITY-ARCHITECTURE, DEPLOYMENT-ARCHITECTURE and MILESTONES; 48 h in DATA-DICTIONARY, DATA-LIFECYCLE and API-SCHEMAS. The expiry job could delete a file the API still lists. Also `snapshot_at` is set at request time (API) or job start (jobs, lifecycle). | DATA-DICTIONARY.md:119; DATA-LIFECYCLE.md:18, :96; BACKGROUND-JOBS.md:29, :50; API-ENDPOINTS.md:467 | Choose 48 h and snapshot at job start; edit the others. |
-| M-10 | Retention cleanups have no owning job or milestone: `idempotency_keys`, `outbox_events`, `rate_limit_counters` (all created in M01 and unbounded from then), `notifications`, `group_invites`, `data_exports`, `ai_generation_requests`, deletion-log and mirror age-out. | DATA-LIFECYCLE.md:7, :40-42; BACKGROUND-JOBS.md:24-43; MILESTONES.md:132, :450, :713 | Add each job to the catalog and assign to M01, M14 or the owning phase. |
-| M-11 | Exam auto-archive job: BACKGROUND-JOBS, ADR-005 and FR-124 still say the job archives; the database design derives archived state and MILESTONES says the job only emits `ExamArchived`. A-13 also offers "archive" with no FR or endpoint. | BACKGROUND-JOBS.md:27, :65; DATABASE-DESIGN.md R4; PAGE-SPECIFICATIONS.md:351 | Align wording; remove "archive" from A-13 or add an FR. |
-| M-12 | Pomodoro pause and resume during a break would open a focus segment: break phases have no segment, `phase_ends_at` is absolute and no remaining time is stored. | DATABASE-DESIGN.md R2; API-ENDPOINTS.md:1204; DATA-DICTIONARY.md:280 | Define pause per phase; add `phase_remaining_seconds` or tag segments. |
-| M-13 | Auto-close ownership breaks the rank rule: Study sessions (rank 7) owns `AutoCloseIdleSessions`, Timer (rank 8) owns heartbeats and runs. A late stop depends only on the reaper job, so a stop after 30 min silence could record the idle gap if the single worker is down. | MODULE-BOUNDARIES.md:38-39; BACKGROUND-JOBS.md:24; API-STRATEGY.md:35; API-ENDPOINTS.md:1160, :1229 | Move the use case to Timer or invert via an inversion point; add a lazy close-at-last-heartbeat check on read and stop. |
-| M-14 | AI request fields `errorCode` and `removedByReason` have no columns. `user_gamification` has no creation rule while locking depends on the row. `card_reviews.card_id` is a plain FK that breaks the composite ownership pattern. | API-SCHEMAS ScheduleRequest; DATA-DICTIONARY.md:429, :531-548, ~375-390; DATABASE-CONSTRAINTS section 2.2 | Add columns; create the row at registration with a P2-02 backfill; use `(card_id, user_id)` composite FK. |
-| M-15 | A restore can drop a pending deletion request (the mirror is written only after purge). | DATA-LIFECYCLE.md section 3 step 5; BACKUP-RESTORE.md sections 2, 6 | Write the request to the mirror at request time. |
+High-impact data defects:
 
-### API and security
+- Conceptual cardinality shows optional user ownership for `timer_runs` although `user_id` is required.
+- Plan entry to notification is modeled as many where the contract permits at most one plan reminder.
+- Conceptual/logical diagrams omit relationships for timer segments, timer topic/plan links, to-do topic, flashcard subject/topic, card review user, gamification, AI consent, push subscription, group reports and invite actors.
+- Conceptual ERD omits FR-backed `data_exports`; logical ERD omits five attribute blocks.
+- `card_reviews.card_id` lacks composite user ownership; notification cross-field constraints are absent.
+- `UNIQUE (lower(email))` is invalid PostgreSQL table-constraint syntax; use an expression unique index.
+- Optimistic versions are absent from several editable settings, goals and membership records despite the architecture-wide promise.
+- Cleanup indexes/jobs are missing for several retention rules.
 
-| ID | Finding | Evidence | Correction |
-|---|---|---|---|
-| M-16 | CSRF: SECURITY-ARCHITECTURE describes a token; API-SECURITY and API-CONVENTIONS decide an origin check with `Sec-Fetch-Site` fallback and no token. ADR-008 still names server actions that the API docs say are not used. | SECURITY-ARCHITECTURE.md:43, :125, :217; API-SECURITY.md:150; API-CONVENTIONS.md:171; ADR-008 decision 1 | Rewrite SECURITY-ARCHITECTURE and ADR-008 to the origin-check decision. Needed before M02. |
-| M-17 | Rate limiter: ADR-008 says Postgres "in Phase 3", MVP needs it for sign-in (M01 creates the table); SECURITY-ARCHITECTURE and TECHNOLOGY-DECISIONS allow in-memory, which breaks per-IP limits with two web instances. | ADR-008 decision 5; SECURITY-ARCHITECTURE.md:181; TECHNOLOGY-DECISIONS.md:317; API-SECURITY.md:102 | State Postgres-backed from MVP everywhere. |
-| M-18 | Wire codes wrong in requirements: AC-FR-221-1 says `insufficient_scope` (wire code `scope_missing`); AC-FR-223-2 says `unknown_version` (wire code `unsupported_api_version`). Phase 3. | FUNCTIONAL-REQUIREMENTS.md:2725, :2760; ACCEPTANCE-CRITERIA.md:591, :600; API-ERRORS.md:96, :158 | Edit both files. |
-| M-19 | Public API count: milestone P3-03 says PUB-01..PUB-35 and the roadmap "35 endpoints"; the inventory has 39 operations including PUB-36 and PUB-37. API-STRATEGY and OPENAPI-PLAN say "37 rows". | API-ENDPOINTS.md:2607-2647; MILESTONES.md:712; DEVELOPMENT-ROADMAP.md:172 | Use PUB-01..PUB-37, 39 operations. |
-| M-20 | NOTIF-05 stores any HTTPS push endpoint and the worker POSTs to it: SSRF path. | API-ENDPOINTS.md:2038; EXTERNAL-INTEGRATIONS.md section 2.5 | Allow-list push-service hosts or guard resolved addresses at send time. Phase 2. |
-| M-21 | AI cost: quota counts only responses received; timeouts and errors are uncounted and retried (second billed call). No attempts ceiling and no global spend ceiling, though R13 promises cost caps. Also a 30 s timeout is `timed_out` in one place and `failed` in another; `proposal_stale` has no reasons for accept-time failures. | AI-INTEGRATION.md sections 7, 8, 10; API-ENDPOINTS.md:2160-2189; API-ERRORS.md:165; ASSUMPTIONS-AND-RISKS.md:40 | Add per-user attempts and monthly global ceilings; fix terminal state; extend reasons. Before P3-01 (gate G4). |
-| M-22 | Group privacy (Phase 3): responses expose `userId` to all members against the "never include user_id" rule; no admin step-down call although FR-205 and the role diagram imply it; leaderboard `weekStart` reveals weeks before join or opt-in; concurrent admin leave or remove can break the one-admin invariant. | API-SCHEMAS.md:17, :883; API-ENDPOINTS.md:2213, :2319-2333, :2404-2449, :2472-2486; FUNCTIONAL-REQUIREMENTS.md:2569 | Opaque `memberId`; add step-down; clamp `weekStart`; lock GRP-11 and GRP-12. Before P3-02. |
-| M-23 | Audit gaps CR-1 (API keys, AI consent, export events), CR-2 (AI cost columns), CR-3 (bounce suppression) are open; the `event_type` CHECK that M02 migrates has six values. | API-SECURITY.md:156-164; DATA-DICTIONARY.md:668 | Decide CR-1 before M02 so the CHECK is right the first time. |
-| M-24 | No personal-data incident procedure and no privacy-law statement (breach, GDPR, DPA). Legal pages are deferred to M15. A weekly dump goes to a second provider that is unnamed. | DEPLOYMENT-ARCHITECTURE.md:133; BACKUP-RESTORE.md section 8; DESIGN-PRINCIPLES.md U-D5 | Write an incident and privacy runbook before M15 and name the provider. |
-
-### Roadmap, testing and UI
-
-| ID | Finding | Evidence | Correction |
-|---|---|---|---|
-| M-25 | CI stages 5, 6, 9, 10, 11 (preview E2E, dependency scan, migration, deploy) are built by no milestone; TESTING-STRATEGY expects preview E2E from M02 and SECURITY-ARCHITECTURE requires the dependency scan on every PR. | MILESTONES.md:135, :146; TESTING-STRATEGY.md:122-124; SECURITY-ARCHITECTURE.md:185 | Assign stages to M01. |
-| M-26 | Dependency graph lets M10 and M11 be skipped; M14 needs every purge handler. M11 completes FR-049 but lists only M03. M00 spike (d) needs a vendor choice that gate G1 can defer. | DEVELOPMENT-ROADMAP.md section 5, :188; MILESTONES.md:44, :105-106; IMPLEMENTATION-PLAN.md:120 | Add edges M10, M11 to M14 and M07, M11 for FR-049; require U-A1 before M00(d). |
-| M-27 | Timer accuracy tests (AC-NFR-052, AC-NFR-090: 1, 25, 120 min runs, throttled tab, wrong client clock) are absent from the M07 test list and fault injection. | ACCEPTANCE-CRITERIA.md:655, :672; MILESTONES.md:289; TESTING-STRATEGY.md:61 | Add to M07 and section 5. |
-| M-28 | Offline timer: the UI spec queues Pause and Stop as "Waiting to sync"; FR-054, EC-028 and the architecture only retry heartbeats, and the server is the time authority (actions carry no durations). A queued Stop would be timestamped at reconnect. | INTERACTION-SPECIFICATIONS.md:141; PAGE-SPECIFICATIONS.md:208; EDGE-CASES.md:36; SYSTEM-ARCHITECTURE.md:78 | Remove queuing, or add a client-timestamp rule to FR-054, EC-028 and ADR-011. |
-| M-29 | Timer UI contradictions: tab title cadence (once per minute vs about once per second in FR-056); Pomodoro focus-end goes to break automatically but an alert offers "Start break"; mini-bar Stop flow is described but the mini-bar and dashboard card have no Stop; desktop mini-bar specified three ways. | INTERACTION-SPECIFICATIONS.md:98-117, :139, :184, :196, :200; FUNCTIONAL-REQUIREMENTS.md:829-841; NAVIGATION-STRUCTURE.md:71, :81; RESPONSIVE-DESIGN.md:29 | Pick one behaviour per item; edit the others. Before M07. |
-| M-30 | Accessibility: heatmap Today outline measures about 1.6:1 (light) and 1.06:1 (dark) against the darkest fills, below the claimed 3:1; mobile bottom padding reserves 88 px but tab bar plus mini-bar is 112 px plus safe area; 8 px target gaps need 356 px in a 360 px calendar grid with 16 px gutters. Reviewer calculation by hand from hex values; recompute before relying on it. | COLOR-TYPOGRAPHY.md section 1, section 4; ACCESSIBILITY.md SC 1.4.11, 2.4.11; RESPONSIVE-DESIGN.md section 4 | Offset the outline outside the cell; set padding to 112 px plus safe area; revisit gap or gutter. |
-| M-31 | FR-073 AC-3 needs a "goal not met" label on past days in the calendar or statistics, but A-5 has none and CAL-01 and CAL-02 return no goal field. Drag reorder is both MVP (A-7, A-8, accessibility names) and Phase 2 (reorder by buttons in MVP). Streak opt-out appears in milestones but in no FR or page. | PAGE-SPECIFICATIONS.md:228-241, :265, :271; API-ENDPOINTS.md:1771-1808; MILESTONES.md:534, :541 | Add goal-met flag to calendar day payloads and the day panel; settle drag; add an FR or remove opt-out. |
-
-## 5. Minor findings
-
-Consolidated; each is a wording, count or citation fix.
-
-- Landmark name "Primary" vs "Main"; mini-bar link punctuation; A-3 and A-5 layouts split at 900 px, a width absent from the breakpoint table (768 and 1024).
-- Locked-account message "updates on submit only" while the submit button is disabled until the lock ends.
-- Timezone is asked in sign-up and again in onboarding step 3 against the "not asked twice" claim; statistics journey says at most 2 clicks but needs 3 taps on mobile; calendar called read-only yet has "Add plan entry"; journey 7 promises readiness in the MVP.
-- ERROR-HANDLING section 5 is cited for rules it does not contain; five settings routes share the page name A-15 so titles are not unique; tab-title wording (elapsed vs remaining); COMPONENT-INVENTORY lacks a disclosure component; A-14 view switch called tabs and segmented control; PAGE-SPECIFICATIONS cites no endpoint IDs.
-- Routes reference `/onboarding` and `/dashboard` from M02 sign-up, but A-1 and A-2 are built in M13.
-- AUTH common error set omits `session_expired`, `session_revoked`; `csrf_rejected` also applies to guest endpoints AUTH-01, 02, 05, 06; FR-208 coverage row names `group_full` for GRP-15, which never emits it; RL-RESET per-email bucket cannot apply to AUTH-06 (no email in the body); RL-TIMER 120/min fails with about 5 tabs; lockout is a denial-of-service vector and per-IP limits will throttle campus NAT users; invite email binding is unspecified; FR-198 allows empty history while R13 and G4 require 4 weeks; PROF-08 streams from storage inside the request against the EXTERNAL-INTEGRATIONS rule.
-- ADR-006 and SYSTEM-ARCHITECTURE say day allocation at read time, but `study_session_days` is stored on write. ADR-011 key lifetime differs from the 7 days in DATABASE-DESIGN. INDEXING cites a group cap of 100 where FR-208 says 20. DATABASE-DESIGN says `user_id` and `created_at` are on every table; `exam_topics` and `timer_run_segments` have no `user_id` and three tables have no `created_at`.
-- `UNIQUE (lower(email))` is invalid as a table constraint (needs a unique index); `uq_exams_id_user` has no referencing FK; CONCEPTUAL-ERD omits five entities and two cardinality notations contradict the text; LOGICAL-ERD lacks five attribute blocks.
-- Exam readiness MVP/Phase 2 wording; NFR-042 (Phase 2) is cited by MVP FR-012 and FR-016; NFR-002 measures at 500 concurrent users while NFR-070 sets capacity at 1,000; AC-E2E-01 times register plus wizard plus first session at 3 minutes while FR-134 times the wizard only; FEATURE-ANALYSIS asks 4 weeks of data, FR-198 does not.
-- U-2 and U-3 are "default used" in SDD but owner gates elsewhere; P3-02 depends on P2-03 although groups do not use XP and the leaderboard shows minutes; P3-02 tests omit EC-025; rolling deploy says "web then worker" while ADR-005 requires one version at all times; no version pins; no DST gap or overlap rule for plan entries and reminders (EC-006 covers durations only); no hosting budget figure.
-- MVP stop transaction writes XP while `xp_ledger` is Phase 2: state the write is a no-op until P2-03. Timer stop idempotency has no mechanism (a `discarded` stop has no `request_key` row). Deletion request steps differ between API (revokes sessions and API keys) and DATA-LIFECYCLE (sessions only).
+See [CONCEPTUAL-ERD](04-database/CONCEPTUAL-ERD.md), [LOGICAL-ERD](04-database/LOGICAL-ERD.md), [DATA-DICTIONARY](04-database/DATA-DICTIONARY.md), [DATABASE-CONSTRAINTS](04-database/DATABASE-CONSTRAINTS.md) and [INDEXING-STRATEGY](04-database/INDEXING-STRATEGY.md).
 
 ## 6. Technical risk assessment
 
-| Area | Rating | Basis and mitigation in the documents | Residual gap |
+| Area | Risk | Main failure mode | Required control |
 |---|---|---|---|
-| Database complexity | Medium | 41 tables, composite ownership FKs, `btree_gist`, PG 15 or newer; every FK indexed (reviewer verified) | C-4, M-12, M-14; vendor must support `btree_gist` and the pooler mode (not in the vendor checklist) |
-| AI integration cost and failure | High until capped | Port and adapter (ADR-010), consent, per-user daily quota, kill switch, data minimisation | M-21: uncounted retries, no global ceiling; legal consent text pending (U-4) |
-| Timer reliability | High (core loop) | Server authoritative time, heartbeat, idle auto-close, M07 is XL and moved early | M-4, M-12, M-13, M-27, M-28; spike M00 is the right control |
-| Calendar scheduling conflicts | Medium | `btree_gist` overlap detection, confirmation flow (BR-026) | M-5; Phase 2 drag-and-drop concurrency; no DST gap rule |
-| Time zones | High | UTC storage, frozen zone, local date and rollover hour per session (ADR-006, NFR-091) | DST gap and overlap rule; ADR-006 wording stale; FR-207 week boundary |
-| XP and leaderboard abuse | Medium (Phase 2 and 3) | Daily cap, ledger, manual sessions excluded, 5-minute minimum | M-6, M-22; the XP row lock depends on an uncreated row |
-| Study group permissions | Medium to High (Phase 3) | Role matrix, not-found on cross-user access, last-admin rule | M-22 |
-| Performance | Low to Medium | Indexing strategy, read models, NFR targets | NFR-002 vs NFR-070 load figures; no hosting budget |
-| Data privacy | High | 16 or older gate, deletion with purge, export, no tracking (NFR-033) | C-5, M-24, M-15; no breach or privacy statement |
-| Backup and restore | Medium | Daily backups, RPO 24 h, RTO 8 h (6.9 h budget), restore drills | C-5, M-15; PITR availability and second provider unknown |
+| Database complexity | High | Cross-module locks, ownership and retention are incomplete across 41 tables | Schema review after rule decisions; migration-from-empty test |
+| AI cost/failure | High for Phase 3 | Failed/retried calls can be billed without user/global ceilings | Attempt quota, monthly spend cap, circuit breaker, kill switch |
+| Timer reliability | Critical | Phase drift, stale worker, pause/resume and command races alter study time | Server state machine, lazy transitions, shared lock, deterministic-clock tests |
+| Calendar conflicts | High | Warning-confirm flow races and subject archive races with creation/timer start | Lock/fingerprint protocol and subject-row locks |
+| Time zones | High | Day totals, plans, reminders and group weeks use conflicting semantics | One frozen-allocation model plus DST input policy |
+| XP/leaderboard abuse | High for future phases | Edited timer sessions remain ranked; cap compensation and cross-day awards are incomplete | Immutable competitive duration and net-award ledger rules |
+| Study-group permissions | High for Phase 3 | Cross-user aggregates, role races and moderation data expose users | Aggregate capability, opaque IDs, group locks, moderation runbook |
+| Performance | Medium to High | Test fixtures do not exercise one 100k-session user, 5m rows or 1k concurrent users | Correct fixtures, private/no-store timer reads and measured thresholds |
+| Data privacy | Critical | Linking takeover, deletion resurrection, external images and processor gaps | Correct auth/deletion contracts, image consent, processor register |
+| Backup/restore | Critical | Relayed jobs and deletion requests can vanish; ordinary staging receives production data | Durable replay, isolated recovery, alternate restore drills |
 
 ## 7. Security review
 
-| Area | Documented control | Verdict |
+| Control | Result | Gap |
 |---|---|---|
-| Authentication | Better Auth (Auth.js fallback), argon-class hash, 10 character minimum, lockout 5 per 15 min, 30-day idle expiry, revocation within 60 s | Gap C-2 (account linking). Lockout allows targeted lockout of known emails: accepted trade-off needs a written decision. Library choice is conditional on the M00 spike |
-| Authorization and isolation | `user_id` ownership, composite FKs, not-found on cross-user access, ownership contract test pattern from M02, K scopes for the public API | Sound; one exception `card_reviews` (M-14), and group `userId` exposure (M-22) |
-| Input validation | Zod at every handler, server-side limits, markdown sanitization (ADR-007) | Sound; sanitization has no dedicated E2E scenario (M-2) |
-| API security | Origin check, cookie rules, rate-limit classes, idempotency, `If-Match` | CSRF wording conflict M-16; limiter backend M-17; NOTIF-05 SSRF M-20 |
-| File upload | No upload surface (SYSTEM-ARCHITECTURE:173); export files are server-generated and stored | Not applicable for the MVP; export links need expiring access (documented) |
-| Rate limiting | RL-* classes in Postgres | Cleanup job missing (M-10); shared-IP throttling of campus users noted |
-| Secret management | Secrets store, bundle scan in CI, no secrets in logs | CI stage 6 and bundle scan not assigned to a milestone (M-25) |
-| Data retention | DATA-LIFECYCLE per table | Cleanup jobs unowned (M-10); backup bound conflict (C-5) |
-| Privacy | Minimisation, no ads or tracking, AI consent | No incident procedure or legal statement (M-24); consent text pending legal review |
-| Logging | Request IDs, scrubbing of passwords, tokens, note content, AI text | Scrub test planned in M01 and M15 |
-| Audit trail | `auth_audit_events` with six event types | CR-1 open (M-23) |
+| Authentication | Fail | Account pre-hijack, OAuth age proof, profile creation and Google reauthentication |
+| Authorization/isolation | Partial | Strong repository scoping intent; list/aggregate/export tests and several composite FKs are missing |
+| Input validation | Mostly specified | Zod, strict unknown fields and limits are strong; body-reference error maps and external-image behavior need correction |
+| API security | Fail | CSRF drift, shared limiter/proxy trust, push SSRF and incomplete transport errors |
+| File upload | Not applicable | No user upload surface is approved; exports are server generated |
+| Rate limiting | Fail | In-memory fallback is incompatible with multi-instance deployment; failure behavior is unspecified |
+| Secret management | Partial | Storage/scrubbing exists; rotation, incident response and queued one-time token handling do not |
+| Data retention | Fail | Purge promise, cleanup ownership, processor retention and report retention conflict |
+| Privacy | Fail | Deletion restore, moderation access, legal basis and processor rules are unresolved |
+| Audit trail | Partial | Event set is incomplete and must be decided before the M02 CHECK constraint |
 
-## 8. Cross-document consistency summary
+## 8. Recommended corrections
 
-- Terminology: "Lumora" in all documents; the planning prompts say "Study Tracker". Use Lumora and say so in the README.
-- Duplicate requirements: none found by the scripted checks. FR ranges in module boundaries and milestones agree.
-- Missing requirements: topic reorder keyboard path (NFR-042 scope), streak opt-out, exam manual archive (either remove or add), PWA (in scope text, no FR), incident procedure, DST rule, calendar goal-met flag.
-- Undefined business rules: heartbeat during pause, "past" entry, XP compensation, group week boundary, default goal creation.
-- Missing relationships: none missing from the dictionary; `card_reviews` ownership is the only weak one.
-- Unspecified error handling: AI `proposal_stale` reasons, `session_expired` and `session_revoked` in the common set, queued offline commands.
-- Priority inconsistencies: topic weight MVP vs readiness Phase 2; NFR-042; streak opt-out.
+1. Approve the correction process, not Build Mode. Record an owner decision framework.
+2. Resolve OD-G02 through OD-G06: MVP identity, day boundaries, Pomodoro/session model, phase boundaries and defaults.
+3. Correct authentication and privacy contracts: linking, age proof, profile fields, reauthentication, durable deletion intent and purge deadline.
+4. Define timer state, locking, idle closure and idempotency before schema freeze.
+5. Repair milestone ownership, migration order and dependency graph.
+6. Repair ERDs, ownership constraints, versions, cleanup jobs and recovery replay.
+7. Correct UI/API mismatches and rerun accessibility/functional hard gates.
+8. Add executable critical-path test designs and full-scale evidence requirements.
+9. Repair per-FR trace evidence, undefined references and source status claims.
+10. Re-audit the corrected baseline. Only then record approval and consider Build Mode.
+
+## 9. Outstanding decisions
+
+The authoritative register is [OPEN-DECISIONS.md](OPEN-DECISIONS.md). Highest-priority decisions are:
+
+- OD-G01 through OD-G07: baseline, product rules and trace standard.
+- OD-S01 through OD-S06: M00 charter, auth, hosting, email and timer evidence.
+- OD-M01 through OD-M23: milestone-specific security, data, timer, deletion, recovery, CI and test contracts.
+- U-D1 through U-D14: owner-controlled UI direction and assets.
+- OD-F01 through OD-F10: Phase 2/3 scope, AI, groups, push and public API.
+
+## 10. Final implementation sequence
+
+1. Correct and re-audit documentation.
+2. Authorize M00 under its own evidence-only charter.
+3. Resolve global rules and approve a versioned baseline.
+4. M01 foundation with full CI, cleanup ownership, secrets and platform controls.
+5. M02 to M06 with corrected auth, catalog, exams, plans and session ownership.
+6. M07 timer after state/locking/test contracts are final.
+7. M08 to M12 goals, calendar, tasks, notes and statistics.
+8. M13 dashboard/onboarding after routes and dependencies exist.
+9. M14 export/deletion after purge and recovery rules are proven.
+10. M15 hardening, isolated restore drill and release evidence; G2 is completion approval.
+11. Phase 2 and Phase 3 only after their own gates close.
+
+## 11. Final gate
+
+**Project is not ready for Build Mode.** Critical issues remain. Stop after presenting this report and wait for owner approval of corrections. Do not start M00 or any implementation automatically.
+
+Recommended first implementation milestone after explicit authorization: **M00 Technical spike**, limited to auth behavior, platform capabilities, transactional email and timer calibration evidence. It must not create production schema or user-facing features.
+
+## 12. Audit limits
+
+No runtime, SQL migration, restore drill, load test, provider capability or generated OpenAPI artifact exists to verify. Findings prove documentation inconsistency, not runtime behavior.
