@@ -1,140 +1,110 @@
-# BUILD MODE — M00 CLOSE-OUT (T12–T14)
+# REVIEW MODE — M00 FINAL ACCEPTANCE & OWNER DECISIONS
 
-You are continuing the Lumora Study Tracker implementation.
+The M00 technical spike, ADR amendments, teardown, and completion report have been completed.
 
-The M00 technical spike evidence phase has been completed and recorded in:
+I am now performing the project-owner review.
 
-- `docs/08-build/M00-IMPLEMENTATION-PLAN.md`
-- `docs/08-build/M00-EVIDENCE.md`
-- `docs/OPEN-DECISIONS.md`
-- `docs/IMPLEMENTATION-READINESS.md`
+Do not start M01 implementation.
 
-The latest execution report confirms that the nine technical spike protocols have been evaluated.
+## 1. Review Sources
 
-Your task is to complete M00 close-out only.
+Inspect:
 
-## 1. Source of Truth
+- docs/08-build/M00-IMPLEMENTATION-PLAN.md
+- docs/08-build/M00-EVIDENCE.md
+- docs/08-build/M00-COMPLETION-REPORT.md
+- docs/OPEN-DECISIONS.md
+- docs/IMPLEMENTATION-READINESS.md
+- All four amended ADRs
+- Baseline correction records B-01, B-02, B-06, B-09
+- docs/CHANGELOG.md
+- docs/DOCUMENTATION-INDEX.md
 
-Before making changes, inspect:
+## 2. ADR Review
 
-- `docs/08-build/M00-IMPLEMENTATION-PLAN.md`
-- `docs/08-build/M00-EVIDENCE.md`
-- `docs/OPEN-DECISIONS.md`
-- `docs/IMPLEMENTATION-READINESS.md`
-- Existing ADR documents
-- `docs/DOCUMENTATION-INDEX.md`
-- `docs/CHANGELOG.md`
+For each of the four ADR amendments, provide:
 
-Follow the exact requirements of T12, T13, and T14 in the approved M00 implementation plan.
-
-Do not invent missing decisions or claim unverified results.
-
-## 2. T12 — ADR Amendments
-
-Update relevant Architecture Decision Records using the actual M00 evidence.
-
-Requirements:
-
-- Record proven technical findings.
-- Record rejected or unsuccessful approaches.
-- Document unresolved decisions.
-- Document vendor validation limitations.
-- Preserve the distinction between PASS, PARTIAL, and DEFERRED.
-- Record the Better Auth account uniqueness finding.
-- Document the limitations of mock Google OAuth.
-- Do not claim production readiness based on spike-only tests.
-
-Update `OPEN-DECISIONS.md` where justified by actual evidence.
-
-Do not silently approve OD-S02 through OD-S06.
-
-## 3. T13 — Teardown
-
-Follow the teardown procedure in the approved implementation plan.
-
-Requirements:
-
-- Preserve all evidence and raw test outputs.
-- Remove temporary scratch databases and local experimental state as specified.
-- Remove temporary binaries such as `.artifacts/oasdiff.exe` when appropriate.
-- Verify that no secrets remain in tracked files.
-- Do not merge `spike/m00` into `main`.
-- Preserve or remove the spike branch only according to the explicit teardown instructions.
-- Verify the main branch has not been modified by experimental code.
-- Record teardown results and any cleanup failures.
-
-Never delete evidence before verifying its documentation has been preserved.
-
-## 4. T14 — Completion Report
-
-Create the M00 completion report at the location specified by the implementation plan.
-
-Include:
-
-- Executive summary.
-- Scope completed.
-- All nine protocol results.
-- Technical findings.
-- Approved architectural decisions.
-- Outstanding open decisions.
+- ADR identifier and title.
+- Original decision.
+- Proposed amendment.
+- Supporting M00 evidence.
 - Known limitations.
-- Deferred requirements.
-- Vendor validation gaps.
-- Remaining risks.
-- Teardown results.
-- Recommendations and prerequisites for M01.
+- Architectural consequences.
+- Recommendation: Accept, Reject, or Amend.
 
-Clearly distinguish experimental proof from production validation.
+Do not automatically approve any amendment.
 
-## 5. Documentation Synchronization
+## 3. Baseline Correction Review
 
-Update:
+For B-01, B-02, B-06, and B-09, provide:
 
-- `docs/CHANGELOG.md`
-- `docs/README.md`
-- `docs/DOCUMENTATION-INDEX.md`
-- `docs/IMPLEMENTATION-READINESS.md`
-- Relevant ADRs and decision records.
+- Original baseline requirement.
+- Proposed correction.
+- Reason for the correction.
+- Impact on the architecture and implementation.
+- Recommendation: Accept, Reject, or Amend.
 
-Ensure document references, statuses, and milestone information remain consistent.
+Also explain OD-S03 regarding same-email account linking and its security implications.
 
-## 6. Strict Restrictions
+## 4. Open Decisions Review
 
-- Do not start M01.
-- Do not implement production application features.
-- Do not create production database migrations.
-- Do not create production schemas or seeds.
-- Do not merge spike code.
-- Do not mark unresolved requirements as completed.
-- Do not fabricate test results.
-- Do not remove existing project documentation.
+Explain the outstanding decisions:
 
-## 7. Final Verification
+- U-01
+- U-02
+- U-03
+- U-05
+- U-06
+- U-07
+- U-A1
+- U-A2
+- U-A7
 
-Before reporting completion:
+Identify which decisions are required before M01 planning, M01 implementation, and M02.
 
-1. Verify T12, T13, and T14 against the approved plan.
-2. Verify all documentation references.
-3. Verify evidence preservation.
-4. Verify Git branch and working-tree state.
-5. Verify no experimental code entered `main`.
-6. Verify remaining blockers are explicitly documented.
-7. Update implementation readiness honestly.
+Do not invent missing decision descriptions.
 
-## 8. Final Output
+## 5. Vendor Planning
 
-Provide:
+Provide a vendor comparison for:
 
-- Files created and modified.
-- T12 completion status.
-- T13 completion status.
-- T14 completion status.
-- Git branch and working-tree status.
-- Evidence preservation status.
-- Remaining risks and open decisions.
-- M01 readiness status.
-- Exact next actions required from the project owner.
+- PostgreSQL PaaS.
+- Email provider.
+- Error tracking.
 
-STOP after M00 close-out.
+Include pricing considerations, free-tier limitations, technical compatibility, and operational requirements.
 
-Do not proceed to M01 without explicit owner approval.
+Clearly distinguish researched facts from recommendations.
+
+Do not select vendors on my behalf.
+
+## 6. Git Review
+
+Inspect the current Git working tree.
+
+Identify:
+
+- All 16 modified files.
+- The untracked M00 completion report.
+- Unexpected modifications.
+- Secret exposure risks.
+- Whether the changes are safe to commit.
+
+Do not commit, push, reset, or discard any changes.
+
+## 7. Final Output
+
+Produce a concise owner review report with:
+
+1. ADR amendment review table.
+2. Baseline correction review table.
+3. Open decision summary.
+4. Vendor selection recommendations.
+5. Git change summary.
+6. Required owner decisions.
+7. M01 planning prerequisites.
+8. M01 implementation prerequisites.
+
+STOP and wait for my explicit decisions.
+
+Do not modify documentation or record owner acceptance until I approve the proposed decisions.

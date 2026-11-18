@@ -27,6 +27,21 @@ The web client reaches data through an internal API from the MVP; it is not a pu
 - Public traffic shares the web tier until an extraction trigger applies (security isolation, scaling).
 - Database-backed rate limiting adds writes; monitored.
 
+## M00 evidence update
+
+Date: 2026-11-18. Status stays Proposed. The spike record is [M00-EVIDENCE](../08-build/M00-EVIDENCE.md).
+
+| Claim | Observation | State |
+|---|---|---|
+| Generator | `@asteasolutions/zod-to-openapi` 9.1.0 with zod 4.6.7 emitted `openapi: "3.1.0"`; two generations were byte-identical; the `oasdiff diff` result was `{}` | PASS for the sample |
+| Validation | Redocly CLI 2.79.0 lint exited 0: "Your API description is valid" | PASS for the sample |
+| Breaking-change gate | oasdiff 1.39.0 reported `response-required-property-removed` for a removed required property; with `--fail-on ERR` the exit code was 1 | PASS for the sample |
+| Default diff exit | Without `--fail-on ERR`, the same breaking comparison exits 0 | LIMITATION: CI must pass the flag |
+| Reference page | No renderer was run. The MVP has no public API; Scalar is the first Phase 3 candidate, Redoc the fallback, and none is chosen for the MVP | DEFERRED |
+| Contract coverage | One path and two schemas only; no route-parity check, spec-to-server request validation, error catalog or 39-operation public surface | NOT PROVEN |
+
+The evidence supports adopting the generator and oasdiff with `--fail-on ERR` for the public contract. It does not prove the full Phase 3 surface and does not choose a reference page. OD-F10 and the OpenAPI-PLAN open items remain open.
+
 ## Alternatives
 
 - tRPC for internal use: good typing but not a public REST contract.

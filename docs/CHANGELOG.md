@@ -2,6 +2,26 @@
 
 Documentation changes only. No application code exists.
 
+## 2026-11-18, M00 close-out
+
+### Added
+- [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md): M00 functionality, files, database changes, tests, results, limitations, remaining tasks and next milestone.
+- [08-build/M00-EVIDENCE.md](08-build/M00-EVIDENCE.md): teardown results and the secret-scan record.
+
+### Changed
+- Added M00 evidence sections to [ADR-004](adr/ADR-004-authentication.md), [ADR-005](adr/ADR-005-background-jobs.md), [ADR-008](adr/ADR-008-api-strategy.md) and [ADR-009](adr/ADR-009-deployment-platform.md). Every status stays Proposed.
+- Updated [DATABASE-DESIGN.md](04-database/DATABASE-DESIGN.md), [OPENAPI-PLAN.md](06-api-integrations/OPENAPI-PLAN.md), [EXTERNAL-INTEGRATIONS.md](06-api-integrations/EXTERNAL-INTEGRATIONS.md) and [TECHNOLOGY-DECISIONS.md](03-architecture/TECHNOLOGY-DECISIONS.md) with the local evidence and the vendor gaps.
+- Added the OD-S02 to OD-S06 evidence table and the close-out record to [OPEN-DECISIONS.md](OPEN-DECISIONS.md); no row was closed.
+- Updated [MILESTONES.md](07-roadmap/MILESTONES.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md), [README.md](README.md) and [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md) for the results and the 83-document inventory.
+
+### Results
+- TS-01, TS-02, TS-04 and TS-05 PASS. TS-03, TS-06, TS-07 and TS-09 PARTIAL. TS-08 DEFERRED.
+- The spike worktree and branch were deleted; the scratch database and local environment file were removed; the evidence survived.
+- The secret scan found no environment secret value in tracked files. The main commit advanced to `c8f151e` and contains no spike source.
+
+### Not changed
+- No ADR is Accepted, no OD-S02 to OD-S06 row is closed, no vendor is selected, no requirement baseline is approved, and no production code, migration or seed exists. M01 and Build Mode remain unauthorized.
+
 ## 2026-11-18, M00 charter approved
 
 ### Added

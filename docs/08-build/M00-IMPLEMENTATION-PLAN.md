@@ -330,18 +330,20 @@ New build records:
 
 ### 10.3 M00 completion checklist
 
-- [ ] Spike (a) recorded, fallback chosen if failed
-- [ ] Spike (b) recorded
-- [ ] Spike (c) recorded, diff tool and reference page decided
-- [ ] Spike (d) recorded
-- [ ] Same-email linking decision recorded
-- [ ] Email one-time secret evidence recorded
-- [ ] U-A1, U-A2 and U-A7 closed or the owner set the needed-by milestone
-- [ ] T11 recorded or explicitly deferred
-- [ ] Evidence file complete and free of secrets
-- [ ] ADR amendments drafted, all statuses still Proposed
-- [ ] Spike branch deleted and trial access revoked
-- [ ] Completion report produced
-- [ ] DEFINITION-OF-DONE checked for the spike level; code-dependent items are marked not applicable with a reason
+- [x] Spike (a) recorded, fallback chosen if failed (PASS/PARTIAL; live Google U-03)
+- [x] Spike (b) recorded (PASS for app ids; native auth-table `uuid` mapping open)
+- [x] Spike (c) recorded, diff tool and reference page decided (oasdiff 1.39.0; no MVP page)
+- [x] Spike (d) recorded (PARTIAL; local no-pooler path only)
+- [x] Same-email linking decision recorded (refusal option; OD-S03 open)
+- [x] Email one-time secret evidence recorded (local sink; provider U-A2 open)
+- [ ] U-A1, U-A2 and U-A7 closed or the owner set the needed-by milestone (not closed; no needed-by set; see OPEN-DECISIONS)
+- [x] T11 recorded or explicitly deferred (deferred under U-01)
+- [x] Evidence file complete and free of secrets
+- [x] ADR amendments drafted, all statuses still Proposed
+- [x] Spike branch deleted and trial access revoked (no trial access existed)
+- [x] Completion report produced
+- [x] DEFINITION-OF-DONE checked for the spike level; code-dependent items are marked not applicable with a reason
+
+Close-out executed 2026-11-18. Evidence and teardown are complete; item (e) and owner acceptance (U-06) remain open. The record is [M00-COMPLETION-REPORT.md](M00-COMPLETION-REPORT.md).
 
 M00 does not include owner acceptance of the amendments. That acceptance is the next gate and the prerequisite for M01 planning.

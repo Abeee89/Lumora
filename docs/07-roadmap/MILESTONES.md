@@ -91,6 +91,7 @@ Execution order is the table order, top to bottom. The only reorder freedom is M
 - **Phase:** MVP (pre-build)
 - **Complexity:** S
 - **Objective:** Resolve the open technology risks before any production code. Time-boxed; the output is recorded decisions, not merged code.
+- **Outcome (2026-11-18):** Evidence and teardown complete. (a) PASS, (b) PASS for app ids with the auth-table mapping open, (c) PASS, (d) PARTIAL without a pooler, (e) open. The full record is [08-build/M00-COMPLETION-REPORT.md](../08-build/M00-COMPLETION-REPORT.md).
 - **Scope (FR/NFR):** NFR-011, NFR-012, NFR-013 (proof only); no FR.
 - **Dependencies:** none
 - **Modules:** none (throwaway branch)
@@ -108,13 +109,15 @@ Execution order is the table order, top to bottom. The only reorder freedom is M
 - **Tests:** throwaway scripts on the spike branch, deleted afterwards.
 - **Acceptance criteria:** each of (a)-(d) has a recorded pass/fail and a fallback decision. No AC ids; no merged code.
 - **Completion checklist:**
-  - [ ] Spike (a) recorded, fallback chosen if failed
-  - [ ] Spike (b) recorded
-  - [ ] Spike (c) recorded, diff tool and reference page decided
-  - [ ] Spike (d) recorded
-  - [ ] U-A1, U-A2, U-A7 closed or owner has set the needed-by milestone
-  - [ ] Spike branch deleted
-  - [ ] DEFINITION-OF-DONE.md checked
+  - [x] Spike (a) recorded, fallback chosen if failed (PASS/PARTIAL; live Google U-03)
+  - [x] Spike (b) recorded (PASS for app ids; native auth-table `uuid` mapping open)
+  - [x] Spike (c) recorded, diff tool and reference page decided (oasdiff 1.39.0; no MVP page)
+  - [x] Spike (d) recorded (PARTIAL; local no-pooler path only)
+  - [ ] U-A1, U-A2, U-A7 closed or owner has set the needed-by milestone (not closed; no needed-by set; see OPEN-DECISIONS)
+  - [x] Spike branch deleted
+  - [x] DEFINITION-OF-DONE.md checked (spike level; code-dependent items N/A with reasons in the completion report)
+
+M00 close-out is complete for evidence and teardown, but M00 is not a full pass because item (e) is open. M01 remains blocked by U-06 and U-07.
 
 ### M01 Project foundation
 

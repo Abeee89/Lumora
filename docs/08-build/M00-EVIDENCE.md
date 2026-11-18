@@ -1,6 +1,6 @@
 # M00 Evidence
 
-> Status: executed 2026-11-18. Branch `spike/m00` at commit `73a39b1`. Evidence only. Spike code, the scratch database and the local environment file are deleted at close.
+> Status: executed 2026-11-18. Worktree branch `spike/m00` at commit `73a39b1`; the branch and worktree were deleted at close. Evidence only. The spike code, scratch database and local environment file are deleted; this file is preserved.
 
 ## Rules
 
@@ -34,8 +34,8 @@
 | TS-05 OpenAPI | M00-T08 | Executed | PASS: valid OpenAPI 3.1, deterministic output, breaking change detected and CI failure proven |
 | TS-06 Queue and pooler | M00-T09 | Executed | PARTIAL: local atomic enqueue, outbox and retry PASS; pooler and vendor modes blocked by U-02 |
 | TS-07 Email and secrets | M00-T10 | Executed | PARTIAL: local sink idempotency and no plaintext PASS; provider sandbox blocked by U-05 |
-| TS-08 Timer calibration | M00-T11 | Deferred | U-01 default applied; M07 keeps its timer-evidence block; NFR-052 is not claimed |
-| TS-09 Vendor checklist | M00-T03 | Partial | Local PostgreSQL 18.6 and `btree_gist` 1.8 observed; vendor rows blocked by U-02 |
+| TS-08 Timer calibration | M00-T11 | DEFERRED | U-01 default applied; M07 keeps its timer-evidence block; NFR-052 is not claimed |
+| TS-09 Vendor checklist | M00-T03 | PARTIAL | Local PostgreSQL 18.6 and `btree_gist` 1.8 observed; vendor rows blocked by U-02 |
 
 ## Environment and versions
 
@@ -46,7 +46,7 @@
 | npm | 11.8.0 |
 | git | 2.53.0.windows.1 |
 | Worktree | `D:/Portofolio/Lumora-m00`, branch `spike/m00`, commit `73a39b1` |
-| Main checkout | `D:/Portofolio/Lumora`, branch `main`, commit `73a39b1` |
+| Main checkout | `D:/Portofolio/Lumora`, branch `main`, commit `73a39b1` at run; `c8f151e` at close |
 | Next.js | 16.4.6 |
 | React and React DOM | 19.3.0 |
 | TypeScript | 5.9.3 |
@@ -920,7 +920,24 @@ These are evidence statements for the amendment task. No ADR is marked Accepted 
 11. All tests are single-process and local. Concurrent sign-ins, process crashes, network loss and load at NFR-070 volume were not tested.
 12. `tsx` failed with a transform error in this Next app; scripts ran through Node 24 type stripping. This is a tooling limitation of the spike, not a product requirement.
 13. The evidence redacts session tokens, cookies, OAuth state, the dummy client id and the password hash prefix. No secret, token, cookie or personal email is recorded here. Sandbox identities use `example.test`.
-14. The evidence file is in the main checkout; the spike code and logs are on `spike/m00`. T13 teardown is not executed yet, so the branch, scratch database and local environment file still exist.
+14. The evidence file is in the main checkout. T13 was executed on 2026-11-18: the worktree, branch, scratch database and local environment file are deleted; this file and the completion report are preserved.
+
+## Teardown
+
+T13 was executed on 2026-11-18, after the evidence file was preserved in the main checkout.
+
+| Check | Result |
+|---|---|
+| Scratch services | `m00-pg` and `m00-next` stopped; both reported `exited` |
+| Worktree | `D:/Portofolio/Lumora-m00` removed with `git worktree remove --force`; exit 0 |
+| Branch | `spike/m00` deleted; it was at `73a39b1`; main is at `c8f151e` |
+| Local state | `spike/m00/.env.local` and `spike/m00/.pgdata` were removed with the worktree; `.pgdata-smoke` was absent before removal |
+| Temporary files | No `oasdiff.exe` exists. The only file under `.artifacts/` is `oasdiff-release.json`, which is tracked in main commit `c8f151e`; it was retained, not deleted |
+| Spike code | `git ls-files spike` is empty; no spike source or manifest is tracked on `main` |
+| Secret scan | 129 tracked files scanned for the five values in `.env.local` and for known dummy literals before deletion. The only match was `BETTER_AUTH_URL` (`http://localhost:3000`, not a secret); `BETTER_AUTH_SECRET`, the Google client id and secret, the database URL, session tokens, OAuth state and the password hash prefix did not appear. `M00_EMAIL_KEY` appears only as an environment-variable name, not a value |
+| Main checkout | `main` at `c8f151e`; the evidence file is tracked; no production code, migration or seed was added |
+
+The main commit advanced from `73a39b1` to `c8f151e` during the spike. The new commit contains this evidence file, `Flow01.5.txt` and `.artifacts/oasdiff-release.json`; it does not contain spike source code. No spike file was merged.
 
 ## Template
 

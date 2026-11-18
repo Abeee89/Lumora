@@ -106,6 +106,8 @@ Capacity context for every choice: 10,000 registered users, 1,000 concurrent use
 
 **Decision**: Better Auth running inside the application: email and password, Google OAuth, database-backed revocable sessions, with application-owned lockout, audit and age-gate logic wired through its hooks. Fallback if review fails: Auth.js plus custom lockout (ADR-004, U-A4).
 
+M00 evidence (2026-11-18): lockout, revocation within 60 seconds, 30-day expiry and a 161-character scrypt password hash passed on a scratch database. The Google callback route, state, PKCE S256 and replay rejection passed, but the live Google token exchange was not tested (U-03). Same-email implicit linking was refused with zero sessions and zero links. Better Auth created `text` ids and no unique `(providerId, accountId)` constraint. D7 remains Proposed; see [ADR-004](../adr/ADR-004-authentication.md).
+
 **Why appropriate**: Requirements are email/password and Google (FR-001..005), password of at least 10 characters with salted adaptive hashing (NFR-011), lockout after 5 failures for 15 minutes (NFR-012), 30-day inactivity expiry and revocation within 60 s (NFR-013), and audit events retained 90 days (NFR-020). Database-backed sessions make revocation immediate, unlike stateless tokens. Keeping identity inside the application avoids a third-party processor for credentials (NFR-030).
 
 **Advantages**: No per-user vendor fee; sessions and accounts live in our database so deletion and purge (NFR-031) are in our control; TypeScript-native; supports adding an API-key mechanism and social providers later.
@@ -220,6 +222,8 @@ This section covers two independent technology areas, charts and AI integration,
 
 **Decision**: pg-boss on the same PostgreSQL database, executed by a separate worker process built from the same repository (BACKGROUND-JOBS.md, ADR-005).
 
+M00 evidence (2026-11-18): transactional enqueue, outbox coupling, duplicate dispatch suppression and at-least-once retry with one idempotent effect passed locally. No pooler, PITR, worker service, dead-letter test or vendor operation was observed. D14 remains Proposed; see [ADR-005](../adr/ADR-005-background-jobs.md).
+
 **Why appropriate**: Required scheduled work is modest: idle-session auto-close every minute (BR-006, FR-046), purge of deleted accounts at 30 days (NFR-031), exam archiving (EC-013), export generation and expiry (FR-130..132), retention cleanup (NFR-020), and Phase 2-3 reminders, streak evaluation, AI generation and weekly leaderboards. A Postgres-backed queue gives transactional enqueueing next to business writes, so a job is never enqueued without its data, and removes a separate broker.
 
 **Advantages**: No Redis or message broker to host, secure or back up; jobs are covered by the existing backup and restore drill (NFR-103); at-least-once delivery with retries and dead-letter handling; cron scheduling and singleton keys.
@@ -252,6 +256,8 @@ This section covers two independent technology areas, charts and AI integration,
 
 **Decision**: OpenAPI 3.1 generated from Zod schemas (zod-to-openapi style generation) for the Phase 3 public `/v1` API only. The internal API used by the web client is not documented externally (NFR-060).
 
+M00 evidence (2026-11-18): `@asteasolutions/zod-to-openapi` 9.1.0 with zod 4.6.7 emitted a valid, deterministic OpenAPI 3.1 document. Redocly lint passed. oasdiff 1.39.0 detected a removed required property and exited 1 only with `--fail-on ERR`. No reference page was rendered. D16 remains Proposed; see [ADR-008](../adr/ADR-008-api-strategy.md).
+
 **Why appropriate**: The public contract needs a machine-readable description including the standard error format (FR-225), pagination (FR-224), key scopes (FR-221) and rate limit headers (FR-222, EC-026). Generating from the same Zod schemas used for validation prevents contract drift.
 
 **Advantages**: One source of truth; documentation and client generation come free; contract tests can run against the document.
@@ -267,6 +273,8 @@ This section covers two independent technology areas, charts and AI integration,
 ## D17 Deployment platform
 
 **Decision**: Managed PaaS hosting a web service, a worker service and managed PostgreSQL, plus an object store only if later needed and a CDN for static assets. The concrete vendor is an unresolved decision (U-A1) with a criteria checklist in DEPLOYMENT-ARCHITECTURE.md.
+
+M00 evidence (2026-11-18): the local embedded PostgreSQL 18.6 server installed `btree_gist` 1.8. No vendor instance, pooler, backup, PITR, worker service, SLA, price, region or DPA was observed. U-A1 remains open; D17 remains Proposed; see [ADR-009](../adr/ADR-009-deployment-platform.md).
 
 **Why appropriate**: The team is small and the load target is moderate (NFR-070). A managed platform delivers TLS (NFR-010), backups with 30-day retention (NFR-100), preview environments and horizontal scaling without operating servers. Containerised services keep the option to move vendors.
 
@@ -332,6 +340,8 @@ This section covers two independent technology areas, charts and AI integration,
 
 **Decision**: A notifications port with an adapter for a transactional email provider (vendor unresolved, U-A2) used first for password reset (FR-005); later for reminders and group invitations.
 
+M00 evidence (2026-11-18): the local sink path stored a SHA-256 token hash and AES-256-GCM ciphertext, sent one message per idempotency key, cleared the payload and kept the plaintext token out of six database locations and the log. No provider sandbox, signed webhook or deliverability test exists. U-A2 remains open; D21 remains Proposed.
+
 **Why appropriate**: Password reset is an MVP Must Have and requires reliable email. Putting it behind a port keeps delivery logic testable with a fake and the vendor replaceable.
 
 **Advantages**: Deliverability handled by specialists; templates versioned in the repository; no email content in logs (NFR-063).
@@ -345,6 +355,8 @@ This section covers two independent technology areas, charts and AI integration,
 **Requirements driven (NFR/FR IDs)**: NFR-011, NFR-030, NFR-063, FR-005, FR-150, FR-151, FR-201.
 
 ## Summary
+
+M00 evidence does not accept any technology decision. It narrows the open risks in D7, D14, D16, D17 and D21; vendor, live Google and reference-page gaps remain. Every status in this document stays Proposed.
 
 | Area | Choice | Replaces candidate? | ADR |
 |---|---|---|---|

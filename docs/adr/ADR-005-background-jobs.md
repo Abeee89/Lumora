@@ -23,6 +23,20 @@ Use pg-boss on the application's PostgreSQL database, with consumers in a separa
 - If the queue becomes a bottleneck, it can move to a dedicated store behind the job interface (extraction trigger).
 - Daily statistics rollups are deferred until p95 for statistics exceeds 700 ms.
 
+## M00 evidence update
+
+Date: 2026-11-18. Status stays Proposed. The spike record is [M00-EVIDENCE](../08-build/M00-EVIDENCE.md). It used pg-boss 12.38.2 on a scratch PostgreSQL 18.6 database with no connection pooler.
+
+| Claim | Observation | State |
+|---|---|---|
+| Atomic enqueue | `boss.send(..., { db: { executeSql } })` inside a manual transaction: rollback left 0 `pgboss.job` rows; commit left exactly 1 | PASS |
+| Outbox coupling | A rollback left 0 `outbox_events` rows; a commit left 1; a dispatcher called twice created 1 job, with 0 on the second call | PASS |
+| At-least-once delivery | A handler that threw once was attempted twice; the idempotent effect row stayed at 1 and `retry_count` was 1 | PASS for a thrown error |
+| Pooler mode | No managed pooler and no vendor trial existed; transaction and session modes were not exercised | NOT TESTED |
+| Operational controls | No dead-letter test, backoff schedule, queue-age alert, PITR, restore drill, worker service or SLA observation | NOT TESTED |
+
+The local evidence supports the outbox-based enqueue and an idempotent handler. It does not select a pooler mode. The fallback remains a direct or session-mode connection for the worker and a transaction-mode pooler with prepared statements disabled for web traffic. The spike does not prove vendor behavior or production readiness.
+
 ## Alternatives
 
 - BullMQ with Redis: higher throughput, extra infrastructure to host, secure and back up.

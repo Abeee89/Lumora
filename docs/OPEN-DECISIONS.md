@@ -1,6 +1,6 @@
 # Open Decisions
 
-> Status: Phase 8 decision register. Every row is **OPEN**, except OD-S01 which section G records as approved for M00 execution. Recommendations are audit proposals, not approved requirements. A decision closes only when the named owner, approval date, baseline version and evidence link are recorded.
+> Status: Phase 8 decision register. Every row is **OPEN**, except OD-S01 which section G records as approved for M00 execution. Section B.1 records M00 evidence; no other row is closed. Recommendations are audit proposals, not approved requirements. A decision closes only when the named owner, approval date, baseline version and evidence link are recorded.
 
 Priority rules:
 
@@ -35,7 +35,21 @@ Source identifiers below resolve within [PRD](02-requirements/PRD.md), [function
 | OD-S05 | Transactional email provider and one-time secret delivery | Select provider/region/DPA; place encrypted short-lived link payloads in the outbox and erase after delivery | Product and security owners / M00, M02 | U-A2; EXTERNAL-INTEGRATIONS; AUTH-05; GRP-07 |
 | OD-S06 | Timer calibration evidence | Measure server offset, background throttling and wrong-clock behavior; record an explicit client algorithm | Architecture owner / M00 evidence, M07 contract | NFR-052; NFR-090; U-A5 |
 
-OD-S01 is approved for execution by the record in section G, dated 2026-11-18. The row stays in the register as decision history. OD-S02..OD-S06 remain open until evidence exists.
+OD-S01 is approved for execution by the record in section G, dated 2026-11-18. The row stays in the register as decision history. OD-S02..OD-S06 remain open pending owner acceptance, including where M00 evidence now exists; see section B.1.
+
+### B.1 M00 evidence status (2026-11-18)
+
+The spike record is [08-build/M00-EVIDENCE.md](08-build/M00-EVIDENCE.md). Evidence narrows these decisions; it does not close them.
+
+| ID | Evidence in M00 | State | Closure proposal |
+|---|---|---|---|
+| OD-S02 | Lockout, revocation, 30-day expiry and password hashing passed. The Google callback route, state, PKCE and replay rejection passed; the live exchange did not (U-03). Better Auth created `text` ids and no unique `(providerId, accountId)` | Partially evidenced | Keep Better Auth provisional. Accept only after U-03 and an M02 `uuid`-mapping test; do not mark ADR-004 Accepted on local evidence |
+| OD-S03 | `disableImplicitLinking: true` refused verified and unverified same-email identities with zero sessions and zero links; a new identity created one user, one link and one session | Partially evidenced | Adopt refusal for the MVP; defer explicit merge until session revocation and credential recovery are designed. Security owner accepts in writing |
+| OD-S04 | Local embedded PostgreSQL 18.6 with `btree_gist` 1.8 only; no vendor instance, SLA, PITR, pooler, region, DPA or price | Not evidenced | Owner-approved vendor shortlist and trial account; complete the DEPLOYMENT-ARCHITECTURE section 8 checklist |
+| OD-S05 | Local sink stored a SHA-256 token hash and AES-256-GCM ciphertext, used idempotency and kept plaintext out of the database and log; no provider sandbox, webhook or deliverability test | Partially evidenced | Select provider, region and DPA; run the same evidence against the provider sandbox |
+| OD-S06 | No timer calibration test. U-01 default applied; M07 keeps its timer-evidence block | Deferred | Run the measurement in M07; do not claim NFR-052 or NFR-090 |
+
+OD-S02..OD-S06 remain **OPEN**. None is approved by this table.
 
 ## C. MVP milestone decisions
 
@@ -110,3 +124,4 @@ PRD U-2 (level formula), U-3 (review limit 50 and group cap 20), U-4 (five AI ge
 | Date | Approved scope | Evidence | Limits |
 |---|---|---|---|
 | 2026-11-18 | M00 charter in [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md): scope, throwaway-output rule, evidence rules, tasks M00-T01..M00-T14, timebox and spend limits | Owner instruction "approved" in the planning session; the plan file; this record | M00 only. No ADR is Accepted, no requirement baseline is approved, no other milestone and no Build Mode is authorized. OD-S02..OD-S06 close only on recorded evidence. |
+| 2026-11-18 | M00 close-out record: ADR-004, ADR-005, ADR-008 and ADR-009 amended with local evidence; supporting database, OpenAPI, integration and technology documents updated; teardown results recorded | [08-build/M00-EVIDENCE.md](08-build/M00-EVIDENCE.md); [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md) | Evidence only. No ADR is Accepted, no OD-S02..OD-S06 row is closed, no requirement baseline is approved, and M01 and Build Mode remain unauthorized. |

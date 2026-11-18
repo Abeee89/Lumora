@@ -2,7 +2,7 @@
 
 Lumora is a web application where learners plan study time, study with a timer, record sessions and compare actual effort with the plan. The planning prompts call it "Study Tracker"; the documents use Lumora.
 
-> Status: Phase 8 audit complete; the planning baseline remains unapproved and has build-blocking inconsistencies. No application code or migration exists. Build Mode has not been authorized; the M00 technical spike is authorized on 2026-11-18 only. See [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) and [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md).
+> Status: Phase 8 audit complete; the planning baseline remains unapproved and has build-blocking inconsistencies. No application code or migration exists. Build Mode has not been authorized. M00 was executed and torn down on 2026-11-18; its evidence is recorded and M01 remains blocked. See [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) and [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md).
 
 ## Reading order
 
@@ -13,13 +13,13 @@ Lumora is a web application where learners plan study time, study with a timer, 
 5. [06-api-integrations/API-ENDPOINTS.md](06-api-integrations/API-ENDPOINTS.md) and [05-ui-ux/PAGE-SPECIFICATIONS.md](05-ui-ux/PAGE-SPECIFICATIONS.md): contracts and screens.
 6. [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): build order.
 7. Phase 8: [FINAL-ARCHITECTURE-REVIEW.md](FINAL-ARCHITECTURE-REVIEW.md), [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [TRACEABILITY-MATRIX.md](TRACEABILITY-MATRIX.md).
-8. M00: [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md): approved spike charter and evidence rules.
+8. M00: [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md) and [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md): charter, results and teardown.
 
 Full list: [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md). Change history: [CHANGELOG.md](CHANGELOG.md).
 
 ## Key numbers
 
-82 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 2 build records. The baseline defines 164 functional requirements (98 MVP), 62 non-functional requirements, 32 business rules, 28 edge cases, 595 functional acceptance criteria, 19 modules, 41 tables, 125 internal and 39 public API operations, 16 MVP milestones, 7 Phase 2 milestones and 3 Phase 3 milestones.
+83 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 3 build records. The baseline defines 164 functional requirements (98 MVP), 62 non-functional requirements, 32 business rules, 28 edge cases, 595 functional acceptance criteria, 19 modules, 41 tables, 125 internal and 39 public API operations, 16 MVP milestones, 7 Phase 2 milestones and 3 Phase 3 milestones.
 
 ## Conventions
 

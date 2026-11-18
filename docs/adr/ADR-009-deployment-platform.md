@@ -22,6 +22,22 @@ Deploy on a managed PaaS with: a stateless web service (at least two instances),
 - Cost grows with instances; staging load tests (NFR-002, NFR-003, NFR-072) set the sizing.
 - Vendor migration is bounded work thanks to standard Postgres and containers.
 
+## M00 evidence update
+
+Date: 2026-11-18. Status stays Proposed. The spike record is [M00-EVIDENCE](../08-build/M00-EVIDENCE.md).
+
+| Claim | Observation | State |
+|---|---|---|
+| Local PostgreSQL | Embedded PostgreSQL 18.6 on Windows; `btree_gist` 1.8 installed; `version()` reported the x86_64-windows build | PASS for the local floor |
+| Vendor PostgreSQL | No vendor instance, no TLS, no pooler | NOT TESTED |
+| Backups and PITR | No backup, restore, PITR or restore drill | NOT TESTED |
+| Worker service | No vendor worker service was deployed | NOT TESTED |
+| Region, SLA, price, DPA | No contract, quote, SLA, region or DPA was read | NOT TESTED |
+| Error tracking | No vendor project and no token/email scrub test | NOT TESTED |
+| Email provider | Local sink only; no provider sandbox (U-05) | NOT TESTED |
+
+The embedded PostgreSQL 18.6 beta satisfies the local version floor but is not a vendor-managed service and is not a production baseline. Every vendor row in `DEPLOYMENT-ARCHITECTURE.md` section 8 remains blocked by U-02. No vendor is recommended and no platform is accepted. The next action is an owner-approved shortlist and trial account, not more local testing.
+
 ## Alternatives
 
 - Serverless-first platform: cold starts and database connection storms.

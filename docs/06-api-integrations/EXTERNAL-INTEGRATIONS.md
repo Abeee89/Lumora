@@ -16,15 +16,17 @@ General rules for all integrations:
 
 | # | Integration | Direction | Phase | Status |
 |---|---|---|---|---|
-| 1 | Google OAuth | Outbound redirect, inbound callback | MVP | Decided (callback path unverified) |
-| 2 | Transactional email | Outbound | MVP | Open: U-A2 |
+| 1 | Google OAuth | Outbound redirect, inbound callback | MVP | Partially verified: callback route, state, PKCE and same-email refusal; live Google not tested (U-03) |
+| 2 | Transactional email | Outbound | MVP | Open: U-A2. Local sink path verified; provider not tested (U-05) |
 | 3 | AI provider | Outbound | 3 | Open: U-A3 |
-| 4 | Error tracking | Outbound | MVP | Open: U-A7 |
+| 4 | Error tracking | Outbound | MVP | Blocked: no vendor and no scrub test (U-A7) |
 | 5 | Web Push | Outbound | 2 | Proposed, pending approval |
 | 6 | Object storage for exports | Outbound | MVP | Decided as a port; vendor follows U-A1 |
 | 7 | Uptime monitor | Inbound probe | MVP | Open: vendor not chosen |
 | 8 | CDN | Outbound delivery | MVP | Decided: platform-provided |
-| 9 | PaaS and managed PostgreSQL | Hosting | MVP | Open: U-A1 |
+| 9 | PaaS and managed PostgreSQL | Hosting | MVP | Open: U-A1. Local PostgreSQL 18.6 and `btree_gist` 1.8 only; vendor not tested (U-02) |
+
+M00 evidence (2026-11-18): the Google callback route, state, PKCE S256, replay rejection and same-email refusal were exercised; the live Google token exchange was not, and the account-linking decision stays open. The email port was exercised against a local sink; no transactional provider was tested. Error tracking, the PaaS and the email provider remain blocked. The record is [M00-EVIDENCE](../08-build/M00-EVIDENCE.md).
 
 ## 2. Integrations
 
@@ -42,7 +44,7 @@ General rules for all integrations:
 | Failure behaviour | User cancels at Google: login page shows a cancellation notice and no account is created (AC-FR-003-3). Google unreachable or token exchange fails: login page shows `internal_error` copy and email-password sign-in remains available |
 | Environment separation | One Google OAuth client and redirect URI set per environment |
 | Privacy basis | Data limited to what FR-003 needs (NFR-030). Age gate applies to new accounts (NFR-035) |
-| Status | Decided (ADR-004). The library-owned callback path `/api/auth/callback/google` is unverified; confirm in the Phase 7 spike (U-A4). Closing criterion: spike proves NFR-012 and NFR-013 and the callback path, otherwise the Auth.js fallback applies |
+| Status | Partially verified (ADR-004). The library-owned callback path exists; state, PKCE S256 and replay rejection were observed. The live Google token exchange was not tested (U-03). Same-email verified and unverified identities were refused with `account_not_linked`; OD-S03 stays open. Closing criterion: live Google callback with two verified test accounts and the accepted linking rule, otherwise the Auth.js fallback applies. |
 | Owner module and port | Authentication; Better Auth Google provider |
 
 ### 2.2 Transactional email
@@ -60,7 +62,7 @@ General rules for all integrations:
 | Failure behaviour | After retries are exhausted the job is dead-lettered and logged as `email_delivery_failed`. Password reset keeps the neutral response (AC-FR-005-1), so the user is not told; they may request again. An invite whose email failed remains valid and the admin can copy the link from GRP-07's one-time response |
 | Environment separation | Separate sender identity and key per environment; non-production sends only to an allow-list or a sink |
 | Privacy basis | Address processed to deliver FR-005 and invites; data processing agreement required (NFR-030) |
-| Status | Open: U-A2 (provider not chosen). Closing criteria: the provider meets every row below, and the owner records the choice in [TECHNOLOGY-DECISIONS.md](../03-architecture/TECHNOLOGY-DECISIONS.md) |
+| Status | Open: U-A2. The M00 local sink proved a 43-character token, a SHA-256 hash, AES-256-GCM ciphertext, an idempotency key and no plaintext token in six database locations or the notification log. No provider sandbox, signed webhook, bounce payload or deliverability check exists. Closing criteria: the provider meets every row below, and the owner records the choice in [TECHNOLOGY-DECISIONS.md](../03-architecture/TECHNOLOGY-DECISIONS.md). |
 | Owner module | Notifications |
 
 U-A2 selection criteria:
@@ -104,7 +106,7 @@ U-A2 selection criteria:
 | Timeout, retry, idempotency | Fire and forget with a short timeout; failure to report never affects the request |
 | Failure behaviour | Silent to the user; errors still appear in structured logs |
 | Privacy basis | Data minimisation (NFR-030, NFR-063); data processing terms required |
-| Status | Open: U-A7. Closing criteria: vendor supports scrubbing hooks and server-side rules, offers a DPA, and the scrub test passes |
+| Status | Blocked: U-A7. No vendor project exists and no seeded-token or seeded-email scrub test was run. Closing criteria remain: scrubbing hooks and server-side rules, a DPA, and a passing scrub test. |
 | Owner | Observability (cross-cutting) |
 
 ### 2.5 Web Push (Phase 2)
@@ -160,7 +162,7 @@ U-A2 selection criteria:
 | Integration | Detail | Status |
 |---|---|---|
 | CDN | Platform-provided delivery of static assets and Phase 2 audio files. No cookies or personal data cross it | Decided |
-| PaaS and managed PostgreSQL | Web service, worker service, managed database. Chosen against the checklist in [DEPLOYMENT-ARCHITECTURE.md](../03-architecture/DEPLOYMENT-ARCHITECTURE.md) section 8 | Open: U-A1. Closing criterion: ADR-009 updated with the vendor |
+| PaaS and managed PostgreSQL | Web service, worker service, managed database. Chosen against the checklist in [DEPLOYMENT-ARCHITECTURE.md](../03-architecture/DEPLOYMENT-ARCHITECTURE.md) section 8 | Open: U-A1. M00 observed local PostgreSQL 18.6 and `btree_gist` 1.8 only; no vendor, pooler, PITR, SLA or price. Closing criterion: ADR-009 updated with the vendor |
 
 ## 3. Failure-mode matrix
 
@@ -190,10 +192,10 @@ U-A2 selection criteria:
 
 | ID | Decision | Default stated | Closes in |
 |---|---|---|---|
-| U-A1 | PaaS vendor | Choose against the DEPLOYMENT-ARCHITECTURE checklist | Before Phase 7 deployment |
-| U-A2 | Transactional email provider | Any provider meeting the criteria in 2.2 | Before MVP release (FR-005 needs it) |
+| U-A1 | PaaS vendor | Choose against the DEPLOYMENT-ARCHITECTURE checklist (M00: local PostgreSQL only; no vendor) | Before Phase 7 deployment |
+| U-A2 | Transactional email provider | Any provider meeting the criteria in 2.2 (M00: local sink only) | Before MVP release (FR-005 needs it) |
 | U-A3 | AI provider and SDK | Adapter now; provider chosen before Phase 3 build | Before Phase 3 |
-| U-A4 | Better Auth acceptance versus fallback | Accept if a spike proves NFR-012 and NFR-013 | Phase 7 spike |
-| U-A7 | Error-tracking vendor | Any vendor supporting scrubbing and DPA | Before MVP release |
+| U-A4 | Better Auth acceptance versus fallback | Partial M00 evidence: lockout, revocation and expiry PASS; callback route partial; live Google U-03; native `uuid` mapping open for M02 | After U-03 and the M02 schema test |
+| U-A7 | Error-tracking vendor | Any vendor supporting scrubbing and DPA (M00: no vendor or scrub test) | Before MVP release |
 | U-4 | AI daily limit and consent wording | 5 per day; wording pending legal review | Before Phase 3 |
 | Push | Web Push approach (2.5) | VAPID, no vendor | Before Phase 2 |

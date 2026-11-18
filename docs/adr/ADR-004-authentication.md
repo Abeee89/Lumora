@@ -4,7 +4,7 @@
 
 ## Status
 
-Proposed, conditional on a spike (see Consequences).
+Proposed, conditional on owner acceptance. The M00 spike is recorded in the evidence update below.
 
 ## Context
 
@@ -23,6 +23,25 @@ Use Better Auth running inside the application with database-backed sessions. Lo
 - Library maturity is a residual risk: we own patching and must track security advisories.
 - The spike must demonstrate: five failures then a correct password refused for 15 min; a revoked session refused within 60 s; a session expiring after 30 days of inactivity with a controlled clock; audit events for each listed action.
 - Password reset depends on the email provider (U-A2).
+
+## M00 evidence update
+
+Date: 2026-11-18. Status stays Proposed. The spike record is [M00-EVIDENCE](../08-build/M00-EVIDENCE.md). It used Better Auth 1.7.25 on a scratch PostgreSQL 18.6 database. No production schema or product code was merged.
+
+| Claim | Observation | State |
+|---|---|---|
+| Lockout | Five wrong passwords produced `failedCount` 1 to 5 and `locked_until`; a correct password while locked returned `kind: "locked"` and created zero sessions; the same password one second after the window returned `kind: "ok"`; the counter cleared on success | PASS |
+| Revocation | `revokeSession` returned `{ "status": true }`; the next `getSession` returned `null`; measured 9.97 ms with `performance.now()` | PASS |
+| Inactivity expiry | `expiresAt - createdAt` was 2,592,000,000 ms; a session backdated in `expiresAt` and `updatedAt` returned `null` | PASS |
+| Password hashing | The stored password was a 161-character `node:crypto` scrypt value, not plaintext | PASS |
+| Google callback | The Next route returned an `accounts.google.com` URL with `code_challenge_method=S256` and a state cookie; the callback route existed; a replayed callback returned `state_mismatch` | PARTIAL: live Google token exchange not tested (U-03) |
+| Same-email linking | A verified and an unverified same-email provider identity both returned `account_not_linked` with zero sessions and zero links; a new provider identity created one user, one link and one session | PASS for the library path |
+| Identifier mapping | Better Auth created `user.id` and `session.id` as `text`; the values were UUIDv7; a native `uuid` column was proven only in a separate probe table | NOT PROVEN for the auth tables |
+| Account uniqueness | No unique constraint or index on `(providerId, accountId)` was created | OPEN: M02 must add one or prove an application-level guard |
+| CSRF and cookies | The state cookie was `HttpOnly; SameSite=Lax; Max-Age=300`; the session cookie was `HttpOnly; SameSite=Lax; Max-Age=2592000`; `Secure` was absent because the local server used HTTP | PARTIAL: CSRF checks and production HTTPS were not exercised |
+| Audit retention | Sign-in and lockout rows were written for failure, locked and success; no 90-day cleanup job was run | PARTIAL |
+
+The Auth.js fallback is not required by lockout, revocation or expiry. It remains available if the live Google path fails U-03 or if the M02 native-`uuid` experiment fails. The safe linking option observed is `accountLinking.disableImplicitLinking: true`; OD-S03 stays open until the security owner accepts it. The spike does not prove production readiness and does not close U-A4.
 
 ## Alternatives
 

@@ -26,10 +26,10 @@ This document plans the machine-readable contract for the public API only (FR-22
 
 | Option | Role | Status |
 |---|---|---|
-| `@asteasolutions/zod-to-openapi` | Default: registers Zod schemas and routes, emits OpenAPI 3.1 | Compatibility with the Zod major version used in the repo is **unverified**; confirm in the Phase 7 spike |
-| Native Zod JSON Schema export for `components.schemas` plus paths assembled by hand from the registry | Fallback if the default is incompatible | Also unverified; confirm in the same spike |
+| `@asteasolutions/zod-to-openapi` | Default: registers Zod schemas and routes, emits OpenAPI 3.1 | Observed compatible with zod 4.6.7: emitted valid OpenAPI 3.1.0; two runs were byte-identical. The repository must pin the same Zod major. |
+| Native Zod JSON Schema export for `components.schemas` plus paths assembled by hand from the registry | Fallback if the default is incompatible | Not exercised in M00; remains the fallback. |
 
-The registry design is the same for both options, so choosing the fallback changes only the generator script. No library version is asserted in this plan.
+The M00 spike used `@asteasolutions/zod-to-openapi` 9.1.0 with zod 4.6.7 and generated a valid document (see [M00-EVIDENCE](../08-build/M00-EVIDENCE.md)). This is a sample result, not a production version pin: the repository must pin the same Zod major or re-run the compatibility check.
 
 ## 4. Document structure
 
@@ -71,7 +71,7 @@ Operation rules that follow from the contract:
 | Item | Decision |
 |---|---|
 | Machine-readable document | `GET /v1/openapi.json` |
-| Human-readable reference page | A Phase 7 decision. Candidates are Scalar or Redoc rendered from the JSON. Not specified now, and no tool is selected |
+| Human-readable reference page | M00 decision for the MVP: none, because the MVP has no public API. Phase 3: Scalar is the first candidate and Redoc is the fallback. No renderer was exercised. |
 | Client SDK generation | Not planned |
 
 ## 7. Governance
@@ -80,15 +80,16 @@ Operation rules that follow from the contract:
 |---|---|
 | Additive changes (new optional response field, new endpoint, new optional request field) | Allowed within `/v1`; changelog entry required |
 | Breaking changes (remove, rename, retype, change semantics) | Require `/v2`; `/v1` stays available for the notice period (FR-223) |
-| Breaking-change check | A diff check between the committed document and the base branch in CI is recommended (an `oasdiff`-style tool; the specific tool is unverified and chosen in Phase 7) |
+| Breaking-change check | oasdiff 1.39.0 with `--fail-on ERR`, between the committed document and the base branch in CI. The default exit code is 0 even when a breaking change is found, so CI must pass the flag. |
 | Changelog | One entry per contract change, with contract version and date |
 | Review | A change to the registry, `Public*` schemas, or `openapi/v1.json` needs a reviewer who checks the breaking-change list |
 | Parity | Every PUB row in [API-ENDPOINTS.md](API-ENDPOINTS.md) has exactly one registry route per operation; PUB-05 and PUB-10 produce two operations each |
 
-## 8. Open items for the Phase 7 spike
+## 8. Open items and M00 results
 
-| Item | Closing criterion |
-|---|---|
-| Zod major version versus generator library | The default generator emits a valid 3.1 document from the repo's Zod version, or the fallback is adopted |
-| Diff tool for contract checks | A tool is chosen and runs in CI |
-| Human reference page | Scalar, Redoc, or none is chosen |
+| Item | M00 result | Remaining |
+|---|---|---|
+| Zod major version versus generator library | PASS for zod 4.6.7 with `@asteasolutions/zod-to-openapi` 9.1.0; valid OpenAPI 3.1.0 and deterministic output | Pin the same Zod major in the product, or re-run the check |
+| Diff tool for contract checks | oasdiff 1.39.0 chosen; `response-required-property-removed` detected; `--fail-on ERR` exits 1 | Add the CI step and the base-branch comparison |
+| Human reference page | None for the MVP; Scalar first candidate for Phase 3; Redoc fallback | Render and review before the Phase 3 public API ships |
+| Contract coverage | One path and two schemas only | Route parity, the 39-operation public surface, error catalog and spec-to-server validation |
