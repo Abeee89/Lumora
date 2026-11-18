@@ -6,8 +6,8 @@
 
 | Measure | Verified result |
 |---|---|
-| Documentation inventory | 80 Markdown documents: 73 baseline and 7 Phase 8 |
-| Owner approval evidence | 0 / 80 |
+| Documentation inventory | 82 Markdown documents: 73 baseline, 7 Phase 8 and 2 build records |
+| Owner approval evidence | 1 / 82: M00 charter only; the product baseline remains 0 / 80 |
 | Functional requirements | 164 total; 98 MVP |
 | Functional acceptance criteria | 595 identifiers; several criteria remain cross-phase, qualitative or semantically inconsistent |
 | Planned test identifiers | 667 including NFR and E2E aliases; executable test specifications: 0 |
@@ -54,7 +54,7 @@ Every MVP FR is blocked by the missing approved baseline. The table records addi
 | Gate | Required evidence | State |
 |---|---|---|
 | Documentation correction | Owner approves which recommended corrections may be applied | Open |
-| M00 spike charter | Explicit scope, throwaway-output rule, acceptance evidence and authorization; hosting choice only for vendor-dependent checks | Open |
+| M00 spike charter | Explicit scope, throwaway-output rule, acceptance evidence and authorization; hosting choice only for vendor-dependent checks | Approved 2026-11-18; execution evidence pending |
 | M01 product foundation | Corrected and approved baseline; B-06, CI ownership, retention ownership and production platform decisions resolved | Blocked |
 | M02 authentication | B-03 plus provider, email, age, CSRF, limiter, audit-event and reauthentication decisions resolved | Blocked |
 | M05/M06 planning and sessions | B-02 and B-07 resolved | Blocked |
@@ -64,6 +64,7 @@ Every MVP FR is blocked by the missing approved baseline. The table records addi
 | G2 release approval | Result of M15, not an M15 start condition | Open |
 
 M00 may produce evidence used to settle later decisions. It does not require approval of the entire product baseline, but it does require its own approved charter and explicit authorization. This removes the prior D-01/D-02/M00 cycle.
+The charter in [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md) was approved on 2026-11-18. M00 is authorized; no other gate changed.
 
 ## 5. Corrected implementation sequence
 
@@ -81,7 +82,7 @@ M00 may produce evidence used to settle later decisions. It does not require app
 
 ## 6. Recommended first milestone
 
-**M00 Technical spike**, after explicit authorization. Minimum charter:
+**M00 Technical spike**, authorized on 2026-11-18 under [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md). Minimum charter:
 
 - Verify auth-library callback, UUID mapping and same-email linking behavior.
 - Verify PostgreSQL 15+, `btree_gist`, pg-boss and the selected pooler only if a vendor is selected.
@@ -91,4 +92,4 @@ M00 may produce evidence used to settle later decisions. It does not require app
 
 ## 7. Authorization
 
-Build Mode remains stopped. Next owner action is to approve, reject or amend the blocker corrections in [OPEN-DECISIONS.md](OPEN-DECISIONS.md). Starting M00 still requires an explicit statement authorizing M00.
+Build Mode remains stopped. M00 is authorized by the owner on 2026-11-18 under [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md); no other milestone is authorized. The next owner action for Build Mode is to approve, reject or amend the blocker corrections in [OPEN-DECISIONS.md](OPEN-DECISIONS.md). M01 remains blocked.

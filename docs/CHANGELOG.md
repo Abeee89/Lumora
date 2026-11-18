@@ -2,6 +2,19 @@
 
 Documentation changes only. No application code exists.
 
+## 2026-11-18, M00 charter approved
+
+### Added
+- [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md): approved M00 charter, requirements mapping, scope, 14-task checklist, order, test protocols, documentation changes and risks.
+- [08-build/M00-EVIDENCE.md](08-build/M00-EVIDENCE.md): evidence template for the nine protocols.
+
+### Changed
+- Recorded M00 authorization in [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G and in the [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) gate model.
+- Updated the inventory counts in README.md and DOCUMENTATION-INDEX.md for the new build record.
+
+### Not changed
+- No ADR is Accepted, no requirement or baseline is approved, no application code or migration exists, and no milestone other than M00 is authorized.
+
 ## 2026-11-17, Phase 8 audit refresh
 
 Audit basis: commit `8e9ef3c` plus the working-tree documentation state.

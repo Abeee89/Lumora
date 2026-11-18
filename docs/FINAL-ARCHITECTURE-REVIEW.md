@@ -4,7 +4,7 @@
 
 ## 1. Scope and method
 
-- Audited 80 Markdown documents: 73 baseline planning documents and 7 Phase 8 governance documents.
+- Audited 80 Markdown documents: 73 baseline planning documents and 7 Phase 8 governance documents. The two build records added on 2026-11-18 are outside this audit.
 - Reviewed product discovery, PRD, FR/NFR/AC coverage, architecture, ADRs, ERDs, data lifecycle, UI/UX, API contracts, security, roadmap, testing and release gates.
 - Ran six independent read-only domain reviews: requirements, architecture/data, UI, API, security/roadmap and final-deliverable traceability.
 - Cross-checked 164 FRs, 62 NFRs, 32 BRs, 28 ECs, 595 functional ACs, 164 API operations, 19 modules, 41 tables and 26 milestones.

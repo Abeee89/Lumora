@@ -1,6 +1,6 @@
 # Open Decisions
 
-> Status: Phase 8 decision register. Every row is **OPEN**. Recommendations are audit proposals, not approved requirements. A decision closes only when the named owner, approval date, baseline version and evidence link are recorded.
+> Status: Phase 8 decision register. Every row is **OPEN**, except OD-S01 which section G records as approved for M00 execution. Recommendations are audit proposals, not approved requirements. A decision closes only when the named owner, approval date, baseline version and evidence link are recorded.
 
 Priority rules:
 
@@ -34,6 +34,8 @@ Source identifiers below resolve within [PRD](02-requirements/PRD.md), [function
 | OD-S04 | Hosting and PostgreSQL platform | Select a vendor supporting PostgreSQL 15+, `btree_gist`, HA, PITR, pooler mode and worker connections | Operations owner / vendor-dependent M00 checks, M01 | U-A1; ADR-009; DEPLOYMENT-ARCHITECTURE |
 | OD-S05 | Transactional email provider and one-time secret delivery | Select provider/region/DPA; place encrypted short-lived link payloads in the outbox and erase after delivery | Product and security owners / M00, M02 | U-A2; EXTERNAL-INTEGRATIONS; AUTH-05; GRP-07 |
 | OD-S06 | Timer calibration evidence | Measure server offset, background throttling and wrong-clock behavior; record an explicit client algorithm | Architecture owner / M00 evidence, M07 contract | NFR-052; NFR-090; U-A5 |
+
+OD-S01 is approved for execution by the record in section G, dated 2026-11-18. The row stays in the register as decision history. OD-S02..OD-S06 remain open until evidence exists.
 
 ## C. MVP milestone decisions
 
@@ -102,3 +104,9 @@ These source IDs remain open and must be recorded individually. Navigation and a
 ## F. Proposed defaults awaiting approval
 
 PRD U-2 (level formula), U-3 (review limit 50 and group cap 20), U-4 (five AI generations per day plus legal consent), U-5 (99.5% availability, RPO 24 hours, RTO 8 hours), U-7 (manual overlap rejection), U-8 (notes conflict UX), U-9 (60 public requests per minute), all numeric NFR targets, and all I-1..I-8 resolutions remain proposed. Bulk approval is acceptable only when the approval record names the exact baseline and list.
+
+## G. Approval record
+
+| Date | Approved scope | Evidence | Limits |
+|---|---|---|---|
+| 2026-11-18 | M00 charter in [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md): scope, throwaway-output rule, evidence rules, tasks M00-T01..M00-T14, timebox and spend limits | Owner instruction "approved" in the planning session; the plan file; this record | M00 only. No ADR is Accepted, no requirement baseline is approved, no other milestone and no Build Mode is authorized. OD-S02..OD-S06 close only on recorded evidence. |
