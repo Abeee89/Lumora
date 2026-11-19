@@ -9,6 +9,16 @@ export default defineConfig({
     alias: { "@": src },
   },
   test: {
+    coverage: {
+      provider: "v8",
+      include: ["src/**"],
+      reporter: ["text"],
+      // Milestone floors (DEFINITION-OF-DONE section 2) are set where M01 has logic:
+      // the shared kernel. Module code arrives with M02 and carries its own floor.
+      thresholds: {
+        "src/kernel/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
+      },
+    },
     projects: [
       {
         extends: true,

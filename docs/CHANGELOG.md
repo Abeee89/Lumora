@@ -2,6 +2,28 @@
 
 Documentation changes and build evidence. M01 application code is tracked from 2026-11-19.
 
+## 2026-11-19, M01 project foundation
+
+### Added
+- [08-build/M01-EVIDENCE.md](08-build/M01-EVIDENCE.md): environment and versions, one section per CI stage and runtime check with the command and raw output, per-row checklist status, nine limitations and the Definition of Done check.
+- Application and tooling: `src/kernel/{config,env,errors,idempotency,logger,outbox,registries,time}.ts`, `src/app/{layout,error,not-found}.tsx` with `globals.css`, `src/app/api/health/route.ts`, `src/app/unsupported-browser/page.tsx`, `src/ui/shell.tsx`, `src/ui/focus-heading.tsx`, `src/ui/nav.ts`, `src/worker/index.ts`, `tools/boundaries.ts`, `scripts/{check-boundaries,apply-migrations}.ts`, `db/migrations/0001_shared_kernel.sql`, `Dockerfile`, `.github/workflows/ci.yml`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`, `vitest.config.ts`, `.env.example`, `README.md`.
+- Tests: 10 unit files (35 tests) and two integration files (6 tests) plus the boundary fixtures.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): M01 rows with evidence are checked and an "As built" note records the deferred deliverables; M11 and M14 dependencies, the M02 database list and acceptance rows, and the M05 and M06 requirement split were corrected.
+- [03-architecture/MODULE-BOUNDARIES.md](03-architecture/MODULE-BOUNDARIES.md): section 8 now records the implemented checker and its fixtures; section 7 no longer claims no files exist in the phase.
+- [04-database/DATA-DICTIONARY.md](04-database/DATA-DICTIONARY.md): `idempotency_keys` records that it ships in M02 with the `users` foreign key.
+- [README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) and [OPEN-DECISIONS.md](OPEN-DECISIONS.md): inventory at 84 documents, M01 authorization and scope.
+
+### Results
+- Boundaries, typecheck, lint, 35 unit tests, 6 integration tests and the production build pass on Node 24.13.1, TypeScript 6.0.3, Next.js 16.4.6, pg-boss 12.38.2, PostgreSQL 18.6 (embedded).
+- The worker dispatches a committed outbox row exactly once; a rollback leaves no row; a duplicate `idempotency_key` is rejected by the database.
+- The shell and the three system pages answer in Chromium at 360 px and 1280 px with no horizontal scroll, contrast above 7:1, a working skip link and no console errors.
+
+### Not changed
+- No ADR is Accepted, no open-decision row is closed, no vendor is selected and no requirement baseline is approved.
+- No product page, no module directory and no user table exists; M02 is not authorized.
+- Stage 8 (staging deploy), stage 5 (preview environment), axe and the container image build are unexecuted; each names its cause in the evidence file.
 
 ## 2026-11-18, M00 close-out
 

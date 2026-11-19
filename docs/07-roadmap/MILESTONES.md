@@ -145,14 +145,15 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** boundary violation fixture, outbox dispatch integration test, config-module test, scrub test, health endpoint test, axe on SY-1..SY-3.
 - **Acceptance criteria:** a deliberate upward import fails CI; `GET /api/health` returns `{"status":"ok"}` on staging; an outbox row written in a transaction is dispatched by the worker exactly once. AC-FR-139-*; AC-NFR for NFR-050, NFR-062, NFR-063 as listed in the file.
 - **Completion checklist:**
-  - [ ] Boundary tooling fails on an upward import
+  - [x] Boundary tooling fails on an upward import
   - [ ] CI stages 1, 2, 3, 4, 7, 8 run on every merge
   - [ ] Staging deploy from the single image; health check passes
-  - [ ] Outbox dispatch once-only test passes
-  - [ ] Error envelope, logging and configuration module in place
-  - [ ] Empty purge, export and archive-guard registries defined
-  - [ ] App shell responsive at 360 px and 1280 px
+  - [x] Outbox dispatch once-only test passes
+  - [x] Error envelope, logging and configuration module in place
+  - [x] Empty purge, export and archive-guard registries defined
+  - [x] App shell responsive at 360 px and 1280 px
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-19):** evidence, per-row proof and the open rows are in [08-build/M01-EVIDENCE.md](../08-build/M01-EVIDENCE.md). Deferred from the deliverable list because their inputs are undecided or absent: Phosphor icons (U-D11), palette and typeface decisions (U-D2, U-D3), shadcn components, preview environments and the staging deploy (U-A1), axe (no browser automation dependency installed), and stage 5 and stage 8 of CI. `idempotency_keys` ships in M02.
 
 ### M02 Authentication and profile
 

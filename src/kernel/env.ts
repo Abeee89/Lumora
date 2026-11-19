@@ -12,7 +12,7 @@ const schema = z.object({
 
 export type Env = z.infer<typeof schema>;
 
-export function readEnv(source: NodeJS.ProcessEnv = process.env): Env {
+export function readEnv(source: Readonly<Record<string, string | undefined>> = process.env): Env {
   const parsed = schema.safeParse(source);
   if (!parsed.success) {
     throw new Error(`Invalid environment: ${parsed.error.issues.map((issue) => issue.path.join(".")).join(", ")}`);

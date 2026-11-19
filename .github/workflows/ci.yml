@@ -29,8 +29,8 @@ jobs:
         run: npm run lint
       - name: Stage 2 boundaries
         run: npm run boundaries
-      - name: Stage 3 unit tests
-        run: npm run test
+      - name: Stage 3 unit tests with coverage floors
+        run: npm run test:coverage
 
   integration:
     name: Stage 4 integration

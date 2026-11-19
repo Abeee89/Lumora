@@ -16,7 +16,15 @@ export interface WorkerHandle {
   stop(): Promise<void>;
 }
 
-export async function startWorker(databaseUrl: string): Promise<WorkerHandle> {
+export interface WorkerOptions {
+  /** Overridable so tests can drive the relay loop without waiting a full interval. */
+  relayIntervalMs?: number;
+}
+
+export async function startWorker(
+  databaseUrl: string,
+  options: WorkerOptions = {},
+): Promise<WorkerHandle> {
   const boss = new PgBoss({ connectionString: databaseUrl, schema: "pgboss" });
   boss.on("error", (error: unknown) => logger.error({ err: error }, "worker.queue_error"));
   await boss.start();
@@ -26,7 +34,7 @@ export async function startWorker(databaseUrl: string): Promise<WorkerHandle> {
     send: (name, data, options) => boss.send(name, data, options),
   };
 
-  const intervalMs = config.outbox.relayIntervalSeconds * 1000;
+  const intervalMs = options.relayIntervalMs ?? config.outbox.relayIntervalSeconds * 1000;
   let inFlight: Promise<void> = Promise.resolve();
   let stopping = false;
 
@@ -39,6 +47,8 @@ export async function startWorker(databaseUrl: string): Promise<WorkerHandle> {
     }
   };
 
+  // One pass at start, then one per interval; passes never overlap.
+  inFlight = inFlight.then(relayOnce);
   const timer = setInterval(() => {
     if (stopping) return;
     inFlight = inFlight.then(relayOnce);
@@ -62,11 +72,17 @@ const invokedDirectly =
   process.argv[1] !== undefined &&
   pathToFileURL(process.argv[1]).href === import.meta.url;
 if (invokedDirectly) {
-  const handle = await startWorker(requireDatabaseUrl(readEnv()));
-  const shutdown = (signal: string) => {
-    logger.info({ signal }, "worker.shutdown");
-    void handle.stop().then(() => process.exit(0));
-  };
-  process.on("SIGTERM", () => shutdown("SIGTERM"));
-  process.on("SIGINT", () => shutdown("SIGINT"));
+  try {
+    const handle = await startWorker(requireDatabaseUrl(readEnv()));
+    const shutdown = (signal: string) => {
+      logger.info({ signal }, "worker.shutdown");
+      void handle.stop().then(() => process.exit(0));
+    };
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
+  } catch (error) {
+    // A structured line beats a stack trace for whoever reads the container log.
+    logger.error({ err: error }, "worker.start_failed");
+    process.exit(1);
+  }
 }

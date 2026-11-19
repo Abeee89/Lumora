@@ -1,14 +1,9 @@
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-
-import EmbeddedPostgres from "embedded-postgres";
 import { Client, Pool } from "pg";
 import { PgBoss } from "pg-boss";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { appendOutboxEvent, relayOutbox, type JobQueue } from "@/kernel/outbox";
-import { applyMigrations } from "../../scripts/apply-migrations";
+import { startTestDatabase, type TestDatabase } from "./support/database";
 
 /**
  * MILESTONES M01, integration evidence: an outbox row written inside a transaction is
@@ -19,44 +14,20 @@ import { applyMigrations } from "../../scripts/apply-migrations";
  * embedded server so the evidence is reproducible on a workstation.
  */
 describe("outbox relay against PostgreSQL (ADR-005)", () => {
-  let connectionString: string;
-  let stopDatabase: (() => Promise<void>) | undefined;
+  let database: TestDatabase;
   let boss: PgBoss;
   let pool: Pool;
   let adminClient: Client;
 
   beforeAll(async () => {
-    const provided = process.env.DATABASE_URL;
-    if (provided !== undefined) {
-      connectionString = provided;
-    } else {
-      const dataDir = await mkdtemp(join(tmpdir(), "lumora-pg-"));
-      const port = 55432;
-      const postgres = new EmbeddedPostgres({
-        databaseDir: dataDir,
-        user: "lumora",
-        password: "lumora",
-        port,
-        persistent: false,
-      });
-      await postgres.initialise();
-      await postgres.start();
-      await postgres.createDatabase("lumora_test");
-      connectionString = `postgresql://lumora:lumora@localhost:${port}/lumora_test`;
-      stopDatabase = async () => {
-        await postgres.stop();
-        await rm(dataDir, { recursive: true, force: true });
-      };
-    }
+    database = await startTestDatabase();
 
-    await applyMigrations(connectionString);
-
-    boss = new PgBoss({ connectionString, schema: "pgboss" });
+    boss = new PgBoss({ connectionString: database.connectionString, schema: "pgboss" });
     await boss.start();
     await boss.createQueue("test.noop", { policy: "stately" });
 
-    pool = new Pool({ connectionString });
-    adminClient = new Client({ connectionString });
+    pool = new Pool({ connectionString: database.connectionString });
+    adminClient = new Client({ connectionString: database.connectionString });
     await adminClient.connect();
   }, 240_000);
 
@@ -64,7 +35,7 @@ describe("outbox relay against PostgreSQL (ADR-005)", () => {
     await adminClient?.end();
     await pool?.end();
     await boss?.stop({ graceful: false });
-    await stopDatabase?.();
+    await database?.stop();
   });
 
   const jobCount = async (): Promise<number> => {

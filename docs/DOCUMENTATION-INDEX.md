@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Status: Updated by the Phase 8 audit, the M00 approval and the M00 close-out. This index covers 83 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 3 build records. Owner approval evidence exists only for the M00 charter (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved.
+> Status: Updated by the Phase 8 audit, the M00 close-out and M01. This index covers 84 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 4 build records. Owner approval evidence exists only for the M00 charter and the M01 authorization (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved.
 
 Product name in all documents: Lumora (the planning prompts call it "Study Tracker").
 
@@ -23,6 +23,7 @@ Product name in all documents: Lumora (the planning prompts call it "Study Track
 | [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md) | Approved M00 charter, scope, checklist, tests and risks |
 | [08-build/M00-EVIDENCE.md](08-build/M00-EVIDENCE.md) | M00 evidence template and results |
 | [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md) | M00 results, limitations, teardown and next-step record |
+| [08-build/M01-EVIDENCE.md](08-build/M01-EVIDENCE.md) | M01 commands, raw output, checklist status, limitations and the Definition of Done check |
 
 ## Root
 
