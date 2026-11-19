@@ -85,8 +85,8 @@ The charter in [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION
 
 **M00 Technical spike** was executed and torn down on 2026-11-18. Local evidence supports the auth, queue and OpenAPI directions; live Google, the vendor platform, the email provider, error tracking and timer calibration remain open. The full record is [08-build/M00-COMPLETION-REPORT.md](08-build/M00-COMPLETION-REPORT.md).
 
-The next milestone is **M01 Project foundation**, not M02. M01 is not authorized. Before M01 planning can start, the owner must accept or reject the M00 amendments (U-06), resolve the baseline corrections B-01, B-02, B-06 and B-09 (U-07), and set the needed-by milestone for the vendor decisions (U-A1, U-A2, U-A7).
+The next milestone is **M01 Project foundation**, not M02, and it was authorized on 2026-11-19 (approval record row in [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G). The C-07 milestone-gate corrections are applied: `idempotency_keys` moved to M02 (B-06), FR-036 actuals moved to M06 (B-07), M02 endpoint rows separated from M13 wizard rows, and the M11/M14 dependency edges repaired (OD-M20). B-01, B-02, B-09 and the OD rows remain unresolved by that authorization, and vendor decisions carry needed-by milestones: U-A1 before the M01 staging deploy, U-A2 before M02 close, U-A7 at M15.
 
 ## 7. Authorization
 
-Build Mode remains stopped. M00 was authorized, executed and torn down on 2026-11-18 under [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md); no other milestone is authorized. The next owner action is to accept, reject or amend the M00 amendments and the blocker corrections in [OPEN-DECISIONS.md](OPEN-DECISIONS.md). M01 remains blocked by U-06 and U-07.
+Build Mode is authorized for **M01 only**. M00 was executed and torn down on 2026-11-18 under [08-build/M00-IMPLEMENTATION-PLAN.md](08-build/M00-IMPLEMENTATION-PLAN.md); M01 was authorized on 2026-11-19. M02..M15 remain unauthorized and are blocked by the owner decisions named in [OPEN-DECISIONS.md](OPEN-DECISIONS.md).

@@ -153,7 +153,7 @@ The diagram shows the principal edges only; every module also depends on User pr
 
 Events are delivered in-process within the originating transaction when the effect must be atomic (for example the XP ledger entry with the session save, EC-017). Effects that may be delayed are recorded as outbox records and executed as jobs.
 
-## 7. Directory layout convention (prose; no files are created in this phase)
+## 7. Directory layout convention
 
 The repository has one top-level application. Inside it there is a directory per module. Each module directory has these sub-areas, named consistently:
 
@@ -165,6 +165,8 @@ The repository has one top-level application. Inside it there is a directory per
 
 Separate top-level areas hold adapters (pages, route handlers, server actions, job handlers), shared kernel code (time module, configuration module, error envelope, result types, validation helpers, logger), and UI components. The shared kernel contains no business rules. Test directories mirror the module structure.
 
-## 8. Boundary enforcement (requirement for Phase 7, not implemented now)
+## 8. Boundary enforcement
 
-Enforcement is by tooling, not convention: a dependency-cruiser or ESLint boundaries configuration encodes the rank table in section 4, forbids imports other than a module's public interface area, and fails CI on a violation or on a cycle. The shared kernel may not import any module. Adapters may import any module's public interface. This requirement is recorded here so that Phase 7 includes the configuration in the first sprint.
+Enforcement is by tooling, not convention: a checker encodes the rank table in section 4, forbids imports other than a module's public interface (`src/modules/<name>/public.ts`), and fails CI on a violation. The shared kernel may not import any module. Adapters may import any module's public interface.
+
+Implemented in M01 as `tools/boundaries.ts`, run by `npm run boundaries` (CI stage 2). Fixtures in `tests/fixtures/boundary` prove an upward import, a deep cross-module import and a kernel import of a module all fail. A cycle cannot form while every module edge goes strictly downward in rank.

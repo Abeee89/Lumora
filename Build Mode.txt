@@ -7,8 +7,7 @@ You are acting as a Senior Full-Stack Developer, Software Architect, and Technic
 Your task is to implement the Study Tracker application based on the approved planning and documentation.
 
 PROJECT LOCATION:
-`C:/portofolio/project/Lumora`
-
+D:\Portofolio\Lumora
 ### SOURCE OF TRUTH
 
 Before performing any implementation, inspect the following documents:

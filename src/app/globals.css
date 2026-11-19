@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/*
+ * Tokens are the committed values from 05-ui-ux/COLOR-TYPOGRAPHY.md.
+ * U-D2 (palette) and U-D3 (typeface) are not approved: this file is the single
+ * switch point once they are, and nothing else may hold a hex value.
+ * Typeface: the documented fallback stack, because Atkinson is not self-hosted yet.
+ */
+:root {
+  color-scheme: light dark;
+
+  --canvas: #f6f4ee;
+  --surface: #ffffff;
+  --sunken: #ece8df;
+  --border: #d9d4c8;
+  --border-strong: #847e70;
+  --ink: #1b2428;
+  --ink-2: #454f55;
+  --muted: #5b656a;
+  --primary: #0e5a58;
+  --primary-hover: #0a4846;
+  --on-primary: #ffffff;
+  --primary-soft: #dcebe8;
+  --on-primary-soft: #0a4846;
+  --accent: #e9a514;
+  --on-accent: #1b2428;
+  --accent-strong: #9c6500;
+  --accent-soft: #fbebc4;
+  --on-accent-soft: #6b4500;
+  --error: #b3261e;
+  --error-soft: #fbe3e0;
+  --focus: #0b6b68;
+
+  --radius-card: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #111618;
+    --surface: #181e21;
+    --sunken: #0c1012;
+    --border: #2c363a;
+    --border-strong: #7b8788;
+    --ink: #e8ecea;
+    --ink-2: #bcc5c4;
+    --muted: #99a3a3;
+    --primary: #5cc8bf;
+    --primary-hover: #7ad6ce;
+    --on-primary: #0a1f1e;
+    --primary-soft: #173433;
+    --on-primary-soft: #a5e4de;
+    --accent: #f0b232;
+    --on-accent: #0a1f1e;
+    --accent-strong: #f0b232;
+    --accent-soft: #3a2c0c;
+    --on-accent-soft: #f5c96a;
+    --error: #f2877f;
+    --error-soft: #3c1a18;
+    --focus: #7ad6ce;
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary-soft: var(--on-primary-soft);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent-soft: var(--on-accent-soft);
+  --color-error: var(--error);
+  --color-error-soft: var(--error-soft);
+  --color-focus: var(--focus);
+
+  --font-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 10px;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Durations, times and counts use tabular figures (COLOR-TYPOGRAPHY section 8). */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

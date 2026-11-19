@@ -635,6 +635,8 @@ Owner: Shared kernel. No `updated_at`.
 | response_body | jsonb | yes | | | | |
 | expires_at | timestamptz | no | | | | Creation plus 7 days (R8). |
 
+Ships in M02, not M01: the primary key carries a foreign key to `users` (B-06). The M01 helper `runIdempotent` defines the replay contract against a store port; the relational adapter lands with this table.
+
 ### outbox_events
 
 Owner: Shared kernel (ADR-005).

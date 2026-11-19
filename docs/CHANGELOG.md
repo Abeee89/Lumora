@@ -1,6 +1,7 @@
 # Changelog
 
-Documentation changes only. No application code exists.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19.
+
 
 ## 2026-11-18, M00 close-out
 

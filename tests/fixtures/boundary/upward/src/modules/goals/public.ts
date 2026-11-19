@@ -1,0 +1,1 @@
+export const goalOf = () => 120;

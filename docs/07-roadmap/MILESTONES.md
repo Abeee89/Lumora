@@ -38,10 +38,10 @@ Endpoint ids (`AUTH-01`, `SESS-03`) are from [API-ENDPOINTS.md](../06-api-integr
 | M08 | Daily and subject goals | M | M07 | 12 | After Timer so progress is verified against real timer sessions |
 | M09 | Calendar | M | M08 | 14 | Read-only over sessions and plans |
 | M10 | Tasks and priorities | M | M03 | 9 | Only needs Topics; may be built any time after M03 (see section 3) |
-| M11 | Notes | L | M03 | 10 | Only needs Topics; may be built any time after M03 (see section 3) |
+| M11 | Notes | L | M03, M07 | 10 | Only needs Topics; FR-049 note prompt needs Timer (M07) |
 | M12 | Statistics | L | M08, M09 | 13 | Before Dashboard: FR-024 reads STAT-04 |
 | M13 | Dashboard and onboarding | M | M07, M08, M10, M12 | adapter composition | Composition over Goals, Timer, Plans, Tasks, Analytics |
-| M14 | Data export and account deletion | L | M13 | 2 | Last, because every module must have registered its purge and export hooks |
+| M14 | Data export and account deletion | L | M13, M10, M11 | 2 | Last, because every module (including Tasks and Notes) must have registered its purge and export hooks |
 | M15 | MVP hardening and release | L | M14 | all | Release gate |
 | P2-01 | Reminders and notifications | L | M15 | 16 | First in Phase 2 for retention (R9) |
 | P2-02 | Habit streak | M | M15; sequenced after P2-01 | 15 | Streak first, XP second |
@@ -129,7 +129,7 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Scope (FR/NFR):** FR-139 (responsive layout shell); NFR-050 (health endpoint, uptime hook), NFR-061 (traceability tooling), NFR-062 (configuration defaults in one place), NFR-063 (structured logs with scrubbing), NFR-080, NFR-081, NFR-085, NFR-086 (browser and viewport targets in the shell). Decisions: ADR-001, ADR-003, ADR-005, ADR-006, ADR-011.
 - **Dependencies:** M00
 - **Modules:** shared kernel, worker entry point
-- **Database changes:** `idempotency_keys`, `outbox_events`, `rate_limit_counters`
+- **Database changes:** `outbox_events`, `rate_limit_counters`. `idempotency_keys` moves to M02: its primary key carries a foreign key to `users` (B-06).
 - **UI pages:** SY-1, SY-2, SY-3, app shell and navigation (NAVIGATION-STRUCTURE)
 - **API:** SYS-01 (`GET /api/health`)
 - **Jobs:** outbox dispatcher (pg-boss)
@@ -164,13 +164,13 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Scope (FR/NFR):** FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-008, FR-009, FR-134, FR-135, FR-137, FR-138 (endpoint side; wizard UI is M13); NFR-010 to NFR-016, NFR-020, NFR-035. Age confirmation (NFR-035, U-6 wording), password of at least 10 characters (NFR-011), lockout (NFR-012), revocation (NFR-013), CSRF (NFR-014), audit events (NFR-020).
 - **Dependencies:** M01
 - **Modules:** Authentication (rank 1), User profile (rank 2), Notifications email port
-- **Database changes:** `users`, `auth_accounts`, `auth_sessions`, `auth_verifications`, `auth_audit_events`, `user_profiles`
+- **Database changes:** `users`, `auth_accounts`, `auth_sessions`, `auth_verifications`, `auth_audit_events`, `user_profiles`, `idempotency_keys` (moved from M01, B-06)
 - **UI pages:** PU-1, PU-2, PU-3, PU-4, PU-5, PU-6; A-15 (profile, sign-ins, appearance, rollover sections only)
 - **API:** AUTH-01..AUTH-09; PROF-01, PROF-02, PROF-03 (profile, settings, onboarding step). PROF-04..PROF-08 belong to M14.
 - **Jobs:** password-reset email (event), auth audit retention cleanup (daily, 90 days), password-reset token and expired-session cleanup (daily)
 - **Deliverables:** email adapter behind the notification port (provider from U-A2); Google sign-in; rollover hour and timezone context (`GetUserClockContext`); theme preference; the reusable ownership contract test helper.
 - **Tests:** unit (lockout, password rules); integration (token single use, revoke-all on reset); API for every AUTH and PROF row; AC-E2E-10 cross-user pattern established as the reusable ownership contract test (NFR-016) that every later milestone's resources must adopt; CSRF; axe on PU-1..PU-6 and A-15.
-- **Acceptance criteria:** AC-FR-001-* to AC-FR-006-*, AC-FR-008-*, AC-FR-009-*, AC-FR-134-*, AC-FR-135-*, AC-FR-137-*, AC-FR-138-*; AC-E2E-10 (partial: unauthenticated redirect and pattern); AC-E2E-06 (timezone change, profile part).
+- **Acceptance criteria:** AC-FR-001-* to AC-FR-006-*, AC-FR-008-*, AC-FR-009-*; endpoint rows only: AC-FR-134-3, AC-FR-134-4, AC-FR-135-2, AC-FR-137-4, AC-FR-138-1 to AC-FR-138-4; AC-E2E-10 (partial: unauthenticated redirect and pattern); AC-E2E-06 (timezone change, profile part). The wizard and dashboard rows (AC-FR-134-1, AC-FR-134-2, AC-FR-135-1, AC-FR-135-3, AC-FR-135-4, AC-FR-136-*, AC-FR-137-1 to AC-FR-137-3) are owned by M13 (B-07/C-07).
 - **Completion checklist:**
   - [ ] Register, sign in, sign out, Google sign-in, reset, sign-in management work end to end
   - [ ] Lockout, revocation and age confirmation verified (NFR-012, NFR-013, NFR-035)
@@ -241,9 +241,9 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **UI pages:** A-6
 - **API:** PLAN-01..PLAN-06 (MVP behavior; the drag, resize and keyboard use of PLAN-04 is Phase 2)
 - **Jobs:** none
-- **Deliverables:** overlap detection with `confirmedWarnings`; exam-date warning; missed marking; the planned-versus-actual fields of PLAN-01 and PLAN-03 return planned values until M06 supplies sessions, then are completed in M06 (composition direction to be confirmed against SDD at scoping; recorded under Open items).
+- **Deliverables:** overlap detection with `confirmedWarnings`; exam-date warning; missed marking. FR-036 actual values and AC-FR-036-* are owned by M06, which is the first milestone with sessions: PLAN-01 and PLAN-03 return planned values only and their actual fields are added in M06 (B-07).
 - **Tests:** unit (overlap, past read-only, exam warning); ownership contract; DST-day plan entry.
-- **Acceptance criteria:** AC-FR-030-* to AC-FR-038-*.
+- **Acceptance criteria:** AC-FR-030-* to AC-FR-035-*, AC-FR-037-*, AC-FR-038-*. AC-FR-036-* moves to M06 (B-07).
 - **Completion checklist:**
   - [ ] Create, edit, delete, missed and list work with warnings requiring confirmation
   - [ ] Past entries are read-only (FR-035)
@@ -266,7 +266,7 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Jobs:** none (auto-close is M07)
 - **Deliverables:** day allocation across midnight and DST (AC-E2E-05, NFR-091); idempotent save by request key (NFR-053); optimistic concurrency (NFR-094); manual entries flagged and excluded from future XP and leaderboards; events SessionCompleted, SessionEdited, SessionDeleted; plan unlink on deletion via event.
 - **Tests:** unit (allocation: midnight, DST spring and fall, rollover hour); integration (idempotent replay, concurrent edits); ownership contract; AC-E2E-05.
-- **Acceptance criteria:** AC-FR-041-* (session side), AC-FR-042-* to AC-FR-044-*, AC-FR-047-*, AC-FR-048-*; AC-E2E-05, AC-E2E-06 (session part), AC-E2E-10 (session part).
+- **Acceptance criteria:** AC-FR-036-* (moved from M05, B-07), AC-FR-041-* (session side), AC-FR-042-* to AC-FR-044-*, AC-FR-047-*, AC-FR-048-*; AC-E2E-05, AC-E2E-06 (session part), AC-E2E-10 (session part).
 - **Completion checklist:**
   - [ ] Manual add, edit, delete, list work; day allocations correct across midnight and DST
   - [ ] Replay of the same request key returns the same result
