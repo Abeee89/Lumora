@@ -1,5 +1,0 @@
-{
-  "to": "ada@example.com",
-  "subject": "Reset your Lumora password",
-  "text": "Use this link to choose a new password. It works once and expires in 60 minutes.\n\nhttp://localhost:3000/reset-password?token=gHVk1KNGjKX0mZUuQ4aojT5dPAK_Hz3ll8dx0XgOoNk\n\nIf you did not ask for this, you can ignore the message."
-}

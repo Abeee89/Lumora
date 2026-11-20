@@ -67,7 +67,7 @@ export function AppearanceForm({ initial, version }: { initial: Theme; version: 
       <fieldset className="space-y-2" disabled={pending}>
         <legend className="text-sm font-semibold text-ink">Theme</legend>
         {options.map((option) => (
-          <span key={option} className="flex min-h-11 items-center gap-3">
+          <label key={option} className="flex min-h-11 w-fit items-center gap-3">
             <input
               id={`theme-${option}`}
               type="radio"
@@ -75,12 +75,10 @@ export function AppearanceForm({ initial, version }: { initial: Theme; version: 
               value={option}
               checked={theme === option}
               onChange={() => void apply(option)}
-              className="size-6 accent-primary"
+              className="pointer-events-none size-6 accent-primary"
             />
-            <label className="text-[15px] text-ink" htmlFor={`theme-${option}`}>
-              {themeLabels[option]}
-            </label>
-          </span>
+            <span className="text-[15px] text-ink">{themeLabels[option]}</span>
+          </label>
         ))}
       </fieldset>
 

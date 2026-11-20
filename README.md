@@ -6,9 +6,15 @@ The product, architecture, database, UI and API contracts live in [`docs/`](docs
 
 ## Build state
 
-M01 (project foundation) only. The shell, the shared kernel, the boundary checker and the
-outbox relay exist; no product page or route ships before M02, so the navigation renders no
-items ([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2).
+M02 (authentication and profile) is built and verified on the M01 foundation. Accounts, sign-in,
+sign-out, sign-in management, password reset, the age gate, profile and appearance settings and
+the Google routes exist, with the shell, the shared kernel, the boundary checker, the outbox
+relay and one scheduled cleanup job beneath them. Google sign-in needs an OAuth client (U-5) and
+the reset email needs a provider (U-A2); no staging host exists (U-A1). The navigation shell
+arrives with the first MVP destinations, so the header carries the shipped pages only
+([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2). Evidence and the open
+rows are in [M02-EVIDENCE](docs/08-build/M02-EVIDENCE.md) and
+[M02-COMPLETION-REPORT](docs/08-build/M02-COMPLETION-REPORT.md).
 
 ## Commands
 

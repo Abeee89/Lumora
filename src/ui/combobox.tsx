@@ -156,7 +156,7 @@ export function TimeZoneCombobox({
               setOpen(false);
             }
           }}
-          className={`block w-full rounded-lg bg-surface px-3 py-2 text-[16px] text-ink ${controlBorder(
+          className={`block min-h-11 w-full rounded-lg bg-surface px-3 py-2 text-[16px] text-ink ${controlBorder(
             error !== null && error !== undefined,
           )}`}
         />

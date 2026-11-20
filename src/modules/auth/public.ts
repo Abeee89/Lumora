@@ -22,9 +22,12 @@ export {
 } from "./service";
 export {
   auditRetentionCutoff,
+  authCleanupJob,
   purgeExpiredResetTokens,
   purgeExpiredSessions,
   purgeUser,
+  runAuthCleanup,
+  type AuthCleanupResult,
 } from "./cleanup";
 export {
   createSession,

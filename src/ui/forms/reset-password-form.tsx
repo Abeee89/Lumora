@@ -48,7 +48,11 @@ export function ResetPasswordForm({ token }: { token: string }) {
         title="This reset link is invalid or has expired."
         body="Request a new link and open it in this browser."
         requestId={failure?.requestId}
-        action={<TextLink href="/forgot-password">Request a new link</TextLink>}
+        action={
+          <TextLink className="inline-flex min-h-11 items-center" href="/forgot-password">
+            Request a new link
+          </TextLink>
+        }
       />
     );
   }

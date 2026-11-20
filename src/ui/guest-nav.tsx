@@ -12,7 +12,7 @@ export function GuestNav() {
   return (
     <nav aria-label="Main" className="ml-auto flex items-center gap-4 text-sm">
       {pathname !== "/login" && (
-        <a href="/login" className="inline-flex min-h-11 items-center text-ink-2 hover:text-primary">
+        <a href="/login" className="inline-flex min-h-11 min-w-11 items-center justify-center text-ink-2 hover:text-primary">
           Log in
         </a>
       )}

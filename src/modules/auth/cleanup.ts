@@ -4,6 +4,8 @@
  */
 import { config } from "../../kernel/config";
 import type { Queryable } from "../../kernel/db";
+import type { ScheduledJob } from "../../kernel/jobs";
+import { deleteAuditEventsBefore } from "./audit";
 
 export async function purgeExpiredSessions(
   database: Queryable,
@@ -46,3 +48,30 @@ export async function purgeUser(database: Queryable, userId: string, now: Date):
 export function auditRetentionCutoff(now: Date): Date {
   return new Date(now.getTime() - config.auth.auditRetentionDays * 24 * 60 * 60 * 1000);
 }
+
+export interface AuthCleanupResult {
+  sessions: number;
+  resetTokens: number;
+  auditEvents: number;
+}
+
+/**
+ * The daily Authentication cleanup of BACKGROUND-JOBS section 2. Keyed by the day, so a
+ * retry or a second worker ticking the same cron entry deletes nothing new and reports
+ * zeroes instead of failing.
+ */
+export async function runAuthCleanup(database: Queryable, now: Date): Promise<AuthCleanupResult> {
+  return {
+    sessions: await purgeExpiredSessions(database, now),
+    resetTokens: await purgeExpiredResetTokens(database, now),
+    auditEvents: await deleteAuditEventsBefore(database, auditRetentionCutoff(now)),
+  };
+}
+
+/** BACKGROUND-JOBS section 2: "Auth audit retention cleanup" and "Password-reset token
+ * and expired-session cleanup", one daily cron, owning module Authentication. */
+export const authCleanupJob: ScheduledJob = {
+  name: config.jobs.authCleanupQueue,
+  cron: config.jobs.authCleanupCron,
+  run: runAuthCleanup,
+};

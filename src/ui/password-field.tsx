@@ -47,7 +47,7 @@ export function PasswordField({
           autoComplete={autoComplete}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy === "" ? undefined : describedBy}
-          className={`w-full rounded-lg bg-surface py-2 pl-3 pr-24 text-[16px] text-ink ${controlBorder(
+          className={`min-h-11 w-full rounded-lg bg-surface py-2 pl-3 pr-24 text-[16px] text-ink ${controlBorder(
             Boolean(error),
           )}`}
         />
@@ -55,7 +55,7 @@ export function PasswordField({
           type="button"
           onClick={() => setVisible((current) => !current)}
           aria-pressed={visible}
-          className="absolute inset-y-0 right-0 my-1 mr-1 inline-flex min-h-9 items-center rounded-lg px-3 text-sm font-semibold text-ink-2 hover:text-primary"
+          className="absolute inset-y-0 right-0 inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-ink-2 hover:text-primary"
         >
           {visible ? "Hide" : "Show"}
         </button>

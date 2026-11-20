@@ -9,3 +9,8 @@ coverage/
 next-env.d.ts
 .pgdata/
 .pgdata-smoke/
+
+# Local run output: the embedded database, the email sink, logs and screenshots. The M00
+# OpenAPI diff is the one artifact kept under version control.
+.artifacts/*
+!.artifacts/oasdiff-release.json

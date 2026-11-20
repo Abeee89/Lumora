@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { apiRequest, type ApiFailure } from "../api-client";
 import { browserTimeZone, TimeZoneCombobox, timeZoneError } from "../combobox";
-import { Button, ButtonLink, Checkbox, ErrorPanel, FieldError, FormFields, Hint, Label, TextInput, formId } from "../control";
+import { Button, ButtonLink, Checkbox, ErrorPanel, FieldError, FormFields, Hint, Label, TextInput, TextLink, formId } from "../control";
 import { messageFor, passwordHint, passwordMinLength } from "../messages";
 import { PasswordField } from "../password-field";
 import { errorCount, errorsFromFailure, type FieldErrors } from "./feedback";
@@ -209,9 +209,12 @@ export function SignUpForm() {
         </ButtonLink>
       </div>
 
-      <Hint id={`${formId("signup")}-hint`}>
-        Already have an account? <a className="text-primary underline" href="/login">Log in</a>.
-      </Hint>
+      <Hint id={`${formId("signup")}-hint`}>Already have an account?</Hint>
+      <p className="flex items-center text-sm text-muted">
+        <TextLink className="inline-flex min-h-11 min-w-11 items-center justify-center" href="/login">
+          Log in
+        </TextLink>
+      </p>
     </form>
   );
 }

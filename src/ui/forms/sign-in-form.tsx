@@ -152,10 +152,14 @@ export function SignInForm({ notice }: { notice?: string | undefined }) {
         </ButtonLink>
       </div>
 
-      <p className="text-sm text-muted">
-        <TextLink href="/forgot-password">Forgot password</TextLink>
-        {" · "}
-        <TextLink href="/signup">Create account</TextLink>
+      <p className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
+        <TextLink className="inline-flex min-h-11 items-center" href="/forgot-password">
+          Forgot password
+        </TextLink>
+        <span aria-hidden="true">·</span>
+        <TextLink className="inline-flex min-h-11 items-center" href="/signup">
+          Create account
+        </TextLink>
       </p>
     </form>
   );

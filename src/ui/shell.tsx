@@ -32,7 +32,7 @@ export function Shell({
       <header className="border-b border-line">
         <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center gap-6 px-4 py-3 sm:px-6">
           {isShipped("/") ? (
-            <a href="/" className="text-xl font-bold tracking-tight text-primary">
+            <a href="/" className="-my-2 inline-flex min-h-11 items-center text-xl font-bold tracking-tight text-primary">
               Lumora
             </a>
           ) : (
@@ -45,7 +45,7 @@ export function Shell({
                 <a
                   key={item.href}
                   href={item.href}
-                  className="inline-flex min-h-11 items-center text-ink-2 hover:text-primary"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center text-ink-2 hover:text-primary"
                 >
                   {item.label}
                 </a>

@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 
+import { exportContributors, purgeHandlers } from "@/kernel/registries";
 import {
   call,
   database,
@@ -234,6 +235,31 @@ describe("profile endpoints", () => {
 
     // The victim's session is untouched by all three attempts.
     expect(await signInIds(victim)).toContain(victimSignIn);
+  });
+
+  it("registers a working purge handler and export contributor for the M02 tables", async () => {
+    const user = await signUpUser({ timezone: "America/New_York" });
+
+    expect(purgeHandlers.keys()).toEqual(["profile", "auth"]);
+    expect(exportContributors.keys()).toEqual(["profile"]);
+
+    const contributor = exportContributors.entries().find(([key]) => key === "profile")?.[1];
+    const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };
+    expect(section.section).toBe("profile");
+    expect(section.rows).toHaveLength(1);
+    // The profile module owns the profile row; the account columns (`users`) have no
+    // contributor yet, which M14 must add before an export is complete (see M02 evidence).
+    expect(section.rows[0]).toMatchObject({ timezone: "America/New_York", theme: "system" });
+
+    // The auth handler owns `users` and cascades: sessions, verifications, profile, keys.
+    const purge = purgeHandlers.entries().find(([key]) => key === "auth")?.[1];
+    expect(await purge?.(user.userId)).toBe(1);
+    expect(await database().query("SELECT 1 FROM users WHERE id = $1", [user.userId])).toEqual([]);
+    expect(await database().query("SELECT 1 FROM user_profiles WHERE user_id = $1", [user.userId])).toEqual([]);
+    const tombstones = await database().query<{ event_type: string; user_id: string | null }>(
+      "SELECT event_type, user_id FROM auth_audit_events WHERE event_type = 'account_deleted'",
+    );
+    expect(tombstones.at(-1)).toEqual({ event_type: "account_deleted", user_id: null });
   });
 
   it("reports a profile request without a session as unauthenticated", async () => {

@@ -25,7 +25,7 @@ export default async function ResetPasswordPage({
           title="This reset link is invalid or has expired."
           body="Request a new link and open it in this browser."
           action={
-            <a className="text-primary underline" href="/forgot-password">
+            <a className="inline-flex min-h-11 items-center text-primary underline" href="/forgot-password">
               Request a new link
             </a>
           }

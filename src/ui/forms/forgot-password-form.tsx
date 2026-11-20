@@ -97,8 +97,10 @@ export function ForgotPasswordForm() {
         Send reset link
       </Button>
 
-      <p className="text-sm text-muted">
-        <TextLink href="/login">Log in</TextLink>
+      <p className="flex items-center text-sm text-muted">
+        <TextLink className="inline-flex min-h-11 min-w-11 items-center justify-center" href="/login">
+          Log in
+        </TextLink>
       </p>
     </form>
   );

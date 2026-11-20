@@ -1,4 +1,5 @@
 import { mkdtemp, rm } from "node:fs/promises";
+import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -24,7 +25,9 @@ export async function startTestDatabase(): Promise<TestDatabase> {
   }
 
   const dataDir = await mkdtemp(join(tmpdir(), "lumora-pg-"));
-  const port = 55432;
+  // A fixed port turns any unrelated listener into a suite-wide failure, so the port comes
+  // from the pool unless LUMORA_TEST_PG_PORT pins it.
+  const port = Number(process.env.LUMORA_TEST_PG_PORT ?? (await freePort()));
   const postgres = new EmbeddedPostgres({
     databaseDir: dataDir,
     user: "lumora",
@@ -46,4 +49,18 @@ export async function startTestDatabase(): Promise<TestDatabase> {
       await rm(dataDir, { recursive: true, force: true });
     },
   };
+}
+
+/** Binds port 0, keeps the assigned number and releases it for the server that follows. */
+async function freePort(): Promise<number> {
+  const probe = createServer();
+  await new Promise<void>((resolve, reject) => {
+    probe.once("error", reject);
+    probe.listen(0, "127.0.0.1", resolve);
+  });
+  const address = probe.address();
+  const port = typeof address === "object" && address !== null ? address.port : 0;
+  await new Promise<void>((resolve) => probe.close(() => resolve()));
+  if (port === 0) throw new Error("Could not reserve a port for the test database");
+  return port;
 }

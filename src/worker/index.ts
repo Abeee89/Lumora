@@ -8,9 +8,13 @@ import { PgBoss } from "pg-boss";
 import pg from "pg";
 
 import { config } from "@/kernel/config";
+import { poolQueryable } from "@/kernel/db";
 import { requireDatabaseUrl, readEnv } from "@/kernel/env";
 import { logger } from "@/kernel/logger";
 import { relayOutbox, type JobQueue } from "@/kernel/outbox";
+import { authCleanupJob } from "@/modules/auth/public";
+
+const scheduledJobs = [authCleanupJob];
 
 export interface WorkerHandle {
   stop(): Promise<void>;
@@ -30,9 +34,29 @@ export async function startWorker(
   await boss.start();
 
   const pool = new pg.Pool({ connectionString: databaseUrl });
+  const database = poolQueryable(pool);
   const queue: JobQueue = {
     send: (name, data, options) => boss.send(name, data, options),
   };
+
+  // Recurring jobs (BACKGROUND-JOBS section 2). `stately` plus a singleton key keeps two
+  // worker instances from running the same tick; the handler is idempotent regardless.
+  for (const job of scheduledJobs) {
+    await boss.createQueue(job.name, { policy: "stately", retryLimit: 0 });
+    await boss.work(job.name, async () => {
+      try {
+        const result = await job.run(database, new Date());
+        logger.info({ job: job.name, result }, "job.ran");
+      } catch (error) {
+        logger.error({ err: error, job: job.name }, "job.failed");
+        throw error;
+      }
+    });
+    await boss.schedule(job.name, job.cron, null, {
+      key: "daily",
+      singletonKey: `${job.name}:daily`,
+    });
+  }
 
   const intervalMs = options.relayIntervalMs ?? config.outbox.relayIntervalSeconds * 1000;
   let inFlight: Promise<void> = Promise.resolve();

@@ -174,12 +174,13 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Acceptance criteria:** AC-FR-001-* to AC-FR-006-*, AC-FR-008-*, AC-FR-009-*; endpoint rows only: AC-FR-134-3, AC-FR-134-4, AC-FR-135-2, AC-FR-137-4, AC-FR-138-1 to AC-FR-138-4; AC-E2E-10 (partial: unauthenticated redirect and pattern); AC-E2E-06 (timezone change, profile part). The wizard and dashboard rows (AC-FR-134-1, AC-FR-134-2, AC-FR-135-1, AC-FR-135-3, AC-FR-135-4, AC-FR-136-*, AC-FR-137-1 to AC-FR-137-3) are owned by M13 (B-07/C-07).
 - **Completion checklist:**
   - [ ] Register, sign in, sign out, Google sign-in, reset, sign-in management work end to end
-  - [ ] Lockout, revocation and age confirmation verified (NFR-012, NFR-013, NFR-035)
-  - [ ] Audit events written and retention job runs
-  - [ ] Ownership contract test helper documented and used
-  - [ ] Purge handler and export contributor registered for the new tables
+  - [x] Lockout, revocation and age confirmation verified (NFR-012, NFR-013, NFR-035)
+  - [x] Audit events written and retention job runs
+  - [x] Ownership contract test helper documented and used
+  - [x] Purge handler and export contributor registered for the new tables
   - [ ] Password-reset email delivered through the notification port in staging
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-20, report 2026-11-20):** evidence, per-row proof and the open rows are in [08-build/M02-EVIDENCE.md](../08-build/M02-EVIDENCE.md); the record is [08-build/M02-COMPLETION-REPORT.md](../08-build/M02-COMPLETION-REPORT.md). Shipped: the seven tables, ten AUTH routes, two PROF routes, PU-1 to PU-6, the profile, appearance and security pages of A-15, the notification email port with a file-sink adapter, and the daily `auth_cleanup` job on the `stately` queue at cron `0 3 * * *` UTC. Rows open because their inputs are absent or undecided: Google sign-in has no OAuth client (U-5), so only its start route, its signed state, its callback and its "unavailable" answer are proven; the reset email reaches no provider and there is no staging host (U-A2, U-A1); the ownership helper is used for sign-in management only, which is the only user-owned resource M02 ships, and every later milestone's resources adopt it; the export contributor covers `user_profiles` while the `users` account columns wait for M14; the Definition of Done was evaluated item by item and is partial, so that row stays unchecked as it did in M01. Deviations: the reset email is sent inside the request scope instead of from a queue job because BACKGROUND-JOBS section 3 and OD-S05 forbid secrets in a queue payload and the stored hash cannot rebuild the link; the UI is hand-built and icon-free (U-D2, U-D3, U-D11); the navigation shell waits for the first MVP destinations; the signed-in landing is `/settings/profile` because `/dashboard` is M04 and `/onboarding` is A-1; reading the session and theme cookies in the root layout makes every route dynamic.
 
 ### M03 Subjects and topics
 

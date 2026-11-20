@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 const labelClass = "block text-sm font-semibold text-ink";
 
 const controlClass =
-  "block w-full rounded-lg bg-surface px-3 py-2 text-[16px] text-ink " +
+  "block w-full min-h-11 rounded-lg bg-surface px-3 py-2 text-[16px] text-ink " +
   "placeholder:text-muted disabled:bg-sunken";
 
 const buttonBase =
@@ -268,7 +268,9 @@ export function Checkbox({
   children: ReactNode;
 }) {
   return (
-    <span className="flex min-h-11 items-center gap-3">
+    // The row is the label, so the 24 px box is not the only target (NFR-087). The input
+    // ignores pointer events: a click anywhere, the box included, activates the label once.
+    <label className="flex min-h-11 w-fit items-center gap-3">
       <input
         id={id}
         name={id}
@@ -277,14 +279,12 @@ export function Checkbox({
         onChange={(event) => onChange(event.target.checked)}
         aria-invalid={invalid || undefined}
         aria-describedby={describedBy}
-        className={`size-6 shrink-0 rounded accent-primary ${
+        className={`pointer-events-none size-6 shrink-0 rounded accent-primary ${
           invalid ? "border-2 border-error" : "border border-line-strong"
         }`}
       />
-      <label className="text-[15px] text-ink" htmlFor={id}>
-        {children}
-      </label>
-    </span>
+      <span className="text-[15px] text-ink">{children}</span>
+    </label>
   );
 }
 

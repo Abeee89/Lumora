@@ -1,6 +1,26 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19 and M02 from 2026-11-20.
+
+## 2026-11-20, M02 authentication and profile
+
+### Added
+- [08-build/M02-EVIDENCE.md](08-build/M02-EVIDENCE.md): environment and versions, one section per checkpoint with the command and raw output, per-row checklist status, eleven limitations and the Definition of Done check.
+- [08-build/M02-COMPLETION-REPORT.md](08-build/M02-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M24 (password-reset mail transport), OD-M25 (account-column export coverage) and OD-M26 (the ADR-004 amendment). Section G: the 2026-11-20 M02 execution row, limited to M02 records and stating that M02 stays open.
+- Application and tooling: `src/kernel/{crypto,http,rate-limit,jobs}.ts`; `src/modules/auth/**` (8 files), `src/modules/profile/**` (2), `src/modules/notifications/public.ts`; `src/server/{container,request-context,session}.ts`; `src/app/api/app/auth/**` (9 routes), `src/app/api/app/profile/**` (2), `src/app/api/auth/callback/google/route.ts`; `src/app/{page,login,signup,forgot-password,reset-password,welcome,settings}/**`; `src/ui/**` with `src/ui/forms/**`; `db/migrations/0002_auth_and_profile.sql`; the `auth_cleanup` scheduled job registered in `src/worker/index.ts`.
+- Tests: five unit files (`auth-password`, `auth-device-label`, `auth-google-state`, `rate-limit`, `profile-defaults`), taking the unit tier to 15 files and 59 tests; three integration files (`auth`, `profile`, `auth-cleanup`) with `tests/integration/support/{api,environment,ownership}.ts`, taking the integration tier to five files and 27 tests.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): the four M02 rows with evidence checked, the three open rows left unchecked, and an "As built" note recording what shipped and what is deferred.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M02 execution state, the open M02 rows and the M03 gate.
+- [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state and the inventory at 87 documents (7 build records).
+- `.env.example`: the email sink, the optional Google variables and the trusted proxy hops. `.gitignore`: local run output under `.artifacts/` is ignored, except the tracked M00 OpenAPI diff.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 15 unit files and 59 tests, 5 integration files and 27 tests against PostgreSQL 18.6.
+- `npx next build`: 24 route entries; every route is dynamic because the root layout reads the session and theme cookies.
+- Browser checks in Chromium: sign-up, sign-in, sign-out, profile save, six of six theme switches, sign-in management, the age gate, three guard redirects, zero targets under 44 px and zero horizontal overflow on eight pages at 360, 768, 1280 and 2560 px, no console errors.
 
 ## 2026-11-19, M01 project foundation
 

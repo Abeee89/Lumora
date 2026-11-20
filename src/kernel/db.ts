@@ -15,6 +15,16 @@ export interface Database extends Queryable {
   end(): Promise<void>;
 }
 
+/** A Queryable view over a pool the caller also uses for locking or transactions. */
+export function poolQueryable(pool: Pool): Queryable {
+  return {
+    async query<Row extends QueryResultRow>(text: string, values: readonly unknown[] = []) {
+      const result = await pool.query<Row>(text, values as unknown[]);
+      return result.rows;
+    },
+  };
+}
+
 export function createDatabase(connectionString: string): Database {
   const pool = new Pool({ connectionString });
 

@@ -71,6 +71,12 @@ export const config = {
     relayBatchSize: 100,
     retentionDays: 7,
   },
+  jobs: {
+    /** BACKGROUND-JOBS section 2: one queue per recurring job, scheduled by cron in UTC. */
+    authCleanupQueue: "auth_cleanup",
+    /** PROPOSED: 03:00 UTC daily; the spec fixes the cadence, not the hour. */
+    authCleanupCron: "0 3 * * *",
+  },
   rateLimit: {
     windowSeconds: 60, // API-CONVENTIONS section 10
     publicApiPerMinute: 60, // PROPOSED: U-9
