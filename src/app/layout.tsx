@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { currentSession, currentTheme } from "@/server/session";
 import { Shell } from "@/ui/shell";
 
 import "./globals.css";
@@ -14,11 +15,19 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/**
+ * The theme and the session are read here so the first paint already has the right colors
+ * and the right header. `data-theme` is set from the appearance cookie; without one the
+ * system preference decides through `color-scheme: light dark`.
+ */
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const theme = await currentTheme();
+  const session = await currentSession();
+
   return (
-    <html lang="en">
+    <html lang="en" data-theme={theme}>
       <body>
-        <Shell>{children}</Shell>
+        <Shell signedIn={session !== null}>{children}</Shell>
       </body>
     </html>
   );

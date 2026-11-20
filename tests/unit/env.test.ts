@@ -3,8 +3,15 @@ import { describe, expect, it } from "vitest";
 import { readEnv, requireDatabaseUrl } from "@/kernel/env";
 
 describe("environment contract (NFR-062)", () => {
-  it("defaults LOG_LEVEL and NODE_ENV and accepts an absent database url", () => {
-    expect(readEnv({})).toEqual({ LOG_LEVEL: "info", NODE_ENV: "development" });
+  it("defaults the optional variables and accepts an absent database url", () => {
+    // M02 added TRUSTED_PROXY_HOPS (default 0) and SESSION_COOKIE_SECURE (default false,
+    // the documented local-development setting; the platform sets `true` on HTTPS).
+    expect(readEnv({})).toEqual({
+      LOG_LEVEL: "info",
+      NODE_ENV: "development",
+      TRUSTED_PROXY_HOPS: 0,
+      SESSION_COOKIE_SECURE: false,
+    });
   });
 
   it("names the offending variable instead of failing silently", () => {

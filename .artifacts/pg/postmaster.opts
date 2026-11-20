@@ -1,0 +1,1 @@
+D:/Portofolio/Lumora/node_modules/@embedded-postgres/windows-x64/native/bin/postgres.exe "-D" ".artifacts/pg" "-p" "55432"

@@ -1,19 +1,24 @@
 import { FocusHeadingOnNavigate } from "./focus-heading";
-import { primaryNav, visibleNav } from "./nav";
-
+import { GuestNav } from "./guest-nav";
+import { isShipped, primaryNav, visibleNav } from "./nav";
+import { SignOutButton } from "./sign-out-button";
 /**
- * The signed-out shell. NAVIGATION-STRUCTURE.md section 3 defines the signed-in sidebar,
- * rail and tab bar; none of their destinations exist yet, so the shell renders the
- * wordmark, the skip link and the content column only.
- *
- * The wordmark is not a link: `/` has no route before M02, and A11Y-BASE plus
- * NAVIGATION-STRUCTURE rule 2 forbid a destination that does not work.
+ * The shell shared by every page. NAVIGATION-STRUCTURE section 3 defines the signed-in
+ * sidebar, rail and tab bar; the MVP destinations they carry arrive with M03 and later, so
+ * this shell renders the wordmark, the skip link, the shipped navigation entries and the
+ * content column. The guest header offers exactly the two choices of section 10.
  *
  * `main` and each page h1 take `tabIndex={-1}` so the skip link and the navigation focus
  * move have a focusable target (A11Y-BASE).
  */
-export function Shell({ children }: { children: React.ReactNode }) {
-  const items = visibleNav(primaryNav);
+export function Shell({
+  signedIn,
+  children,
+}: {
+  signedIn: boolean;
+  children: React.ReactNode;
+}) {
+  const items = signedIn ? visibleNav(primaryNav) : [];
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas text-ink">
@@ -26,7 +31,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <header className="border-b border-line">
         <div className="mx-auto flex min-h-14 w-full max-w-6xl items-center gap-6 px-4 py-3 sm:px-6">
-          <span className="text-xl font-bold tracking-tight text-primary">Lumora</span>
+          {isShipped("/") ? (
+            <a href="/" className="text-xl font-bold tracking-tight text-primary">
+              Lumora
+            </a>
+          ) : (
+            <span className="text-xl font-bold tracking-tight text-primary">Lumora</span>
+          )}
+
           {items.length > 0 && (
             <nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 text-sm">
               {items.map((item) => (
@@ -39,6 +51,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 </a>
               ))}
             </nav>
+          )}
+
+          {signedIn ? (
+            <div className="ml-auto">
+              <SignOutButton />
+            </div>
+          ) : (
+            <GuestNav />
           )}
         </div>
       </header>

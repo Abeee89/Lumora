@@ -46,6 +46,7 @@ export const errorCatalog = {
   exam_date_in_past: entry("validation", 400, false, "The exam date is in the past."),
   consent_required: entry("validation", 400, false, "Consent is required."),
   input_too_large: entry("validation", 400, false, "The input is too large."),
+  version_required: entry("validation", 400, false, "The version header is required."),
 
   unauthenticated: entry("authentication", 401, false, "Sign in to continue."),
   invalid_credentials: entry("authentication", 401, false, "The email or password is incorrect."),
@@ -57,6 +58,7 @@ export const errorCatalog = {
   api_key_revoked: entry("authentication", 401, false, "The API key was revoked."),
 
   not_found: entry("authorization", 404, false, "Not found."),
+  csrf_rejected: entry("authorization", 403, false, "The request origin was rejected."),
   scope_missing: entry("authorization", 403, false, "The API key lacks this scope."),
   role_not_allowed: entry("authorization", 403, false, "This role cannot perform the action."),
   last_administrator: entry("conflict", 409, false, "The last administrator cannot be removed."),

@@ -22,17 +22,47 @@ export const primaryNav: readonly NavItem[] = [
   { group: "Settings", label: "Settings", href: "/settings/profile" },
 ];
 
+/** NAVIGATION-STRUCTURE section 8. Sections appear only once their route is shipped. */
+export const settingsSections: readonly { label: string; href: string }[] = [
+  { label: "Profile", href: "/settings/profile" },
+  { label: "Study", href: "/settings/study" },
+  { label: "Appearance", href: "/settings/appearance" },
+  { label: "Security", href: "/settings/security" },
+  { label: "Data", href: "/settings/data" },
+];
+
 export type ShippedRoutes = Readonly<Record<string, true>>;
 
 /**
- * Routes that exist in this build. M01 ships no product route: the first entry
- * arrives with M02 (PU-1..PU-6). Keep this in step with `src/app`.
+ * Routes that exist in this build. M02 adds the public pages and the three settings
+ * sections that belong to profile, appearance and security. Keep this in step with
+ * `src/app`.
  */
-export const shippedRoutes: ShippedRoutes = {};
+export const shippedRoutes: ShippedRoutes = {
+  "/": true,
+  "/signup": true,
+  "/login": true,
+  "/forgot-password": true,
+  "/reset-password": true,
+  "/welcome": true,
+  "/settings/profile": true,
+  "/settings/appearance": true,
+  "/settings/security": true,
+};
 
 export function visibleNav(
   items: readonly NavItem[],
   shipped: ShippedRoutes = shippedRoutes,
 ): readonly NavItem[] {
   return items.filter((item) => shipped[item.href] === true);
+}
+
+export function visibleSettingsSections(
+  shipped: ShippedRoutes = shippedRoutes,
+): readonly { label: string; href: string }[] {
+  return settingsSections.filter((section) => shipped[section.href] === true);
+}
+
+export function isShipped(href: string, shipped: ShippedRoutes = shippedRoutes): boolean {
+  return shipped[href] === true;
 }

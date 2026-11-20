@@ -1,6 +1,6 @@
 # M01 Evidence
 
-> Status: executed 2026-11-19 on `main` at `eca6091` plus uncommitted work; build work tree `D:/Portofolio/Lumora`. M01 is authorized for the rows proven here only. Every command below was run in this session; outputs are pasted as observed.
+> Status: executed 2026-11-19 on `main` at `eca6091` plus uncommitted work; build work tree `D:/Portofolio/Lumora`. M01 is authorized for the rows proven here only. Every command below was run in this session; outputs are pasted as observed. The milestone record is [M01-COMPLETION-REPORT.md](M01-COMPLETION-REPORT.md).
 
 ## Rules
 

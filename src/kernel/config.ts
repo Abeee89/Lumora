@@ -16,6 +16,12 @@ export const config = {
     revocationMaxSeconds: 60, // NFR-013
     auditRetentionDays: 90, // M02 job
     minimumAge: 16, // PROPOSED: U-6
+    resetTokenMinutes: 60, // FR-005
+    sessionCookieName: "__Host-lumora_session", // API-SECURITY 1.1
+    devSessionCookieName: "lumora_session", // API-SECURITY 1.1, HTTP local development
+    /** PROPOSED: a conservative email bound; the dictionary fixes no maximum. */
+    emailMaxLength: 254,
+    displayNameMaxLength: 50, // DATA-DICTIONARY user_profiles.display_name
   },
   session: {
     /** BR-008: anything under one minute is discarded. */
@@ -66,8 +72,15 @@ export const config = {
     retentionDays: 7,
   },
   rateLimit: {
-    windowSeconds: 60,
+    windowSeconds: 60, // API-CONVENTIONS section 10
     publicApiPerMinute: 60, // PROPOSED: U-9
+    readPerUserPerMinute: 300,
+    writePerUserPerMinute: 120,
+    signInPerIpPerMinute: 10,
+    signUpPerIpPerMinute: 5,
+    resetPerIpPerMinute: 5,
+    resetPerEmailPerMinute: 3,
+    deletePerUserPerMinute: 5,
   },
   export: {
     /** PROPOSED: OD-M16. */
@@ -80,6 +93,7 @@ export const config = {
   },
   http: {
     requestIdHeader: "x-request-id",
+    maxBodyBytes: 512 * 1024, // API-CONVENTIONS section 2
   },
 } as const;
 

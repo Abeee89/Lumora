@@ -6,6 +6,8 @@ Documentation changes and build evidence. M01 application code is tracked from 2
 
 ### Added
 - [08-build/M01-EVIDENCE.md](08-build/M01-EVIDENCE.md): environment and versions, one section per CI stage and runtime check with the command and raw output, per-row checklist status, nine limitations and the Definition of Done check.
+- [08-build/M01-COMPLETION-REPORT.md](08-build/M01-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G: the 2026-11-20 row recording the M01 execution and close-out, limited to M01 records and stating that M01 stays open.
 - Application and tooling: `src/kernel/{config,env,errors,idempotency,logger,outbox,registries,time}.ts`, `src/app/{layout,error,not-found}.tsx` with `globals.css`, `src/app/api/health/route.ts`, `src/app/unsupported-browser/page.tsx`, `src/ui/shell.tsx`, `src/ui/focus-heading.tsx`, `src/ui/nav.ts`, `src/worker/index.ts`, `tools/boundaries.ts`, `scripts/{check-boundaries,apply-migrations}.ts`, `db/migrations/0001_shared_kernel.sql`, `Dockerfile`, `.github/workflows/ci.yml`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`, `vitest.config.ts`, `.env.example`, `README.md`.
 - Tests: 10 unit files (35 tests) and two integration files (6 tests) plus the boundary fixtures.
 
