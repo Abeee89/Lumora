@@ -207,6 +207,7 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
   - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
 - **As built (2026-11-21):** evidence, per-row proof and the open rows are in [08-build/M03-EVIDENCE.md](../08-build/M03-EVIDENCE.md); the record is [08-build/M03-COMPLETION-REPORT.md](../08-build/M03-COMPLETION-REPORT.md). Shipped: both tables, the eleven SUBJ and TOP routes, A-7 and A-8, the archive-guard verdict contract, the topic-event contract, bulk paste with preview and a 200-line cap, the PostgreSQL idempotency store, and the purge handlers and export contributors for both tables. The `DEFINITION-OF-DONE.md` row stays partial: AC-FR-013-1, AC-FR-014-2 and the picker half of AC-FR-013-3 need sessions, plans and to-dos, and a picker, none of which M03 ships; the coverage floors have no command; axe has no browser-automation dependency (the M01 and M02 gap); and the `m03-done` tag needs the owner's commit. Deviations: `SubjectListItem` gains both topic counts on SUBJ-01, no production archive guard until M05, keyboard and button reorder instead of pointer drag, and in-process topic events. Test and build numbers: 69 unit tests, 47 integration tests, 37 routes, no horizontal overflow at 360, 768, 1280 or 2560 px.
+  The delivery report was approved on 2026-11-21 ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G), which accepts this record without closing M03; the unchecked row above is what M03 still needs.
 
 ### M04 Exams (basic)
 

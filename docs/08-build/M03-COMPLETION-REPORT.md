@@ -1,6 +1,6 @@
 # M03 Completion Report
 
-> Status: M03 execution record, 2026-11-21. Commands, raw output and the browser measurements are in [M03-EVIDENCE.md](M03-EVIDENCE.md). M03 is built and verified; one of its five checklist rows stays partial because it depends on milestones that are not built yet. No ADR is Accepted, no vendor is selected, nothing is committed or tagged by me, and M04 is not authorized by this report.
+> Status: M03 execution record, 2026-11-21, approved by the owner the same day ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G). Commands, raw output and the browser measurements are in [M03-EVIDENCE.md](M03-EVIDENCE.md). M03 is built and verified; one of its five checklist rows stays partial because it depends on milestones that are not built yet. No ADR is Accepted, no vendor is selected, nothing is committed or tagged by me, and M04 is not authorized by this report.
 
 ## 1. Executive summary
 
