@@ -23,6 +23,10 @@ export const errorCopy: Readonly<Record<string, string>> = {
   internal_error: "Something went wrong on our side. Try again.",
   csrf_rejected: "Reload the page and try again.",
   network_error: "We could not reach the server. Check your connection and try again.",
+  name_conflict: "An active subject already uses that name. Choose another one.",
+  subject_archived: "This subject is archived. Restore it first.",
+  subject_has_running_session: "A session is running on this subject. Stop the timer first.",
+  input_too_large: "That is more than the limit for one paste.",
 };
 
 /** Fallback for a code the UI has no copy for. */

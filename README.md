@@ -6,15 +6,15 @@ The product, architecture, database, UI and API contracts live in [`docs/`](docs
 
 ## Build state
 
-M02 (authentication and profile) is built and verified on the M01 foundation. Accounts, sign-in,
-sign-out, sign-in management, password reset, the age gate, profile and appearance settings and
-the Google routes exist, with the shell, the shared kernel, the boundary checker, the outbox
-relay and one scheduled cleanup job beneath them. Google sign-in needs an OAuth client (U-5) and
-the reset email needs a provider (U-A2); no staging host exists (U-A1). The navigation shell
-arrives with the first MVP destinations, so the header carries the shipped pages only
-([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2). Evidence and the open
-rows are in [M02-EVIDENCE](docs/08-build/M02-EVIDENCE.md) and
-[M02-COMPLETION-REPORT](docs/08-build/M02-COMPLETION-REPORT.md).
+M03 (subjects and topics) is built and verified on the M02 foundation. Subjects with their
+colour, order and archive state, the topics under each with weight and status, the duplicate-name
+and running-session rules, and the bulk paste path sit under the accounts, sign-in, profile and
+appearance work, with the shell, the shared kernel, the boundary checker, the outbox relay and one
+scheduled cleanup job beneath them. Google sign-in needs an OAuth client (U-5) and the reset email
+needs a provider (U-A2); no staging host exists (U-A1). The navigation carries the shipped pages
+only, which is now Subjects beside Settings ([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md)
+rule 2). Evidence and the open rows are in [M03-EVIDENCE](docs/08-build/M03-EVIDENCE.md) and
+[M03-COMPLETION-REPORT](docs/08-build/M03-COMPLETION-REPORT.md).
 
 ## Commands
 

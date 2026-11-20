@@ -1,13 +1,37 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19 and M02 from 2026-11-20.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20 and M03 from 2026-11-21.
+
+## 2026-11-21, M03 subjects and topics
+
+### Added
+- [08-build/M03-EVIDENCE.md](08-build/M03-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements at four widths, the five defects found and fixed, five deviations and the Definition of Done check.
+- [08-build/M03-COMPLETION-REPORT.md](08-build/M03-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M27 to OD-M32 (the SUBJ-01 topic counts, the M05 archive guard, pointer drag, the archived-subject read-only rule, coverage floors and durable topic events). Section G: the 2026-11-21 M03 execution row, limited to M03 records and stating that M03 stays open.
+- Application and tooling: `db/migrations/0003_subjects_and_topics.sql`; `src/modules/subjects/**` and `src/modules/topics/**`; `src/app/api/app/subjects/**` (8 routes) and `src/app/api/app/topics/**` (3); `src/app/subjects/**`; `src/ui/subject-dot.tsx`, `src/ui/dialog.tsx`, `src/ui/forms/subject-*.tsx` and `src/ui/forms/topic-*.tsx`.
+- Tests: `tests/unit/subjects-topics.test.ts` (7 cases) and `tests/integration/subjects.test.ts` with `tests/integration/topics.test.ts` (11 and 9 cases), taking the unit tier to 16 files and 69 tests and the integration tier to 7 files and 47 tests.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): four M03 rows with evidence checked, the Definition of Done row left partial, and an "As built" note recording what shipped, the deviations and the open rows.
+- [03-architecture/ERROR-HANDLING.md](03-architecture/ERROR-HANDLING.md) section 4 and [03-architecture/MODULE-BOUNDARIES.md](03-architecture/MODULE-BOUNDARIES.md) section 3: seven error codes, including the one retryable conflict, and the archive-guard verdict shape.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7, [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M04 gate and the inventory at 89 documents (9 build records).
+- Application and tooling: `src/kernel/{config,errors,idempotency,registries}.ts` (the PostgreSQL idempotency store, the archive guard, the palette keys and limits), `src/server/{request-context,container}.ts`, `src/ui/{control,format,messages,nav}.ts(x)`, `src/ui/forms/feedback.ts`, `src/app/globals.css` (the ten subject tokens), `tests/integration/support/{api,ownership}.ts` and `tests/integration/profile.test.ts`.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 16 unit files and 69 tests, 7 integration files and 47 tests in 132.69 s against PostgreSQL 18.6.
+- `npx next build`: 37 routes, 22 under `/api/app` of which 11 are M03's, plus `/subjects` and `/subjects/[subjectId]`; 26 pages generated; no static and dynamic sibling conflict.
+- Browser checks in Chromium at 360, 768, 1280 and 2560 px: A-7 and A-8 with their empty, loading and error states, keyboard reorder, archive and restore, the paste preview and its 200-line cap, no horizontal overflow and no target between 24 and 44 px.
+
+### Not changed
+- No commit, no tag, no ADR Accepted, no vendor selected, no open-decision row closed and no requirement baseline approved.
+- No session, timer, plan, to-do, note or exam behaviour, no pointer drag reorder and no readiness job; M04 is not authorized.
 
 ## 2026-11-20, M02 authentication and profile
 
 ### Added
 - [08-build/M02-EVIDENCE.md](08-build/M02-EVIDENCE.md): environment and versions, one section per checkpoint with the command and raw output, per-row checklist status, eleven limitations and the Definition of Done check.
 - [08-build/M02-COMPLETION-REPORT.md](08-build/M02-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
-- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M24 (password-reset mail transport), OD-M25 (account-column export coverage) and OD-M26 (the ADR-004 amendment). Section G: the 2026-11-20 M02 execution row, limited to M02 records and stating that M02 stays open.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M24 (password-reset mail transport), OD-M25 (account-column export coverage) and OD-M26 (the ADR-004 amendment). Section G: the 2026-11-20 M02 execution row and the approval row answering the delivery report, both limited to M02 records and stating that M02 stays open.
 - Application and tooling: `src/kernel/{crypto,http,rate-limit,jobs}.ts`; `src/modules/auth/**` (8 files), `src/modules/profile/**` (2), `src/modules/notifications/public.ts`; `src/server/{container,request-context,session}.ts`; `src/app/api/app/auth/**` (9 routes), `src/app/api/app/profile/**` (2), `src/app/api/auth/callback/google/route.ts`; `src/app/{page,login,signup,forgot-password,reset-password,welcome,settings}/**`; `src/ui/**` with `src/ui/forms/**`; `db/migrations/0002_auth_and_profile.sql`; the `auth_cleanup` scheduled job registered in `src/worker/index.ts`.
 - Tests: five unit files (`auth-password`, `auth-device-label`, `auth-google-state`, `rate-limit`, `profile-defaults`), taking the unit tier to 15 files and 59 tests; three integration files (`auth`, `profile`, `auth-cleanup`) with `tests/integration/support/{api,environment,ownership}.ts`, taking the integration tier to five files and 27 tests.
 

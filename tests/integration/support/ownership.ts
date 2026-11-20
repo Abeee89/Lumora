@@ -12,6 +12,8 @@ export interface OwnershipCase {
   method: string;
   path: string;
   body?: unknown;
+  /** Headers a real caller would send, for example the If-Match a write requires. */
+  headers?: Record<string, string>;
 }
 
 /** Calls another user's resource as `actor` and expects the answer a missing one gets. */
@@ -19,9 +21,13 @@ export async function expectHiddenFromOtherUser(actor: TestUser, testCase: Owner
   const response = await call(testCase.path, {
     method: testCase.method,
     body: testCase.body,
+    ...(testCase.headers === undefined ? {} : { headers: testCase.headers }),
     cookie: actor.cookie,
   });
-  expect(response.status, `${testCase.label} must hide another user's resource`).toBe(404);
+  expect(
+    response.status,
+    `${testCase.label} must hide another user's resource, answered ${JSON.stringify(response.body)}`,
+  ).toBe(404);
   expect(response.body).toMatchObject({ code: "not_found" });
 }
 

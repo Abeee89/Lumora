@@ -18,6 +18,17 @@ import { POST as completeReset } from "@/app/api/app/auth/password-reset/complet
 import { POST as requestReset } from "@/app/api/app/auth/password-reset/request/route";
 import { GET as getProfile, PATCH as patchProfile } from "@/app/api/app/profile/route";
 import { PATCH as patchOnboarding } from "@/app/api/app/profile/onboarding/route";
+import { POST as bulkTopics } from "@/app/api/app/subjects/[subjectId]/topics/bulk/route";
+import { PUT as reorderTopics } from "@/app/api/app/subjects/[subjectId]/topics/order/route";
+import { GET as getTopics, POST as createTopic } from "@/app/api/app/subjects/[subjectId]/topics/route";
+import { POST as archiveSubject } from "@/app/api/app/subjects/[subjectId]/archive/route";
+import { POST as restoreSubject } from "@/app/api/app/subjects/[subjectId]/restore/route";
+import { GET as getSubject, PATCH as patchSubject } from "@/app/api/app/subjects/[subjectId]/route";
+import { PUT as reorderSubjects } from "@/app/api/app/subjects/order/route";
+import { GET as getSubjects, POST as createSubject } from "@/app/api/app/subjects/route";
+import { POST as archiveTopic } from "@/app/api/app/topics/[topicId]/archive/route";
+import { POST as restoreTopic } from "@/app/api/app/topics/[topicId]/restore/route";
+import { GET as getTopic, PATCH as patchTopic } from "@/app/api/app/topics/[topicId]/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -107,6 +118,56 @@ async function dispatch(method: string, path: string, request: Request): Promise
   if (method === "PATCH" && path === "/api/app/profile") return patchProfile(request);
   if (method === "PATCH" && path === "/api/app/profile/onboarding") return patchOnboarding(request);
   if (method === "GET" && path === "/api/app/profile") return getProfile(request);
+  if (method === "GET" && path === "/api/app/subjects") return getSubjects(request);
+  if (method === "POST" && path === "/api/app/subjects") return createSubject(request);
+  if (method === "PUT" && path === "/api/app/subjects/order") return reorderSubjects(request);
+
+  const subjectPath = /^\/api\/app\/subjects\/([^/]+)$/.exec(path);
+  if (subjectPath !== null) {
+    const params = { params: Promise.resolve({ subjectId: subjectPath[1] ?? "" }) };
+    if (method === "GET") return getSubject(request, params);
+    if (method === "PATCH") return patchSubject(request, params);
+  }
+
+  const subjectActionPath = /^\/api\/app\/subjects\/([^/]+)\/(archive|restore)$/.exec(path);
+  if (method === "POST" && subjectActionPath !== null) {
+    const params = { params: Promise.resolve({ subjectId: subjectActionPath[1] ?? "" }) };
+    return subjectActionPath[2] === "archive"
+      ? archiveSubject(request, params)
+      : restoreSubject(request, params);
+  }
+
+  const subjectTopicsPath = /^\/api\/app\/subjects\/([^/]+)\/topics$/.exec(path);
+  if (subjectTopicsPath !== null) {
+    const params = { params: Promise.resolve({ subjectId: subjectTopicsPath[1] ?? "" }) };
+    if (method === "GET") return getTopics(request, params);
+    if (method === "POST") return createTopic(request, params);
+  }
+
+  const topicsOrderPath = /^\/api\/app\/subjects\/([^/]+)\/topics\/order$/.exec(path);
+  if (method === "PUT" && topicsOrderPath !== null) {
+    return reorderTopics(request, { params: Promise.resolve({ subjectId: topicsOrderPath[1] ?? "" }) });
+  }
+
+  const topicsBulkPath = /^\/api\/app\/subjects\/([^/]+)\/topics\/bulk$/.exec(path);
+  if (method === "POST" && topicsBulkPath !== null) {
+    return bulkTopics(request, { params: Promise.resolve({ subjectId: topicsBulkPath[1] ?? "" }) });
+  }
+
+  const topicPath = /^\/api\/app\/topics\/([^/]+)$/.exec(path);
+  if (topicPath !== null) {
+    const params = { params: Promise.resolve({ topicId: topicPath[1] ?? "" }) };
+    if (method === "GET") return getTopic(request, params);
+    if (method === "PATCH") return patchTopic(request, params);
+  }
+
+  const topicActionPath = /^\/api\/app\/topics\/([^/]+)\/(archive|restore)$/.exec(path);
+  if (method === "POST" && topicActionPath !== null) {
+    const params = { params: Promise.resolve({ topicId: topicActionPath[1] ?? "" }) };
+    return topicActionPath[2] === "archive"
+      ? archiveTopic(request, params)
+      : restoreTopic(request, params);
+  }
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
   if (method === "DELETE" && signInPath !== null) {
@@ -177,6 +238,56 @@ export function parseBody<Schema extends z.ZodType>(
   }
   return parsed.data;
 }
+
+export const subjectSchema = z
+  .object({
+    id: z.string(),
+    name: z.string(),
+    color: z.string(),
+    position: z.number(),
+    archivedAt: z.string().nullable(),
+    version: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .loose();
+
+/** A-7 reads the two counts from the list response only (deviation recorded in M03). */
+export const subjectListItemSchema = subjectSchema.extend({
+  topicCount: z.number(),
+  doneTopicCount: z.number(),
+});
+
+export const subjectListSchema = z.object({ data: z.array(subjectListItemSchema) });
+
+/** SUBJ-05 and TOP-06 answer the reordered rows without the counts SUBJ-01 adds. */
+export const subjectCollectionSchema = z.object({ data: z.array(subjectSchema) });
+
+export const topicSchema = z
+  .object({
+    id: z.string(),
+    subjectId: z.string(),
+    name: z.string(),
+    weight: z.number(),
+    status: z.enum(["not_started", "in_progress", "done"]),
+    position: z.number(),
+    archivedAt: z.string().nullable(),
+    version: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .loose();
+
+export const topicListSchema = z.object({ data: z.array(topicSchema) });
+
+export const bulkPreviewSchema = z.object({
+  valid: z.array(z.string()),
+  duplicates: z.array(z.string()),
+  tooLong: z.array(z.string()),
+});
+
+export type SubjectWire = z.infer<typeof subjectSchema>;
+export type TopicWire = z.infer<typeof topicSchema>;
 
 export interface TestUser {
   email: string;

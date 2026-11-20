@@ -76,6 +76,7 @@ export function Button({
   type = "button",
   onClick,
   disabled = false,
+  ariaLabel,
 }: {
   children: ReactNode;
   variant?: keyof typeof buttonVariants | undefined;
@@ -84,6 +85,8 @@ export function Button({
   type?: "button" | "submit" | undefined;
   onClick?: (() => void) | undefined;
   disabled?: boolean | undefined;
+  /** Names a button whose label repeats on a row, for example `Actions for Physics`. */
+  ariaLabel?: string | undefined;
 }) {
   return (
     <button
@@ -91,6 +94,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled || pending}
       aria-busy={pending || undefined}
+      aria-label={ariaLabel}
       className={`${buttonBase} ${buttonVariants[variant]} ${wide ? "w-full" : ""}`}
     >
       {pending && <Spinner />}
@@ -223,6 +227,7 @@ export function SelectInput({
   invalid = false,
   describedBy,
   placeholder,
+  disabled = false,
 }: {
   id: string;
   value: string;
@@ -231,6 +236,7 @@ export function SelectInput({
   invalid?: boolean | undefined;
   describedBy?: string | undefined;
   placeholder?: string | undefined;
+  disabled?: boolean | undefined;
 }) {
   return (
     <select
@@ -240,6 +246,7 @@ export function SelectInput({
       onChange={(event) => onChange(event.target.value)}
       aria-invalid={invalid || undefined}
       aria-describedby={describedBy}
+      disabled={disabled}
       className={`${controlClass} ${controlBorder(invalid)}`}
     >
       {placeholder !== undefined && <option value="">{placeholder}</option>}
@@ -249,6 +256,39 @@ export function SelectInput({
         </option>
       ))}
     </select>
+  );
+}
+
+/** Multi-line text, used by the topic paste dialog (FR-017). */
+export function Textarea({
+  id,
+  value,
+  onChange,
+  rows = 8,
+  invalid = false,
+  describedBy,
+  placeholder,
+}: {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  rows?: number | undefined;
+  invalid?: boolean | undefined;
+  describedBy?: string | undefined;
+  placeholder?: string | undefined;
+}) {
+  return (
+    <textarea
+      id={id}
+      name={id}
+      value={value}
+      rows={rows}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder={placeholder}
+      aria-invalid={invalid || undefined}
+      aria-describedby={describedBy}
+      className={`${controlClass} ${controlBorder(invalid)}`}
+    />
   );
 }
 

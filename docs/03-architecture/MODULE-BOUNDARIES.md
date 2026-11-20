@@ -61,7 +61,7 @@ Lower layers must sometimes react to facts known only by higher layers. They do 
 
 | Contract owner | Contract | Registered by | Requirement |
 |---|---|---|---|
-| Subjects | Archive guard: "may this subject be archived now?" | Timer (a running session on that subject blocks archive) | EC-007 |
+| Subjects | Archive guard: "may this subject be archived now?" The guard answers a verdict (`blocked`, with optional details such as the running timer's id); no registered guard means archiving proceeds | Timer (a running session on that subject blocks archive) | EC-007 |
 | User profile | Purge handler: "delete all of this user's data" | Every module that owns user data | BR-032, NFR-031, EC-019 |
 | User profile | Export contributor: "provide this module's data for export" | Every module that owns exportable data | FR-130, NFR-032, EC-027 |
 | Authentication | Notification port: "send password-reset email" | Notifications | FR-005 |

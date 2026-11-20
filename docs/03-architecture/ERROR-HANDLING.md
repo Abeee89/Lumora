@@ -51,15 +51,15 @@ Names only. Names are stable once released; messages may change. HTTP statuses c
 
 | Category | Codes |
 |---|---|
-| Validation | `validation_failed`, `password_too_short`, `age_confirmation_required`, `invalid_timezone`, `goal_out_of_range`, `duration_out_of_range`, `manual_entry_in_future`, `manual_entry_too_long`, `daily_total_exceeded`, `exam_date_in_past`, `consent_required`, `input_too_large` |
+| Validation | `validation_failed`, `password_too_short`, `age_confirmation_required`, `invalid_timezone`, `goal_out_of_range`, `duration_out_of_range`, `manual_entry_in_future`, `manual_entry_too_long`, `daily_total_exceeded`, `exam_date_in_past`, `consent_required`, `input_too_large`, `version_required`, `idempotency_key_required` |
 | Authentication | `unauthenticated`, `invalid_credentials`, `account_locked`, `session_expired`, `session_revoked`, `reset_token_invalid`, `api_key_invalid`, `api_key_revoked` |
-| Authorization and not-found | `not_found`, `scope_missing`, `role_not_allowed`, `last_administrator` |
-| Conflict | `stale_version`, `timer_already_running`, `subject_has_running_session`, `overlap_confirmation_required`, `exam_date_warning_confirmation_required`, `manual_entry_overlaps_session`, `duplicate_email`, `group_full`, `invite_expired`, `already_member`, `past_entry_read_only`, `session_already_closed` |
+| Authorization and not-found | `not_found`, `scope_missing`, `role_not_allowed`, `last_administrator`, `csrf_rejected` |
+| Conflict | `stale_version`, `timer_already_running`, `subject_has_running_session`, `overlap_confirmation_required`, `exam_date_warning_confirmation_required`, `manual_entry_overlaps_session`, `duplicate_email`, `group_full`, `invite_expired`, `already_member`, `past_entry_read_only`, `session_already_closed`, `name_conflict`, `subject_archived`, `idempotency_key_reused`, `request_in_progress` |
 | Rate limit | `rate_limited`, `ai_daily_limit_reached`, `export_limit_reached` |
 | Dependency failure | `ai_provider_unavailable`, `ai_provider_timeout`, `ai_no_valid_entries`, `email_delivery_failed`, `storage_unavailable`, `database_unavailable` |
 | Unexpected | `internal_error` |
 
-Notes: `overlap_confirmation_required` and `exam_date_warning_confirmation_required` are warnings that require a confirmed resubmission and are not failures of the user's data (BR-026, FR-038). `ai_no_valid_entries` is a dependency-class outcome because the cause is provider output (EC-015).
+Notes: `overlap_confirmation_required` and `exam_date_warning_confirmation_required` are warnings that require a confirmed resubmission and are not failures of the user's data (BR-026, FR-038). `ai_no_valid_entries` is a dependency-class outcome because the cause is provider output (EC-015). `request_in_progress` is the one retryable conflict: the same `Idempotency-Key` is still executing, so the answer carries `Retry-After` and the client retries the identical request. The catalog also records `csrf_rejected` and `version_required`, which the M02 write routes already answered.
 
 ## 5. Client handling rules
 

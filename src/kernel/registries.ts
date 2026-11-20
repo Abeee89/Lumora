@@ -14,7 +14,17 @@ export interface ExportSection {
 
 export type ExportContributor = (userId: string) => Promise<ExportSection>;
 
-export type ArchiveGuard = (subjectId: string) => Promise<boolean>;
+/**
+ * The answer of one guard. `details` becomes the `details` of the
+ * `subject_has_running_session` conflict, so a guard can name the run that blocks it
+ * (SUBJ-06, EC-007).
+ */
+export interface ArchiveCheck {
+  blocked: boolean;
+  details?: Record<string, unknown>;
+}
+
+export type ArchiveGuard = (subjectId: string) => Promise<ArchiveCheck>;
 
 export interface Registry<T> {
   register(key: string, entry: T): void;

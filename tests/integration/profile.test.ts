@@ -237,11 +237,13 @@ describe("profile endpoints", () => {
     expect(await signInIds(victim)).toContain(victimSignIn);
   });
 
-  it("registers a working purge handler and export contributor for the M02 tables", async () => {
+  it("registers a working purge handler and export contributor for every owned table group", async () => {
     const user = await signUpUser({ timezone: "America/New_York" });
 
-    expect(purgeHandlers.keys()).toEqual(["profile", "auth"]);
-    expect(exportContributors.keys()).toEqual(["profile"]);
+    // M03 adds the taxonomy pair; the per-table behaviour of those is covered by
+    // tests/integration/subjects.test.ts.
+    expect(purgeHandlers.keys()).toEqual(["profile", "auth", "topics", "subjects"]);
+    expect(exportContributors.keys()).toEqual(["profile", "subjects", "topics"]);
 
     const contributor = exportContributors.entries().find(([key]) => key === "profile")?.[1];
     const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };

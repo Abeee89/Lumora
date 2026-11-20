@@ -8,12 +8,15 @@
 import { config } from "../kernel/config";
 import { createDatabase, type Database } from "../kernel/db";
 import { readEnv, requireAppOrigin, requireDatabaseUrl, type Env } from "../kernel/env";
+import { createPostgresIdempotencyStore, type IdempotencyStore } from "../kernel/idempotency";
 import { createLogger } from "../kernel/logger";
 import { createPostgresRateLimiter, type RateLimiter } from "../kernel/rate-limit";
 import { exportContributors, purgeHandlers } from "../kernel/registries";
 import * as auth from "../modules/auth/public";
 import { createLocalEmailSink } from "../modules/notifications/public";
 import * as profile from "../modules/profile/public";
+import * as subjects from "../modules/subjects/public";
+import * as topics from "../modules/topics/public";
 
 export interface Container {
   readonly database: Database;
@@ -22,6 +25,7 @@ export interface Container {
   readonly secureCookies: boolean;
   readonly trustedProxyHops: number;
   readonly authDeps: auth.AuthDeps;
+  readonly idempotency: IdempotencyStore;
   readonly google: auth.GoogleConfig | null;
 }
 
@@ -33,6 +37,7 @@ export async function postgresContainer(connectionString: string): Promise<Conta
 function createContainer(database: Database, env: Env, appOrigin: string): Container {
   const logger = createLogger({ level: env.LOG_LEVEL, pretty: env.NODE_ENV !== "production" });
   const limiter: RateLimiter = createPostgresRateLimiter(database);
+  const idempotency = createPostgresIdempotencyStore(database);
   const sender = createLocalEmailSink({
     directory: env.EMAIL_SINK_DIR ?? ".artifacts/emails",
     logger,
@@ -66,6 +71,7 @@ function createContainer(database: Database, env: Env, appOrigin: string): Conta
     secureCookies: env.SESSION_COOKIE_SECURE,
     trustedProxyHops: env.TRUSTED_PROXY_HOPS,
     authDeps,
+    idempotency,
     google,
   };
 }
@@ -92,6 +98,27 @@ export function registerContributions(database: Database): void {
     exportContributors.register("profile", async (userId) => ({
       section: "profile",
       rows: [await profile.exportProfile(userId, database)],
+    }));
+  }
+  // Topics registers before Subjects: the composite foreign key from topics to subjects is
+  // NO ACTION (BR-029 keeps archived subjects), so a purge must remove the children first.
+  // The handlers run in registration order.
+  if (!purgeHandlers.has("topics")) {
+    purgeHandlers.register("topics", (userId) => topics.purgeTopics(userId, database));
+  }
+  if (!purgeHandlers.has("subjects")) {
+    purgeHandlers.register("subjects", (userId) => subjects.purgeSubjects(userId, database));
+  }
+  if (!exportContributors.has("subjects")) {
+    exportContributors.register("subjects", async (userId) => ({
+      section: "subjects",
+      rows: await subjects.exportSubjects(userId, database),
+    }));
+  }
+  if (!exportContributors.has("topics")) {
+    exportContributors.register("topics", async (userId) => ({
+      section: "topics",
+      rows: await topics.exportTopics(userId, database),
     }));
   }
 }

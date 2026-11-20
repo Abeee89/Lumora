@@ -30,6 +30,35 @@ export const config = {
     manualMinMinutes: 5,
     manualMaxMinutes: 480,
   },
+  /**
+   * FR-010: a fixed palette of exactly 10 colours. The keys are what `subjects.color`
+   * stores and what the API validates against; the labels are the visible names of the
+   * swatch picker. The light and dark values of COLOR-TYPOGRAPHY section 6 live in
+   * `app/globals.css` as the `--subject-*` tokens, the only place a hex value may sit.
+   */
+  subjects: {
+    nameMaxLength: 100, // DATA-DICTIONARY subjects.name
+    palette: [
+      { key: "teal", label: "Teal" },
+      { key: "red", label: "Red" },
+      { key: "blue", label: "Blue" },
+      { key: "brown", label: "Brown" },
+      { key: "violet", label: "Violet" },
+      { key: "green", label: "Green" },
+      { key: "plum", label: "Plum" },
+      { key: "slate", label: "Slate" },
+      { key: "rust", label: "Rust" },
+      { key: "cyan", label: "Cyan" },
+    ],
+  },
+  topics: {
+    nameMaxLength: 150, // DATA-DICTIONARY topics.name
+    /** BR-024 weight range. */
+    weightMin: 1,
+    weightMax: 5,
+    /** FR-017: a pasted list of more than this many non-blank lines is rejected. */
+    bulkMaxLines: 200,
+  },
   timer: {
     /** BR-009 defaults. */
     focusMinutes: 25,
@@ -65,6 +94,11 @@ export const config = {
   idempotency: {
     /** R8. */
     retentionDays: 7,
+    /**
+     * PROPOSED: how long a reserved key blocks a duplicate request before it is treated
+     * as abandoned (API-CONVENTIONS section 7 keeps `Retry-After` at 1 second).
+     */
+    reservationSeconds: 30,
   },
   outbox: {
     relayIntervalSeconds: 5,
@@ -81,6 +115,7 @@ export const config = {
     windowSeconds: 60, // API-CONVENTIONS section 10
     publicApiPerMinute: 60, // PROPOSED: U-9
     readPerUserPerMinute: 300,
+    heavyPerUserPerMinute: 30, // RL-HEAVY: statistics, calendar, exports, bulk topics
     writePerUserPerMinute: 120,
     signInPerIpPerMinute: 10,
     signUpPerIpPerMinute: 5,

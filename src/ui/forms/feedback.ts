@@ -42,3 +42,22 @@ export function errorsFromFailure(
 export function errorCount(errors: FieldErrors): number {
   return Object.keys(errors).length;
 }
+
+/**
+ * Sentence for an action that failed. Two codes carry the fact the user needs: an archive
+ * blocked by a running timer names the run (BR-029), and an oversized paste names both
+ * counts (TOP-03).
+ */
+export function failureBody(failure: ApiFailure): string {
+  const base = messageFor(failure.code, failure.message);
+  const timerRunId = failure.details["timerRunId"];
+  if (typeof timerRunId === "string") return `${base} Running session ${timerRunId}.`;
+  if (failure.code === "input_too_large") {
+    const limit = failure.details["limit"];
+    const actual = failure.details["actual"];
+    if (typeof limit === "number" && typeof actual === "number") {
+      return `You pasted ${actual} lines. One paste holds up to ${limit}.`;
+    }
+  }
+  return base;
+}

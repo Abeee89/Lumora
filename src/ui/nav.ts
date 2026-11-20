@@ -35,8 +35,8 @@ export type ShippedRoutes = Readonly<Record<string, true>>;
 
 /**
  * Routes that exist in this build. M02 adds the public pages and the three settings
- * sections that belong to profile, appearance and security. Keep this in step with
- * `src/app`.
+ * sections that belong to profile, appearance and security; M03 adds Subjects and the
+ * subject detail page. Keep this in step with `src/app`.
  */
 export const shippedRoutes: ShippedRoutes = {
   "/": true,
@@ -48,6 +48,7 @@ export const shippedRoutes: ShippedRoutes = {
   "/settings/profile": true,
   "/settings/appearance": true,
   "/settings/security": true,
+  "/subjects": true,
 };
 
 export function visibleNav(

@@ -1,6 +1,6 @@
 # M02 Evidence
 
-> Status: executed 2026-11-20 on `main` at `d2b3435` plus the uncommitted work listed at the end; build work tree `D:/Portofolio/Lumora`. Every command below was run in this session and outputs are pasted as observed. The milestone record is [M02-COMPLETION-REPORT.md](M02-COMPLETION-REPORT.md).
+> Status: executed 2026-11-20 on `main` at `d2b3435` plus the uncommitted work listed at the end; build work tree `D:/Portofolio/Lumora`. Every command below was run in this session and outputs are pasted as observed. The record was approved by the owner on 2026-11-20 ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G); the milestone record is [M02-COMPLETION-REPORT.md](M02-COMPLETION-REPORT.md).
 
 ## Rules
 

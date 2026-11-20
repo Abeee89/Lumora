@@ -52,6 +52,39 @@ export const updateOnboardingSchema = z
   })
   .strict();
 
+/**
+ * M03 request bodies. Only types are asserted here: lengths, ranges and enum membership
+ * belong to the module that owns the column, so every rejection carries the same
+ * `details.fields` shape whether it happens here or there.
+ */
+export const createSubjectSchema = z.object({ name: z.string(), color: z.string() }).strict();
+
+export const updateSubjectSchema = z
+  .object({ name: z.string().optional(), color: z.string().optional() })
+  .strict();
+
+export const subjectOrderSchema = z.object({ subjectIds: z.array(z.string()).max(1000) }).strict();
+
+const topicStatusSchema = z.enum(["not_started", "in_progress", "done"]);
+
+export const createTopicSchema = z
+  .object({ name: z.string(), weight: z.number().optional(), status: topicStatusSchema.optional() })
+  .strict();
+
+export const updateTopicSchema = z
+  .object({
+    name: z.string().optional(),
+    weight: z.number().optional(),
+    status: topicStatusSchema.optional(),
+  })
+  .strict();
+
+export const topicOrderSchema = z.object({ topicIds: z.array(z.string()).max(2000) }).strict();
+
+export const bulkTopicsSchema = z
+  .object({ lines: z.array(z.string()).max(5000), dryRun: z.boolean().optional() })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {
@@ -97,6 +130,48 @@ export async function requireIdentity(request: Request, c: Container): Promise<a
 }
 
 /**
+ * ADR-011, API-CONVENTIONS section 6: `If-Match: "<version>"`; a bare integer is accepted
+ * too. `null` when the header is absent or unreadable, which the caller answers with
+ * `version_required`.
+ */
+export function ifMatchVersion(request: Request): number | null {
+  const header = request.headers.get("if-match");
+  if (header === null) return null;
+  const parsed = Number.parseInt(header.replace(/"/g, "").trim(), 10);
+  return Number.isInteger(parsed) ? parsed : null;
+}
+
+/** API-CONVENTIONS section 7: 1..100 characters of `[A-Za-z0-9_-]`, scoped to the user. */
+function readIdempotencyKey(request: Request): string | null {
+  const header = request.headers.get("idempotency-key");
+  if (header === null || header.trim() === "") return null;
+  if (!/^[A-Za-z0-9_-]{1,100}$/.test(header)) {
+    throw new AppError("validation_failed", {
+      details: { fields: [{ path: "Idempotency-Key", rule: "format" }] },
+    });
+  }
+  return header;
+}
+
+/** Every creating `POST` on the internal API requires a key. */
+export function requiredIdempotencyKey(request: Request): string {
+  const key = readIdempotencyKey(request);
+  if (key === null) throw new AppError("idempotency_key_required");
+  return key;
+}
+
+/** `includeArchived` is a boolean query parameter; anything else is `validation_failed`. */
+export function includeArchivedQuery(url: URL): boolean {
+  const raw = url.searchParams.get("includeArchived");
+  if (raw === null) return false;
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  throw new AppError("validation_failed", {
+    details: { fields: [{ path: "includeArchived", rule: "boolean" }] },
+  });
+}
+
+/**
  * NFR-022. Reads fail open: a limiter outage must not take the whole app down, and the
  * endpoints that must never fail open (register, sign-in, password reset) call the limiter
  * directly instead of through this guard.
@@ -104,10 +179,13 @@ export async function requireIdentity(request: Request, c: Container): Promise<a
 export async function enforceUserRate(
   c: Container,
   identity: auth.SessionIdentity,
-  kind: "read" | "write",
+  kind: "read" | "write" | "heavy",
 ): Promise<void> {
-  const limit =
-    kind === "read" ? config.rateLimit.readPerUserPerMinute : config.rateLimit.writePerUserPerMinute;
+  const limit = {
+    read: config.rateLimit.readPerUserPerMinute,
+    write: config.rateLimit.writePerUserPerMinute,
+    heavy: config.rateLimit.heavyPerUserPerMinute,
+  }[kind];
   try {
     const result = await c.authDeps.limiter.consume(
       `user:${identity.userId}:${kind}`,

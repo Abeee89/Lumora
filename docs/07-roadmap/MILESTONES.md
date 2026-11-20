@@ -181,6 +181,7 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
   - [ ] Password-reset email delivered through the notification port in staging
   - [ ] DEFINITION-OF-DONE.md checked
 - **As built (2026-11-20, report 2026-11-20):** evidence, per-row proof and the open rows are in [08-build/M02-EVIDENCE.md](../08-build/M02-EVIDENCE.md); the record is [08-build/M02-COMPLETION-REPORT.md](../08-build/M02-COMPLETION-REPORT.md). Shipped: the seven tables, ten AUTH routes, two PROF routes, PU-1 to PU-6, the profile, appearance and security pages of A-15, the notification email port with a file-sink adapter, and the daily `auth_cleanup` job on the `stately` queue at cron `0 3 * * *` UTC. Rows open because their inputs are absent or undecided: Google sign-in has no OAuth client (U-5), so only its start route, its signed state, its callback and its "unavailable" answer are proven; the reset email reaches no provider and there is no staging host (U-A2, U-A1); the ownership helper is used for sign-in management only, which is the only user-owned resource M02 ships, and every later milestone's resources adopt it; the export contributor covers `user_profiles` while the `users` account columns wait for M14; the Definition of Done was evaluated item by item and is partial, so that row stays unchecked as it did in M01. Deviations: the reset email is sent inside the request scope instead of from a queue job because BACKGROUND-JOBS section 3 and OD-S05 forbid secrets in a queue payload and the stored hash cannot rebuild the link; the UI is hand-built and icon-free (U-D2, U-D3, U-D11); the navigation shell waits for the first MVP destinations; the signed-in landing is `/settings/profile` because `/dashboard` is M04 and `/onboarding` is A-1; reading the session and theme cookies in the root layout makes every route dynamic.
+  The delivery report was approved on 2026-11-20 ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G), which accepts this record without closing M02; the unchecked rows above are what M02 still needs.
 
 ### M03 Subjects and topics
 
@@ -200,11 +201,12 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (ordering, weights, archive rules, BR-029); ownership contract tests for subjects and topics; bulk paste edge cases; axe and keyboard reorder.
 - **Acceptance criteria:** AC-FR-010-* to AC-FR-019-*; AC-E2E-10 (subject part).
 - **Completion checklist:**
-  - [ ] All SUBJ and TOP endpoints implemented with documented error codes
-  - [ ] Keyboard equivalent for reorder
-  - [ ] Empty, loading and error states on A-7, A-8
-  - [ ] Purge handler and export contributor registered
+  - [x] All SUBJ and TOP endpoints implemented with documented error codes
+  - [x] Keyboard equivalent for reorder
+  - [x] Empty, loading and error states on A-7, A-8
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-21):** evidence, per-row proof and the open rows are in [08-build/M03-EVIDENCE.md](../08-build/M03-EVIDENCE.md); the record is [08-build/M03-COMPLETION-REPORT.md](../08-build/M03-COMPLETION-REPORT.md). Shipped: both tables, the eleven SUBJ and TOP routes, A-7 and A-8, the archive-guard verdict contract, the topic-event contract, bulk paste with preview and a 200-line cap, the PostgreSQL idempotency store, and the purge handlers and export contributors for both tables. The `DEFINITION-OF-DONE.md` row stays partial: AC-FR-013-1, AC-FR-014-2 and the picker half of AC-FR-013-3 need sessions, plans and to-dos, and a picker, none of which M03 ships; the coverage floors have no command; axe has no browser-automation dependency (the M01 and M02 gap); and the `m03-done` tag needs the owner's commit. Deviations: `SubjectListItem` gains both topic counts on SUBJ-01, no production archive guard until M05, keyboard and button reorder instead of pointer drag, and in-process topic events. Test and build numbers: 69 unit tests, 47 integration tests, 37 routes, no horizontal overflow at 360, 768, 1280 or 2560 px.
 
 ### M04 Exams (basic)
 

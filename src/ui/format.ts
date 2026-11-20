@@ -1,3 +1,8 @@
+/** "1 topic" / "3 topics" (A-7 row copy). */
+export function countText(count: number, singular: string, plural: string): string {
+  return count === 1 ? `1 ${singular}` : `${count} ${plural}`;
+}
+
 /** Shared display formatting for timestamps shown next to records. */
 export function formatLastActive(iso: string, now: Date = new Date()): string {
   const then = new Date(iso);

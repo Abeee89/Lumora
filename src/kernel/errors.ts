@@ -47,6 +47,7 @@ export const errorCatalog = {
   consent_required: entry("validation", 400, false, "Consent is required."),
   input_too_large: entry("validation", 400, false, "The input is too large."),
   version_required: entry("validation", 400, false, "The version header is required."),
+  idempotency_key_required: entry("validation", 400, false, "The Idempotency-Key header is required."),
 
   unauthenticated: entry("authentication", 401, false, "Sign in to continue."),
   invalid_credentials: entry("authentication", 401, false, "The email or password is incorrect."),
@@ -64,6 +65,10 @@ export const errorCatalog = {
   last_administrator: entry("conflict", 409, false, "The last administrator cannot be removed."),
 
   stale_version: entry("conflict", 409, false, "The record changed elsewhere."),
+  name_conflict: entry("conflict", 409, false, "A subject with that name already exists."),
+  subject_archived: entry("conflict", 409, false, "This subject is archived. Restore it first."),
+  idempotency_key_reused: entry("conflict", 409, false, "That Idempotency-Key was used for a different request."),
+  request_in_progress: entry("conflict", 409, true, "An identical request is still running."),
   timer_already_running: entry("conflict", 409, false, "A timer is already running."),
   subject_has_running_session: entry("conflict", 409, false, "A running session blocks this archive."),
   overlap_confirmation_required: entry("conflict", 409, false, "Overlapping plan entries need confirmation."),

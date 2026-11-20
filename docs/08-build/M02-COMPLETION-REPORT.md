@@ -1,6 +1,6 @@
 # M02 Completion Report
 
-> Status: M02 execution record, 2026-11-20. Commands, raw output and residual risk are in [M02-EVIDENCE.md](M02-EVIDENCE.md). M02 is built and verified; it is not closed, because three checklist rows need inputs that do not exist yet (section 9). No ADR is Accepted, no open-decision row is closed, no vendor is selected, and M03 is not authorized by this report.
+> Status: M02 execution record, 2026-11-20, approved by the owner the same day ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G). Commands, raw output and residual risk are in [M02-EVIDENCE.md](M02-EVIDENCE.md). M02 is built and verified; it is not closed, because three checklist rows need inputs that do not exist yet (section 9). No ADR is Accepted, no open-decision row is closed, no vendor is selected, and M03 is not authorized by this report.
 
 ## 1. Executive summary
 
