@@ -13,10 +13,12 @@ export default defineConfig({
       provider: "v8",
       include: ["src/**"],
       reporter: ["text"],
-      // Milestone floors (DEFINITION-OF-DONE section 2) are set where M01 has logic:
-      // the shared kernel. Module code arrives with M02 and carries its own floor.
+      // Milestone floors (DEFINITION-OF-DONE section 2) are set where a milestone has
+      // logic: the shared kernel from M01, and each module from the milestone that adds
+      // it. Measured by `npm run test:coverage`, which runs both projects.
       thresholds: {
         "src/kernel/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
+        "src/modules/exams/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
       },
     },
     projects: [

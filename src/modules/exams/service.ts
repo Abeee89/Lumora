@@ -274,8 +274,8 @@ export async function listExams(
 
 async function countByExam(database: Queryable, userId: string): Promise<Map<string, ListCountRow>> {
   const rows = await database.query<ListCountRow>(
-    `SELECT x.exam_id, count(x.topic_id) AS topic_count,
-            count(*) FILTER (WHERE x.completed) AS completed_count
+    `SELECT x.exam_id, count(x.topic_id)::int AS topic_count,
+            count(*) FILTER (WHERE x.completed)::int AS completed_count
      FROM exam_topics x
      JOIN exams e ON e.id = x.exam_id AND e.user_id = $1
      JOIN topics t ON t.id = x.topic_id AND t.subject_id = x.subject_id

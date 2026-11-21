@@ -1,6 +1,37 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20 and M03 from 2026-11-21.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 from 2026-11-21 and M04 from 2026-11-21.
+
+## 2026-11-21, M04 exams (basic)
+
+### Added
+- [08-build/M04-EVIDENCE.md](08-build/M04-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements at four widths, the four defects found and fixed, the registry order, the derived archive state and the Definition of Done check.
+- [08-build/M04-COMPLETION-REPORT.md](08-build/M04-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M33 to OD-M35 (the derived archive state, the date-only edit on an archived exam and the unpaginated upcoming list). Section G: the 2026-11-21 M04 execution row, limited to M04 records and stating that M04 stays open.
+- Application and tooling: `db/migrations/0004_exams_and_checklists.sql`; `src/modules/exams/**` (5 files); `src/app/api/app/exams/**` (4 routes); `src/app/exams/**` (2 pages); `src/ui/forms/exam-{dialog,list,workspace}.tsx`; the `exam_auto_archive` scheduled job registered in `src/worker/index.ts`.
+- Tests: `tests/unit/exams.test.ts` (7 cases) and `tests/integration/exams.test.ts` (12 cases), taking the unit tier to 17 files and 76 tests and the integration tier to 8 files and 59 tests.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): three M04 rows with evidence checked, the Definition of Done row left partial, and an "As built" note recording what shipped, the derived archive rule and the open rows.
+- [03-architecture/ERROR-HANDLING.md](03-architecture/ERROR-HANDLING.md) section 4: `invalid_page_size` and `invalid_cursor`, and the EC-008 row now names the checklist drop rather than a readiness note.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7, [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M05 gate and the inventory at 91 documents (11 build records).
+- Application and tooling: `src/kernel/{config,errors}.ts` (the exams limits, the queue name, the cron and two codes), `src/server/{container,request-context}.ts`, `src/ui/{control,messages,nav}.ts(x)`, `vitest.config.ts` (a `src/modules/exams/**` coverage floor beside the kernel one), `tests/integration/support/api.ts` and `tests/integration/profile.test.ts`.
+
+### Fixed
+- The exam list answered `topicCount` and `completedCount` as the driver's bigint strings; both counts now cast `::int`, with a regression case.
+- A `date` column returned as a JavaScript `Date` shifted every countdown by one day outside UTC; every exam read now selects `exam_date::text`.
+- The A-12 tablist used a roving tabindex with no arrow handler, so the Archived tab was unreachable by keyboard; both exam tabs now follow the ARIA arrow pattern.
+- The exam list showed "No upcoming exams" during the request; a loading branch now renders five skeletons in an `aria-busy` region with a `role="status"` label.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 17 unit files and 76 tests, 8 integration files and 59 tests in 140.70 s against PostgreSQL 18.6.
+- `npx next build`: 43 routes, 26 under `/api/app` of which 4 are M04's, plus `/exams` and `/exams/[examId]`; 28 static pages generated; no static and dynamic sibling conflict.
+- `npm run test:coverage` exit 0: both configured floors pass, the kernel at 94.94% lines and 77.5% branches and the exams module at 89.93% lines and 87.15% branches; overall lines measure 50.12%, because the UI layer is covered by the browser pass, so the Definition of Done coverage item stays partial.
+- Browser checks in Chromium at 360, 768, 1280 and 2560 px: A-12 and A-13 with their empty, loading and error states, the add, edit and change-date dialogs, the checklist tick, arrow-key tabs, the read-only archived exam and no horizontal overflow.
+
+### Not changed
+- No commit, no tag, no ADR Accepted, no vendor selected, no open-decision row closed and no requirement baseline approved.
+- No readiness score, weight input or label (Phase 2), no plan, session, timer, statistic or note behaviour, and no paging widget on the archived list; M05 is not authorized.
 
 ## 2026-11-21, M03 subjects and topics
 

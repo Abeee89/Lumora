@@ -231,6 +231,31 @@ describe("exam endpoints", () => {
     expect(secondPage.page.hasMore).toBe(false);
   });
 
+  it("answers the list counts as numbers, not the driver's bigint strings", async () => {
+    const user = await signUpUser();
+    const subjectId = await createSubject(user, "Geography");
+    const first = await createTopic(user, subjectId, "Rivers");
+    await createTopic(user, subjectId, "Mountains");
+    const exam = await createExam(user, subjectId, "Physical geography", daysFromNow(4));
+    await call(`/api/app/exams/${exam.id}/topics`, {
+      method: "PUT",
+      cookie: user.cookie,
+      body: { topicIds: [first] },
+    });
+    await call(`/api/app/exams/${exam.id}/topics/${first}`, {
+      method: "PUT",
+      cookie: user.cookie,
+      body: { completed: true },
+    });
+
+    const listed = await call("/api/app/exams?state=upcoming", { cookie: user.cookie });
+    const row = parseBody(examListSchema, listed, "GET upcoming").data.find((item) => item.id === exam.id);
+    expect(typeof row?.topicCount).toBe("number");
+    expect(typeof row?.completedCount).toBe("number");
+    expect(row?.topicCount).toBe(1);
+    expect(row?.completedCount).toBe(1);
+  });
+
   it("rejects limit or cursor on the upcoming list and bad page sizes", async () => {
     const user = await signUpUser();
     const limited = await call("/api/app/exams?state=upcoming&limit=10", { cookie: user.cookie });

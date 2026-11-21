@@ -227,10 +227,11 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** countdown across timezone; archive at user-local today; ownership contract; checklist replace semantics.
 - **Acceptance criteria:** AC-FR-120-* to AC-FR-125-*; AC-E2E-08.
 - **Completion checklist:**
-  - [ ] Create, edit, checklist, countdown, archive list work
-  - [ ] No readiness UI or field visible in the MVP build
-  - [ ] Purge handler and export contributor registered
+  - [x] Create, edit, checklist, countdown, archive list work
+  - [x] No readiness UI or field visible in the MVP build
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-21):** evidence, per-row proof and the open rows are in [08-build/M04-EVIDENCE.md](../08-build/M04-EVIDENCE.md); the record is [08-build/M04-COMPLETION-REPORT.md](../08-build/M04-COMPLETION-REPORT.md). Shipped: `exams` and `exam_topics`, the four EXAM route files behind ids EXAM-01..EXAM-06, A-12 and A-13, the derived archive state (no `archived_at` column; an exam is archived when its date is before the user's local today), the hourly `exam_auto_archive` job that only publishes `ExamArchived`, the EC-008 subscriber that drops an archived topic from every checklist, and the purge handler and export contributor for both tables. The `DEFINITION-OF-DONE.md` row stays partial: AC-FR-126-*, AC-FR-127-* and AC-FR-128-* need the Phase 2 readiness score (P2-05), the by-layer coverage floors the Definition of Done names are neither enforced nor met although both configured floors pass (`npm run test:coverage` exit 0; the exams module floor is new in this milestone), axe has no browser-automation dependency, and the `m04-done` tag needs the owner's commit; nothing is marked done on the owner's behalf.
 
 ### M05 Study plans
 

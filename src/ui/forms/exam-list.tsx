@@ -66,6 +66,7 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
   }, [tab, archived]);
 
   const shown = tab === "upcoming" ? (upcoming ?? []) : (archived ?? []);
+  const loading = tab === "upcoming" ? upcoming === null : archived === null;
   const countdownText = (row: ExamListItem): string => {
     const countdown = row.countdown;
     if (countdown === null) return "";
@@ -107,6 +108,17 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
               aria-selected={tab === name}
               tabIndex={tab === name ? 0 : -1}
               onClick={() => setTab(name)}
+              onKeyDown={(event) => {
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                event.preventDefault();
+                const next = name === "upcoming" ? "archived" : "upcoming";
+                setTab(next);
+                // ARIA tabs pattern: the arrow keys move focus with the selection.
+                const tabs = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                  "[role='tab']",
+                );
+                tabs?.[next === "upcoming" ? 0 : 1]?.focus();
+              }}
               className={`inline-flex min-h-11 items-center rounded-lg px-4 text-[15px] ${
                 tab === name ? "bg-primary-soft font-semibold text-on-primary-soft" : "text-ink-2 hover:text-primary"
               }`}
@@ -119,7 +131,16 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
       </div>
 
 
-      {shown.length === 0 ? (
+      {loading ? (
+        <div aria-busy="true" className="space-y-2">
+          <p role="status" className="sr-only">
+            Loading exams
+          </p>
+          {[0, 1, 2, 3, 4].map((index) => (
+            <div key={index} className="h-12 rounded-card border border-line bg-sunken" />
+          ))}
+        </div>
+      ) : shown.length === 0 ? (
         <Panel className="space-y-3">
           <p className="text-ink-2">
             {tab === "upcoming" ? "No upcoming exams" : "No archived exams"}
