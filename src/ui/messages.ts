@@ -27,6 +27,9 @@ export const errorCopy: Readonly<Record<string, string>> = {
   subject_archived: "This subject is archived. Restore it first.",
   subject_has_running_session: "A session is running on this subject. Stop the timer first.",
   input_too_large: "That is more than the limit for one paste.",
+  exam_date_in_past: "Choose an exam date that is today or later.",
+  invalid_page_size: "That page size is outside the allowed range.",
+  invalid_cursor: "That page link is out of date. Refresh the list.",
 };
 
 /** Fallback for a code the UI has no copy for. */

@@ -17,6 +17,7 @@ import { createLocalEmailSink } from "../modules/notifications/public";
 import * as profile from "../modules/profile/public";
 import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
+import * as exams from "../modules/exams/public";
 
 export interface Container {
   readonly database: Database;
@@ -98,6 +99,23 @@ export function registerContributions(database: Database): void {
     exportContributors.register("profile", async (userId) => ({
       section: "profile",
       rows: [await profile.exportProfile(userId, database)],
+    }));
+  }
+  // EC-008: Topics publishes after commit, so the checklist drop is safe to run here.
+  if (!topics.topicEventSubscribers.has("exams")) {
+    topics.topicEventSubscribers.register("exams", (event) =>
+      exams.dropArchivedTopicFromChecklists(event, database),
+    );
+  }
+  // Exams purge before Topics: the checklist cascades from exams, but exam_topics -> topics
+  // is NO ACTION (EC-008 keeps archived topics), so the exams rows must go first.
+  if (!purgeHandlers.has("exams")) {
+    purgeHandlers.register("exams", (userId) => exams.purgeExams(userId, database));
+  }
+  if (!exportContributors.has("exams")) {
+    exportContributors.register("exams", async (userId) => ({
+      section: "exams",
+      rows: await exams.exportExams(userId, database),
     }));
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is

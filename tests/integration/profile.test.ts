@@ -240,10 +240,10 @@ describe("profile endpoints", () => {
   it("registers a working purge handler and export contributor for every owned table group", async () => {
     const user = await signUpUser({ timezone: "America/New_York" });
 
-    // M03 adds the taxonomy pair; the per-table behaviour of those is covered by
-    // tests/integration/subjects.test.ts.
-    expect(purgeHandlers.keys()).toEqual(["profile", "auth", "topics", "subjects"]);
-    expect(exportContributors.keys()).toEqual(["profile", "subjects", "topics"]);
+    // M04 adds the exams group; the per-table behaviour of that is covered by
+    // tests/integration/exams.test.ts.
+    expect(purgeHandlers.keys()).toEqual(["profile", "auth", "exams", "topics", "subjects"]);
+    expect(exportContributors.keys()).toEqual(["profile", "exams", "subjects", "topics"]);
 
     const contributor = exportContributors.entries().find(([key]) => key === "profile")?.[1];
     const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };

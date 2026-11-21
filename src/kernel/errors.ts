@@ -48,6 +48,8 @@ export const errorCatalog = {
   input_too_large: entry("validation", 400, false, "The input is too large."),
   version_required: entry("validation", 400, false, "The version header is required."),
   idempotency_key_required: entry("validation", 400, false, "The Idempotency-Key header is required."),
+  invalid_page_size: entry("validation", 400, false, "The page size is outside the allowed range."),
+  invalid_cursor: entry("validation", 400, false, "The page cursor is invalid."),
 
   unauthenticated: entry("authentication", 401, false, "Sign in to continue."),
   invalid_credentials: entry("authentication", 401, false, "The email or password is incorrect."),

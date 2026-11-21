@@ -193,7 +193,7 @@ export function TextInput({
   placeholder,
 }: {
   id: string;
-  type: "text" | "email" | "password" | "number";
+  type: "text" | "email" | "password" | "number" | "date";
   value: string;
   onChange: (value: string) => void;
   onBlur?: (() => void) | undefined;

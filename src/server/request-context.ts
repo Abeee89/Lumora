@@ -85,6 +85,42 @@ export const bulkTopicsSchema = z
   .object({ lines: z.array(z.string()).max(5000), dryRun: z.boolean().optional() })
   .strict();
 
+/**
+ * M04 request bodies. EXAM-01..EXAM-06: the module owns bounds and enum membership,
+ * the adapter only asserts the shape.
+ */
+export const createExamSchema = z
+  .object({ subjectId: z.string(), title: z.string(), examDate: z.string() })
+  .strict();
+
+export const updateExamSchema = z
+  .object({
+    subjectId: z.string().optional(),
+    title: z.string().optional(),
+    examDate: z.string().optional(),
+  })
+  .strict();
+
+export const examListQuery = z
+  .object({
+    state: z.enum(["upcoming", "archived"]).default("upcoming"),
+    limit: z.coerce.number().int().optional(),
+    cursor: z.string().optional(),
+  })
+  .strict()
+  .superRefine((query, ctx) => {
+    // EXAM-01: the archived list is the only paginated surface, so a page size or
+    // cursor on the upcoming list is a programming error, not a silent ignore.
+    if (query.state === "upcoming" && (query.limit !== undefined || query.cursor !== undefined)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "limit and cursor apply to archived exams only" });
+    }
+  });
+
+export const setExamTopicsSchema = z.object({ topicIds: z.array(z.string()) }).strict();
+
+/** EXAM-06: `completed` is required; a missing boolean is a 400, not a toggle. */
+export const setExamTopicSchema = z.object({ completed: z.boolean() }).strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {

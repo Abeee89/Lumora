@@ -13,8 +13,9 @@ import { requireDatabaseUrl, readEnv } from "@/kernel/env";
 import { logger } from "@/kernel/logger";
 import { relayOutbox, type JobQueue } from "@/kernel/outbox";
 import { authCleanupJob } from "@/modules/auth/public";
+import { examAutoArchiveJob } from "@/modules/exams/public";
 
-const scheduledJobs = [authCleanupJob];
+const scheduledJobs = [authCleanupJob, examAutoArchiveJob];
 
 export interface WorkerHandle {
   stop(): Promise<void>;

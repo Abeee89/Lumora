@@ -29,6 +29,10 @@ import { GET as getSubjects, POST as createSubject } from "@/app/api/app/subject
 import { POST as archiveTopic } from "@/app/api/app/topics/[topicId]/archive/route";
 import { POST as restoreTopic } from "@/app/api/app/topics/[topicId]/restore/route";
 import { GET as getTopic, PATCH as patchTopic } from "@/app/api/app/topics/[topicId]/route";
+import { GET as getExams, POST as createExam } from "@/app/api/app/exams/route";
+import { GET as getExam, PATCH as patchExam } from "@/app/api/app/exams/[examId]/route";
+import { PUT as setExamTopics } from "@/app/api/app/exams/[examId]/topics/route";
+import { PUT as setExamTopic } from "@/app/api/app/exams/[examId]/topics/[topicId]/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -169,6 +173,31 @@ async function dispatch(method: string, path: string, request: Request): Promise
       : restoreTopic(request, params);
   }
 
+  const examsPath = /^\/api\/app\/exams$/.exec(path);
+  if (examsPath !== null) {
+    if (method === "GET") return getExams(request);
+    if (method === "POST") return createExam(request);
+  }
+
+  const examPath = /^\/api\/app\/exams\/([^/]+)$/.exec(path);
+  if (examPath !== null) {
+    const params = { params: Promise.resolve({ examId: examPath[1] ?? "" }) };
+    if (method === "GET") return getExam(request, params);
+    if (method === "PATCH") return patchExam(request, params);
+  }
+
+  const examTopicsPath = /^\/api\/app\/exams\/([^/]+)\/topics$/.exec(path);
+  if (method === "PUT" && examTopicsPath !== null) {
+    return setExamTopics(request, { params: Promise.resolve({ examId: examTopicsPath[1] ?? "" }) });
+  }
+
+  const examTopicPath = /^\/api\/app\/exams\/([^/]+)\/topics\/([^/]+)$/.exec(path);
+  if (method === "PUT" && examTopicPath !== null) {
+    return setExamTopic(request, {
+      params: Promise.resolve({ examId: examTopicPath[1] ?? "", topicId: examTopicPath[2] ?? "" }),
+    });
+  }
+
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
   if (method === "DELETE" && signInPath !== null) {
     return deleteSignIn(request, { params: Promise.resolve({ signInId: signInPath[1] ?? "" }) });
@@ -279,6 +308,46 @@ export const topicSchema = z
   .loose();
 
 export const topicListSchema = z.object({ data: z.array(topicSchema) });
+
+const examCountdownSchema = z
+  .object({ daysRemaining: z.number().int(), isToday: z.boolean() })
+  .loose();
+
+const examChecklistItemSchema = z
+  .object({
+    topicId: z.string(),
+    name: z.string(),
+    completed: z.boolean(),
+    weight: z.number().int(),
+  })
+  .loose();
+
+export const examSchema = z
+  .object({
+    id: z.string(),
+    subjectId: z.string(),
+    title: z.string(),
+    examDate: z.string(),
+    state: z.enum(["upcoming", "archived"]),
+    countdown: examCountdownSchema.nullable(),
+    checklist: z.array(examChecklistItemSchema),
+    version: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .loose();
+
+export const examListItemSchema = examSchema
+  .omit({ checklist: true })
+  .extend({ topicCount: z.number(), completedCount: z.number() });
+
+export const examListSchema = z.object({
+  data: z.array(examListItemSchema),
+  page: z.object({ nextCursor: z.string().nullable(), hasMore: z.boolean() }),
+});
+
+export type ExamWire = z.infer<typeof examSchema>;
+export type ExamListWire = z.infer<typeof examListSchema>;
 
 export const bulkPreviewSchema = z.object({
   valid: z.array(z.string()),

@@ -59,6 +59,13 @@ export const config = {
     /** FR-017: a pasted list of more than this many non-blank lines is rejected. */
     bulkMaxLines: 200,
   },
+  exams: {
+    /** DATA-DICTIONARY exams.title. */
+    titleMaxLength: 200,
+    /** API-CONVENTIONS section 4: the archived exam list page size. */
+    archivePageSize: 50,
+    archiveMaxPageSize: 100,
+  },
   timer: {
     /** BR-009 defaults. */
     focusMinutes: 25,
@@ -110,6 +117,9 @@ export const config = {
     authCleanupQueue: "auth_cleanup",
     /** PROPOSED: 03:00 UTC daily; the spec fixes the cadence, not the hour. */
     authCleanupCron: "0 3 * * *",
+    /** BACKGROUND-JOBS section 2: "Exam auto-archive" (FR-124), hourly in UTC. */
+    examAutoArchiveQueue: "exam_auto_archive",
+    examAutoArchiveCron: "0 * * * *",
   },
   rateLimit: {
     windowSeconds: 60, // API-CONVENTIONS section 10
