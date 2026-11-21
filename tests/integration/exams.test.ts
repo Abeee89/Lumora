@@ -134,6 +134,7 @@ describe("exam endpoints", () => {
   it("rejects an archived subject and out-of-range titles", async () => {
     const user = await signUpUser();
     const subjectId = await createSubject(user, "Botany");
+    const freshSubjectId = await createSubject(user, "Mycology");
     await call(`/api/app/subjects/${subjectId}/archive`, {
       method: "POST",
       cookie: user.cookie,
@@ -153,7 +154,7 @@ describe("exam endpoints", () => {
       method: "POST",
       cookie: user.cookie,
       headers: { "idempotency-key": crypto.randomUUID() },
-      body: { subjectId, title: "x".repeat(201), examDate: daysFromNow(3) },
+      body: { subjectId: freshSubjectId, title: "x".repeat(201), examDate: daysFromNow(3) },
     });
     expect(long.status).toBe(400);
   });

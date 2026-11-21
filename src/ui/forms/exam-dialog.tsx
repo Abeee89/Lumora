@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import type { ExamListItem } from "@/modules/exams/public";
 import type { ApiFailure } from "../api-client";
 import { Button, FieldError, FormFields, Label, SelectInput, TextInput, formId } from "../control";
 import { Dialog } from "../dialog";

@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { ExamListItem } from "@/modules/exams/public";
-import { apiRequest, fieldIssues, type ApiFailure } from "../api-client";
+import { apiRequest, type ApiFailure } from "../api-client";
 import { Button, ErrorPanel, Panel } from "../control";
 import { countText } from "../format";
-import { messageFor } from "../messages";
 import { SubjectDot } from "../subject-dot";
 import { failureBody } from "./feedback";
 import { ExamDialog, formatExamDate } from "./exam-dialog";
@@ -26,10 +25,8 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [failure, setFailure] = useState<ApiFailure | null>(null);
-  const [actionFailure, setActionFailure] = useState<ApiFailure | null>(null);
   const [tab, setTab] = useState<Tab>("upcoming");
   const [dialog, setDialog] = useState<DialogState>(null);
-  const [pending, setPending] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
   const loadUpcoming = useCallback(async () => {
@@ -121,13 +118,6 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
         <Button onClick={() => setDialog({ kind: "add" })}>Add exam</Button>
       </div>
 
-      {actionFailure !== null && (
-        <ErrorPanel
-          title="That did not work"
-          body={failureBody(actionFailure)}
-          requestId={actionFailure.requestId}
-        />
-      )}
 
       {shown.length === 0 ? (
         <Panel className="space-y-3">
@@ -159,11 +149,7 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
                 </p>
                 <div className="ml-auto flex items-center gap-2">
                   {row.state === "archived" && (
-                    <Button
-                      variant="secondary"
-                      pending={pending}
-                      onClick={() => setDialog({ kind: "edit", row })}
-                    >
+                    <Button variant="secondary" onClick={() => setDialog({ kind: "edit", row })}>
                       Change date
                     </Button>
                   )}

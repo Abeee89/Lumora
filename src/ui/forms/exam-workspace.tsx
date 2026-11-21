@@ -26,10 +26,8 @@ export function ExamWorkspace({
   subjectName: string;
 }) {
   const [exam, setExam] = useState(initial);
-  const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
   const [dialog, setDialog] = useState<DialogState>(null);
   const [failure, setFailure] = useState<ApiFailure | null>(null);
-  const [pending, setPending] = useState(false);
 
   const archived = exam.state === "archived";
 

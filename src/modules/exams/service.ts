@@ -12,7 +12,6 @@ import type { Database, Queryable } from "../../kernel/db";
 import { AppError } from "../../kernel/errors";
 import type { LocalDate } from "../../kernel/time";
 import * as subjects from "../subjects/public";
-import * as topics from "../topics/public";
 
 export interface ExamChecklistItem {
   topicId: string;
@@ -111,7 +110,7 @@ function validateDate(value: string): LocalDate {
 }
 
 function present(row: ExamRow, checklist: ExamChecklistItem[], today: LocalDate): Exam {
-  const date = row.exam_date.toISOString().slice(0, 10);
+  const date = row.exam_date;
   const state: ExamState = date < today ? "archived" : "upcoming";
   return {
     id: row.id,
@@ -128,7 +127,7 @@ function present(row: ExamRow, checklist: ExamChecklistItem[], today: LocalDate)
 }
 
 function presentListItem(row: ExamRow, counts: ListCountRow | undefined, today: LocalDate): ExamListItem {
-  const date = row.exam_date.toISOString().slice(0, 10);
+  const date = row.exam_date;
   const state: ExamState = date < today ? "archived" : "upcoming";
   return {
     id: row.id,
@@ -268,7 +267,7 @@ export async function listExams(
   const last = pageRows[pageRows.length - 1];
   return {
     data: pageRows.map((row) => presentListItem(row, counts.get(row.id), today)),
-    nextCursor: hasMore && last !== undefined ? encodeCursor(last.exam_date.toISOString().slice(0, 10), last.id) : null,
+    nextCursor: hasMore && last !== undefined ? encodeCursor(last.exam_date, last.id) : null,
     hasMore,
   };
 }
@@ -333,7 +332,7 @@ export async function editExam(
     throw new AppError("stale_version", { details: { current: fresh } });
   }
 
-  const currentDate = current.exam_date.toISOString().slice(0, 10);
+  const currentDate = current.exam_date;
   const archived = currentDate < today;
   if (archived && (patch.subjectId !== undefined || patch.title !== undefined)) {
     throw fieldsError("body", "exam_archived", { allowed: ["examDate"] });
@@ -341,7 +340,6 @@ export async function editExam(
 
   const assignments: string[] = [];
   const values: unknown[] = [userId, examId, expectedVersion];
-  let nextDate = currentDate;
 
   if (patch.title !== undefined) {
     values.push(validateTitle(patch.title));
@@ -356,7 +354,7 @@ export async function editExam(
     assignments.push(`subject_id = $${values.length}`);
   }
   if (patch.examDate !== undefined) {
-    nextDate = validateDate(patch.examDate);
+    const nextDate = validateDate(patch.examDate);
     values.push(nextDate);
     assignments.push(`exam_date = $${values.length}`);
   }
@@ -389,7 +387,7 @@ export async function setExamTopics(
   today: LocalDate,
 ): Promise<Exam> {
   const row = await getExamRow(database, userId, examId);
-  const currentDate = row.exam_date.toISOString().slice(0, 10);
+  const currentDate = row.exam_date;
   if (currentDate < today) throw fieldsError("body", "exam_archived");
 
   const seen = new Set<string>();
@@ -433,7 +431,7 @@ export async function setExamTopic(
   today: LocalDate,
 ): Promise<Exam> {
   const row = await getExamRow(database, userId, examId);
-  const currentDate = row.exam_date.toISOString().slice(0, 10);
+  const currentDate = row.exam_date;
   if (currentDate < today) throw fieldsError("body", "exam_archived");
 
   await database.query(
