@@ -113,7 +113,7 @@ export function PlanDialog({
       open
       title={title}
       onClose={onClose}
-      className="max-sm:m-0 max-sm:h-dvh max-sm:w-dvw max-sm:max-w-none max-sm:rounded-none"
+      className="max-sm:m-0 max-sm:h-dvh max-sm:max-h-dvh max-sm:w-dvw max-sm:max-w-none max-sm:rounded-none max-sm:overflow-y-auto"
     >
       <form
         noValidate

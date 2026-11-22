@@ -1,6 +1,35 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 from 2026-11-21 and M04 from 2026-11-21.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, and M05 from 2026-11-22.
+
+## 2026-11-22, M05 study plans
+
+### Added
+- [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements, the three defects found and fixed, the registry order and the Definition of Done check.
+- [08-build/M05-COMPLETION-REPORT.md](08-build/M05-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M36 (the header's Calendar item pointing at `/plan` until A-5 ships).
+- Application and tooling: `db/migrations/0005_plan_entries.sql`; `src/modules/plans/**` (3 files); `src/app/api/app/plan-entries/**` (3 route files) covering PLAN-01..PLAN-06; `src/app/plan/page.tsx` (A-6); `src/ui/forms/plan-{dialog,list}.tsx`; the plans entries in the container, the request schemas, the error catalogue, the UI copy, the nav and the coverage config.
+- Tests: `tests/unit/plans.test.ts` (19 cases) and `tests/integration/plans.test.ts` (20 cases), taking the unit tier to 18 files and 95 tests and the integration tier to 9 files and 79 tests, plus the plan block in `tests/integration/support/api.ts` and an exams export assertion.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): three M05 rows with evidence checked, the Definition of Done row left partial, and an "As built" note recording what shipped, the two warning rules and the open rows.
+- [03-architecture/ERROR-HANDLING.md](03-architecture/ERROR-HANDLING.md) section 4: `invalid_date_range` and the note that confirms the plan codes on the plan routes.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7, [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M05 gate, the M05 execution row and the inventory at 93 documents (13 build records).
+- Application and tooling: `src/kernel/{config,errors}.ts` (the plan limits and the five codes); `src/modules/exams/{public,service}.ts` (`upcomingExamsBySubject`); `src/server/{container,request-context}.ts` (the module and the schemas); `src/ui/{format,messages,nav}.ts`, `src/ui/dialog.tsx` and `src/ui/forms/exam-workspace.tsx`; `vitest.config.ts` (the plans floor).
+
+### Fixed
+- A `date` column returned as a JavaScript `Date` shifted the exported dates by the host offset in both contributors; `exportPlans` and `exportExams` now select `local_date::text` and `exam_date::text`, and the exams test pins the text shape.
+- The filtered list had no way back: an empty result now reads "No planned sessions match these filters" and offers "Clear filters" (AC-FR-037-3).
+- The mobile dialog stopped 38 px short of the viewport because the user-agent `max-height` capped the sheet; `PlanDialog` now sets `max-sm:max-h-dvh` with `max-sm:overflow-y-auto`.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 18 unit files and 95 tests, 9 integration files and 79 tests in 144.05 s.
+- `npx next build`: 46 routes, 29 under `/api/app` of which 3 are M05's, plus `/plan`; no static and dynamic sibling conflict.
+- `npm run test:coverage` exit 0: all three configured floors pass, the kernel at 94.94% lines, the exams module at 90.41% and the plans module at 94.57%; overall lines measure 49.96% because the UI layer is covered by the browser pass.
+- Browser checks in Chromium at 360, 768, 1280 and 2560 px on the production build: A-6 with both warnings behind one confirmation, the overlap-only warning, the touching-interval case, the read-only past row, the missed mark, the three filters, the clear-filters action, the loading skeleton, the error panel with its retry, the keyboard paths and the full-height mobile sheet; no horizontal overflow at any of the four widths.
+
+### Not changed
+- No actual value, no `done` status, no session link, no plan generation, no calendar page, no to-do and no statistics behaviour; FR-036 and AC-FR-036-* stay with M06 (B-07), and nothing is committed or tagged by the build session.
 
 ## 2026-11-21, M04 exams (basic)
 

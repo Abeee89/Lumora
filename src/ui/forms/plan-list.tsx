@@ -93,9 +93,12 @@ export function PlanList({
 }) {
   const [entries, setEntries] = useState<PlanEntry[] | null>(null);
   const [failure, setFailure] = useState<ApiFailure | null>(null);
-  const [from, setFrom] = useState(today);
-  const [to, setTo] = useState(addDays(today, 13));
-  const [subjectFilter, setSubjectFilter] = useState(presetSubjectId ?? "");
+  const defaultFrom = today;
+  const defaultTo = addDays(today, 13);
+  const defaultSubjectId = presetSubjectId ?? "";
+  const [from, setFrom] = useState(defaultFrom);
+  const [to, setTo] = useState(defaultTo);
+  const [subjectFilter, setSubjectFilter] = useState(defaultSubjectId);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
   const [dialog, setDialog] = useState<DialogState>(
     presetSubjectId === null ? null : { kind: "add", initial: { subjectId: presetSubjectId } },
@@ -230,6 +233,18 @@ export function PlanList({
     groups.set(entry.localDate, rows);
   }
   const now = Date.now();
+  // FR-037 AC-3: a filtered list that matches nothing offers to clear the filters.
+  const filtered =
+    from !== defaultFrom ||
+    to !== defaultTo ||
+    subjectFilter !== defaultSubjectId ||
+    statusFilter !== "";
+  const clearFilters = () => {
+    setFrom(defaultFrom);
+    setTo(defaultTo);
+    setSubjectFilter(defaultSubjectId);
+    setStatusFilter("");
+  };
 
   return (
     <div className="space-y-4">
@@ -318,8 +333,17 @@ export function PlanList({
         />
       ) : groups.size === 0 ? (
         <Panel className="space-y-3">
-          <p className="text-ink-2">No planned sessions</p>
-          <Button onClick={() => setDialog({ kind: "add" })}>Add plan entry</Button>
+          <p className="text-ink-2">
+            {filtered ? "No planned sessions match these filters" : "No planned sessions"}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={() => setDialog({ kind: "add" })}>Add plan entry</Button>
+            {filtered && (
+              <Button variant="secondary" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            )}
+          </div>
         </Panel>
       ) : (
         <div className="space-y-5">

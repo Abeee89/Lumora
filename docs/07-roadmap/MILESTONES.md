@@ -251,10 +251,11 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (overlap, past read-only, exam warning); ownership contract; DST-day plan entry.
 - **Acceptance criteria:** AC-FR-030-* to AC-FR-035-*, AC-FR-037-*, AC-FR-038-*. AC-FR-036-* moves to M06 (B-07).
 - **Completion checklist:**
-  - [ ] Create, edit, delete, missed and list work with warnings requiring confirmation
-  - [ ] Past entries are read-only (FR-035)
-  - [ ] Purge handler and export contributor registered
+  - [x] Create, edit, delete, missed and list work with warnings requiring confirmation
+  - [x] Past entries are read-only (FR-035)
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-22):** evidence, per-row proof and the open rows are in [08-build/M05-EVIDENCE.md](../08-build/M05-EVIDENCE.md); the record is [08-build/M05-COMPLETION-REPORT.md](../08-build/M05-COMPLETION-REPORT.md). Shipped: `plan_entries`, the three PLAN route files behind ids PLAN-01..PLAN-06, A-6 at `/plan`, the advisory user-wide overlap warning and the exam-date warning behind one `confirmedWarnings` confirmation, the past-entry read-only rule, the missed mark, and the purge handler and export contributor for the table. Two choices are recorded rather than assumed: actual values and the `done` status wait for M06 (B-07), so PLAN-01 and PLAN-03 answer planned values and a `status` derived from `missed_at`; and the Calendar navigation item points at `/plan` until A-5 ships (OD-M36). The `DEFINITION-OF-DONE.md` row stays partial: the by-layer coverage floors are neither enforced nor met, axe cannot run, and the `m05-done` tag needs the owner's commit.
 
 ### M06 Study sessions
 
