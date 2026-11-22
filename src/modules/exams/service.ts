@@ -286,6 +286,41 @@ async function countByExam(database: Queryable, userId: string): Promise<Map<str
   return new Map(rows.map((row) => [row.exam_id, row]));
 }
 
+/** One upcoming exam of a subject, as the plan module's warning needs it (FR-038). */
+export interface UpcomingExam {
+  id: string;
+  examDate: LocalDate;
+}
+
+/**
+ * FR-038, BR-025: Exams is the rank-5 owner of the exam date, so Study plans asks for it
+ * rather than reading the table. Only exams still ahead of the user's local today are
+ * returned (EC-013); a subject may carry more than one, ordered by date.
+ */
+export async function upcomingExamsBySubject(
+  database: Queryable,
+  userId: string,
+  subjectIds: readonly string[],
+  today: LocalDate,
+): Promise<Map<string, UpcomingExam[]>> {
+  const bySubject = new Map<string, UpcomingExam[]>();
+  if (subjectIds.length === 0) return bySubject;
+
+  const rows = await database.query<{ id: string; subject_id: string; exam_date: string }>(
+    `SELECT e.id, e.subject_id, e.exam_date::text
+     FROM exams e
+     WHERE e.user_id = $1 AND e.exam_date >= $2 AND e.subject_id = ANY($3::uuid[])
+     ORDER BY e.exam_date, e.id`,
+    [userId, today, [...subjectIds]],
+  );
+  for (const row of rows) {
+    const list = bySubject.get(row.subject_id) ?? [];
+    list.push({ id: row.id, examDate: row.exam_date });
+    bySubject.set(row.subject_id, list);
+  }
+  return bySubject;
+}
+
 /** EXAM-02. The date is checked against the user's local today (BR-030, EC-013). */
 export async function createExam(
   database: Queryable,

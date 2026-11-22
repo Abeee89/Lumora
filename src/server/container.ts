@@ -18,6 +18,7 @@ import * as profile from "../modules/profile/public";
 import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
 import * as exams from "../modules/exams/public";
+import * as plans from "../modules/plans/public";
 
 export interface Container {
   readonly database: Database;
@@ -116,6 +117,17 @@ export function registerContributions(database: Database): void {
     exportContributors.register("exams", async (userId) => ({
       section: "exams",
       rows: await exams.exportExams(userId, database),
+    }));
+  }
+  // Plans purge before Topics and Subjects: plan_entries -> subjects and -> topics are
+  // both NO ACTION (EC-008), so the entries must go first. The handlers run in order.
+  if (!purgeHandlers.has("plans")) {
+    purgeHandlers.register("plans", (userId) => plans.purgePlans(userId, database));
+  }
+  if (!exportContributors.has("plans")) {
+    exportContributors.register("plans", async (userId) => ({
+      section: "plans",
+      rows: await plans.exportPlans(userId, database),
     }));
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is

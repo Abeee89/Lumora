@@ -121,6 +121,42 @@ export const setExamTopicsSchema = z.object({ topicIds: z.array(z.string()) }).s
 /** EXAM-06: `completed` is required; a missing boolean is a 400, not a toggle. */
 export const setExamTopicSchema = z.object({ completed: z.boolean() }).strict();
 
+/**
+ * M05 request bodies. PLAN-01..PLAN-06: the module owns the duration bounds, the date
+ * range and the future/past rules; the adapter asserts the shape and the warning codes
+ * (API-SCHEMAS section 8: an unknown code is a 400, never a silent ignore).
+ */
+const confirmedWarnings = z.array(z.enum(["overlap", "exam_date"])).optional();
+
+export const createPlanEntrySchema = z
+  .object({
+    subjectId: z.string(),
+    topicId: z.string().nullable().optional(),
+    startsAt: z.string(),
+    durationMin: z.number().int(),
+    confirmedWarnings,
+  })
+  .strict();
+
+export const updatePlanEntrySchema = z
+  .object({
+    subjectId: z.string().optional(),
+    topicId: z.string().nullable().optional(),
+    startsAt: z.string().optional(),
+    durationMin: z.number().int().optional(),
+    confirmedWarnings,
+  })
+  .strict();
+
+export const planEntryListQuery = z
+  .object({
+    from: z.string(),
+    to: z.string(),
+    subjectId: z.string().optional(),
+    status: z.enum(["upcoming", "done", "missed"]).optional(),
+  })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {

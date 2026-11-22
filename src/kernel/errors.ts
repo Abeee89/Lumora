@@ -50,6 +50,7 @@ export const errorCatalog = {
   idempotency_key_required: entry("validation", 400, false, "The Idempotency-Key header is required."),
   invalid_page_size: entry("validation", 400, false, "The page size is outside the allowed range."),
   invalid_cursor: entry("validation", 400, false, "The page cursor is invalid."),
+  invalid_date_range: entry("validation", 400, false, "The date range is invalid."),
 
   unauthenticated: entry("authentication", 401, false, "Sign in to continue."),
   invalid_credentials: entry("authentication", 401, false, "The email or password is incorrect."),

@@ -16,12 +16,13 @@ export {
   purgeExams,
   setExamTopic,
   setExamTopics,
+  upcomingExamsBySubject,
   type Exam,
   type ExamChecklistItem,
   type ExamCountdown,
-  type ExamListItem,
   type ExamPatch,
   type ExamState,
+  type UpcomingExam,
 } from "./service";
 export {
   dropArchivedTopicFromChecklists,

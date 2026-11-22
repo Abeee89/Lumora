@@ -92,6 +92,8 @@ export const config = {
     /** FR-031. */
     minDurationMinutes: 5,
     maxDurationMinutes: 480,
+    /** API-CONVENTIONS section 5: a plan list range spans at most 93 days (FR-037). */
+    maxRangeDays: 93,
     overlapGridMinutes: 15, // P2-06
   },
   statistics: {
