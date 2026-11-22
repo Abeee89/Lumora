@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from "react";
 import type { ExamListItem } from "@/modules/exams/public";
 import { apiRequest, type ApiFailure } from "../api-client";
 import { Button, ErrorPanel, Panel } from "../control";
-import { countText } from "../format";
+import { countText, formatLocalDate } from "../format";
 import { SubjectDot } from "../subject-dot";
 import { failureBody } from "./feedback";
-import { ExamDialog, formatExamDate } from "./exam-dialog";
+import { ExamDialog } from "./exam-dialog";
 
 type Tab = "upcoming" | "archived";
 
@@ -164,7 +164,7 @@ export function ExamList({ subjects }: { subjects: readonly { id: string; name: 
                   {row.title}
                 </a>
                 <p className="w-full text-sm text-muted sm:w-auto">
-                  {subject?.name ?? "Subject"}: {formatExamDate(row.examDate)}
+                  {subject?.name ?? "Subject"}: {formatLocalDate(row.examDate)}
                   {row.state === "upcoming" && countdownText(row) !== "" && ` · ${countdownText(row)}`}
                   {row.state === "upcoming" && ` · ${countText(row.topicCount, "topic", "topics")}, ${row.completedCount} done`}
                 </p>

@@ -30,6 +30,12 @@ export const errorCopy: Readonly<Record<string, string>> = {
   exam_date_in_past: "Choose an exam date that is today or later.",
   invalid_page_size: "That page size is outside the allowed range.",
   invalid_cursor: "That page link is out of date. Refresh the list.",
+  invalid_date_range: "Choose a range of 93 days or less, ending on or after the start.",
+  duration_out_of_range: "Choose a duration of 5 to 480 minutes.",
+  overlap_confirmation_required: "This overlaps another planned session. Confirm to save anyway.",
+  exam_date_warning_confirmation_required: "This is planned after an exam date. Confirm to save anyway.",
+  past_entry_read_only: "This session has already started, so it can only be marked as missed.",
+  request_in_progress: "That save is already running. Wait a moment and check the list.",
 };
 
 /** Fallback for a code the UI has no copy for. */

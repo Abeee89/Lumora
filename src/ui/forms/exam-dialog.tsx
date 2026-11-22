@@ -19,14 +19,6 @@ export interface ExamFields {
   examDate: string;
 }
 
-/** `YYYY-MM-DD` to a display date without time-zone shifts (the date is the value). */
-export function formatExamDate(examDate: string): string {
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeZone: "UTC",
-  }).format(new Date(`${examDate}T00:00:00Z`));
-}
-
 /**
  * FR-121: the add and edit dialogs. `dateOnly` is the archived list's "Change date"
  * (FR-125): an archived exam accepts only `examDate`, and that is all this form sends.

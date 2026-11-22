@@ -12,11 +12,14 @@ export function Dialog({
   title,
   onClose,
   children,
+  className = "",
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** Layout override; A-6 turns the entry form into a full-height sheet on mobile. */
+  className?: string | undefined;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -32,7 +35,7 @@ export function Dialog({
       ref={ref}
       onClose={onClose}
       aria-label={title}
-      className="m-auto w-[min(30rem,calc(100vw-2rem))] rounded-card border border-line bg-surface p-5 text-ink backdrop:bg-black/40"
+      className={`m-auto w-[min(30rem,calc(100vw-2rem))] rounded-card border border-line bg-surface p-5 text-ink backdrop:bg-black/40 ${className}`}
     >
       <h2 className="text-lg font-semibold text-ink">{title}</h2>
       <div className="mt-4">{children}</div>

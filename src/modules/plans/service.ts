@@ -288,7 +288,7 @@ export async function listPlanEntries(
   ctx: PlanContext,
 ): Promise<PlanEntry[]> {
   const { start, end } = rangeOf(query, ctx);
-  const active = await subjects.listSubjects(database, userId);
+  const active = await subjects.listSubjects(database, userId, false);
   if (active.length === 0) return [];
 
   const rows = await database.query<PlanEntryRow>(
@@ -529,7 +529,7 @@ export async function purgePlans(userId: string, database: Queryable): Promise<n
 /** Registered export contributor (FR-130, FR-131). */
 export async function exportPlans(userId: string, database: Queryable): Promise<unknown[]> {
   return database.query<Record<string, unknown>>(
-    `SELECT id, subject_id, topic_id, starts_at, duration_min, timezone, local_date,
+    `SELECT id, subject_id, topic_id, starts_at, duration_min, timezone, local_date::text,
             missed_at, created_at, updated_at
      FROM plan_entries WHERE user_id = $1 ORDER BY starts_at, id`,
     [userId],

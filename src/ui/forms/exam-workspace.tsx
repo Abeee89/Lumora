@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 
 import type { Exam, ExamChecklistItem } from "@/modules/exams/public";
 import { apiRequest, type ApiFailure } from "../api-client";
-import { Button, Checkbox, ErrorPanel } from "../control";
+import { Button, ButtonLink, Checkbox, ErrorPanel } from "../control";
 import { Dialog } from "../dialog";
-import { countText } from "../format";
+import { countText, formatLocalDate } from "../format";
 import { messageFor } from "../messages";
 import { failureBody } from "./feedback";
-import { ExamDialog, formatExamDate } from "./exam-dialog";
+import { ExamDialog } from "./exam-dialog";
 
 interface TopicsPage {
   data: { id: string; name: string }[];
@@ -74,14 +74,20 @@ export function ExamWorkspace({
             {exam.title}
           </h1>
           <p className="text-sm text-ink-2">
-            {subjectName} · {formatExamDate(exam.examDate)}
+            {subjectName} · {formatLocalDate(exam.examDate)}
             {countdownText !== "" && ` · ${countdownText}`}
           </p>
         </div>
         {archived ? (
           <Button onClick={() => setDialog({ kind: "changeDate" })}>Change date</Button>
         ) : (
-          <Button onClick={() => setDialog({ kind: "editTopics" })}>Edit topics</Button>
+          <div className="flex flex-wrap gap-2">
+            {/* A-13: the plan page opens with this subject preselected. */}
+            <ButtonLink href={`/plan?subjectId=${exam.subjectId}`} variant="secondary">
+              Plan study sessions
+            </ButtonLink>
+            <Button onClick={() => setDialog({ kind: "editTopics" })}>Edit topics</Button>
+          </div>
         )}
       </div>
 

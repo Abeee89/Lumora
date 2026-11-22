@@ -451,6 +451,9 @@ describe("exam endpoints", () => {
     };
     expect(examsSection.section).toBe("exams");
     expect(examsSection.rows).toHaveLength(1);
+    // `exam_date` is a calendar date: the export carries it as text, never as a timestamp
+    // shifted by the timezone of whatever process wrote the file.
+    expect(examsSection.rows[0]).toMatchObject({ exam_date: daysFromNow(14), title: "Stats final" });
 
     // Registration order is the purge order; exams must precede topics because
     // exam_topics -> topics is NO ACTION (EC-008 keeps archived topics).

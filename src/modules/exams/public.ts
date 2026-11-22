@@ -20,6 +20,7 @@ export {
   type Exam,
   type ExamChecklistItem,
   type ExamCountdown,
+  type ExamListItem,
   type ExamPatch,
   type ExamState,
   type UpcomingExam,

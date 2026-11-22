@@ -33,6 +33,13 @@ import { GET as getExams, POST as createExam } from "@/app/api/app/exams/route";
 import { GET as getExam, PATCH as patchExam } from "@/app/api/app/exams/[examId]/route";
 import { PUT as setExamTopics } from "@/app/api/app/exams/[examId]/topics/route";
 import { PUT as setExamTopic } from "@/app/api/app/exams/[examId]/topics/[topicId]/route";
+import { GET as getPlanEntries, POST as createPlanEntry } from "@/app/api/app/plan-entries/route";
+import {
+  DELETE as deletePlanEntry,
+  GET as getPlanEntry,
+  PATCH as patchPlanEntry,
+} from "@/app/api/app/plan-entries/[entryId]/route";
+import { POST as markPlanEntryMissed } from "@/app/api/app/plan-entries/[entryId]/missed/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -197,6 +204,26 @@ async function dispatch(method: string, path: string, request: Request): Promise
       params: Promise.resolve({ examId: examTopicPath[1] ?? "", topicId: examTopicPath[2] ?? "" }),
     });
   }
+  const planEntriesPath = /^\/api\/app\/plan-entries$/.exec(path);
+  if (planEntriesPath !== null) {
+    if (method === "GET") return getPlanEntries(request);
+    if (method === "POST") return createPlanEntry(request);
+  }
+
+  const planEntryPath = /^\/api\/app\/plan-entries\/([^/]+)$/.exec(path);
+  if (planEntryPath !== null) {
+    const params = { params: Promise.resolve({ entryId: planEntryPath[1] ?? "" }) };
+    if (method === "GET") return getPlanEntry(request, params);
+    if (method === "PATCH") return patchPlanEntry(request, params);
+    if (method === "DELETE") return deletePlanEntry(request, params);
+  }
+
+  const planMissedPath = /^\/api\/app\/plan-entries\/([^/]+)\/missed$/.exec(path);
+  if (method === "POST" && planMissedPath !== null) {
+    return markPlanEntryMissed(request, {
+      params: Promise.resolve({ entryId: planMissedPath[1] ?? "" }),
+    });
+  }
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
   if (method === "DELETE" && signInPath !== null) {
@@ -348,6 +375,48 @@ export const examListSchema = z.object({
 
 export type ExamWire = z.infer<typeof examSchema>;
 export type ExamListWire = z.infer<typeof examListSchema>;
+
+/** API-SCHEMAS section 8. Strict: a field the spec does not list fails the test. */
+export const planEntrySchema = z
+  .object({
+    id: z.string(),
+    subjectId: z.string(),
+    topicId: z.string().nullable(),
+    startsAt: z.string(),
+    durationMin: z.number(),
+    timezone: z.string(),
+    localDate: z.string(),
+    status: z.enum(["upcoming", "done", "missed"]),
+    missedAt: z.string().nullable(),
+    plannedMin: z.number(),
+    version: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .strict();
+
+export const planWarningSchema = z.union([
+  z
+    .object({
+      code: z.literal("overlap"),
+      planEntryId: z.string(),
+      subjectId: z.string(),
+      startsAt: z.string(),
+      durationMin: z.number(),
+    })
+    .strict(),
+  z.object({ code: z.literal("exam_date"), examId: z.string(), examDate: z.string() }).strict(),
+]);
+
+/** Create and update answer the entry with the advisories the caller confirmed. */
+export const planEntryWrittenSchema = planEntrySchema.extend({
+  warnings: z.array(planWarningSchema),
+});
+
+export const planEntryListSchema = z.object({ data: z.array(planEntrySchema) });
+
+export type PlanEntryWire = z.infer<typeof planEntrySchema>;
+export type PlanWarningWire = z.infer<typeof planWarningSchema>;
 
 export const bulkPreviewSchema = z.object({
   valid: z.array(z.string()),

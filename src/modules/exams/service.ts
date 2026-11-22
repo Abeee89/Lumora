@@ -489,7 +489,7 @@ export async function purgeExams(userId: string, database: Queryable): Promise<n
 /** Registered export contributor (FR-130, FR-131); the checklist is not a separate file. */
 export async function exportExams(userId: string, database: Queryable): Promise<unknown[]> {
   const rows = await database.query<Record<string, unknown>>(
-    `SELECT e.id, e.subject_id, e.title, e.exam_date, e.version, e.created_at, e.updated_at
+    `SELECT e.id, e.subject_id, e.title, e.exam_date::text, e.version, e.created_at, e.updated_at
      FROM exams e WHERE e.user_id = $1 ORDER BY e.exam_date, e.id`,
     [userId],
   );
