@@ -208,7 +208,7 @@ Milestone level, [DEFINITION-OF-DONE.md](../07-roadmap/DEFINITION-OF-DONE.md) se
 | axe accessibility run | NOT RUN: no browser-automation dependency is installed in the tree; the same gap M01 to M04 recorded |
 | Completion report written | PASS: [M05-COMPLETION-REPORT.md](M05-COMPLETION-REPORT.md) |
 | No future-phase behaviour shipped | PASS: no actual or variance field, no session link, no `done` status, no generator, no calendar or to-do route; the route table in E04 holds none |
-| Tag `m05-done` created | NOT DONE: the owner commits and tags. This row stays unchecked |
+| Tag `m05-done` created | NOT DONE: the owner tags. The build is committed (`900a90b`, `1931a0b`, `51958f1`, `aff79f9`) and no tag exists, so this row stays unchecked |
 
 ## E10 Coverage floors
 
@@ -240,4 +240,4 @@ The exams module moved from 89.93% to 90.41% lines because the export assertion 
 
 The M05 build is committed by the owner: `900a90b push profile` carries `0005_plan_entries.sql`, the three route files, `src/kernel/{config,errors}.ts` and the exams `upcomingExamsBySubject` lookup; `1931a0b push ui modules` carries `src/modules/plans/{service,events,public}.ts`, `/plan`, the two forms, the container and request-context registrations, the UI copy, the nav entry, `tests/unit/plans.test.ts`, `tests/integration/plans.test.ts`, the harness block in `tests/integration/support/api.ts` and the coverage floor in `vitest.config.ts`; `51958f1 update architecture` carries the ERROR-HANDLING edit.
 
-Left uncommitted in the working tree by me, because the owner commits and tags: this document and [M05-COMPLETION-REPORT.md](M05-COMPLETION-REPORT.md), plus `src/ui/forms/plan-list.tsx` and `src/ui/forms/plan-dialog.tsx`, which hold the two E08 UI fixes.
+The two E08 UI fixes and every document in this milestone were left uncommitted in the working tree by me, because the owner commits and tags. The owner then committed them in `aff79f9 update ui forms` (2026-11-22 21:16), which carries `src/ui/forms/plan-list.tsx` with the filter defaults and the clear-filters branch, `src/ui/forms/plan-dialog.tsx` with the mobile sheet height, and the M05 documents. `git status` is clean at that commit, no milestone tag exists, and the `m05-done` tag is the only step left to the owner.

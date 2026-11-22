@@ -120,6 +120,13 @@
     outline-offset: 2px;
   }
 
+  /* Tailwind v4, unlike v3, does not put the pointer cursor on buttons, so every enabled control
+     would read as non-interactive. A button's UA default is the arrow, so any author rule wins. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
   /* Durations, times and counts use tabular figures (COLOR-TYPOGRAPHY section 8). */
   .tabular {
     font-variant-numeric: tabular-nums;

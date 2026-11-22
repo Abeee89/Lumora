@@ -12,7 +12,7 @@ Actual time is deliberately absent. FR-036 and AC-FR-036-* belong to M06 under B
 
 Everything M05 claims is proven by a command run in this repository: typecheck, lint, the boundary check, 95 unit tests, 79 integration tests against PostgreSQL 18.6, a production build with a 46-route table, and browser checks on A-6 at four viewport widths against the production build.
 
-M05 is not a full pass. `DEFINITION-OF-DONE.md checked` is partial: the by-layer coverage floors the document names are neither enforced nor met, axe cannot run in this tree, and the `m05-done` tag needs the owner's commit. Those are named in section 9 and in the evidence record rather than ticked. Three defects were found by this pass and fixed; they are in section 7.
+M05 is not a full pass. `DEFINITION-OF-DONE.md checked` is partial: the by-layer coverage floors the document names are neither enforced nor met, axe cannot run in this tree, and the `m05-done` tag is still the owner's to create. Those are named in section 9 and in the evidence record rather than ticked. Three defects were found by this pass and fixed; they are in section 7.
 
 ## 2. Scope and authorization
 
@@ -129,12 +129,12 @@ Full commands, raw output and the measurement tables are in [M05-EVIDENCE.md](M0
 
 | Item | Why it is open | Where it is recorded |
 |---|---|---|
-| `DEFINITION-OF-DONE.md checked` row | The by-layer coverage floors the document names have no threshold and are not met; axe cannot run; the tag needs the owner's commit | E09, E10, this section |
+| `DEFINITION-OF-DONE.md checked` row | The by-layer coverage floors the document names have no threshold and are not met; axe cannot run; no `m05-done` tag exists yet, though the build is committed | E09, E10, this section |
 | Coverage floors | `npm run test:coverage` exits 0 with the kernel at 94.94% lines, the exams module at 90.41% and the plans module at 94.57% against the configured floors, but overall lines measure 49.96%, below the 80% the document names and 0.16 points under M04 because the two new forms are covered only by the browser pass | E10, OD-M31 |
 | Actual values and `done` | M06 owns FR-036 with the session link (B-07) | MILESTONES M05 card, MILESTONES M06 card |
 | Escape on the row menu | One accessibility handler for every list menu is the M10 pass, not a per-list divergence | section 8, item 2 |
 | Calendar label and target | A-5 ships in M09 | OD-M36 |
-| `m05-done` tag | The owner commits and tags; nothing was committed by me | E09, E11 |
+| `m05-done` tag | The owner commits and tags, so nothing was staged, committed or tagged by me. The build landed in `900a90b push profile` and `1931a0b push ui modules`, the ERROR-HANDLING edit in `51958f1 update architecture`, and the two UI fixes with both documents in `aff79f9 update ui forms`; no milestone tag exists | E09, E11 |
 
 ## 10. Docs updated
 
@@ -158,7 +158,7 @@ M06 Study sessions. It is the consumer this milestone prepared: `plan_entries` i
 
 ## 13. Not done, and not claimed
 
-1. Nothing is staged, committed or tagged by me. The owner committed the M05 build in `900a90b push profile` and `1931a0b push ui modules`; the three fixes in E08 and both documents were written after that, so `src/ui/forms/plan-list.tsx`, `src/ui/forms/plan-dialog.tsx`, [M05-EVIDENCE.md](M05-EVIDENCE.md) and this report sit uncommitted in the working tree.
+1. Nothing is staged, committed or tagged by me. The owner committed the M05 build in `900a90b push profile` and `1931a0b push ui modules`, the ERROR-HANDLING edit in `51958f1 update architecture`, and the two UI fixes from E08 plus both M05 documents in `aff79f9 update ui forms` (2026-11-22 21:16). `git status` is clean at that commit, and the only step left to the owner is the `m05-done` tag.
 2. No axe run, no load test and no staging deploy: M05 claims none of them. The coverage command was run and its result is in E10.
 3. Three defects were found and fixed in this pass: the `date` cast in both exports, the missing clear-filters action and the 38 px short mobile sheet. No other defect is known as of this record.
 4. The overlap rule being user-wide, the omitted actual fields, the `body` path on `not_started_yet` and the Calendar item pointing at `/plan` are decisions, not gaps: the first three are argued in section 7 and the fourth is OD-M36, and any of them can be reversed cheaply if the owner disagrees.
