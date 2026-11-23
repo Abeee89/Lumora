@@ -1,6 +1,6 @@
 # M05 Completion Report
 
-> Status: M05 execution record, 2026-11-22. Commands, raw output, the browser measurements and the three fixed defects are in [M05-EVIDENCE.md](M05-EVIDENCE.md). M05 is built and verified; its DoD row stays partial because the coverage item is measured but not met at the by-layer thresholds the document names, and because the tag is the owner's step. No ADR is Accepted, no vendor is selected, no OD row is closed, and nothing is committed or tagged by me.
+> Status: M05 execution record, 2026-11-22, approved by the owner on 2026-11-22 ([OPEN-DECISIONS.md](../OPEN-DECISIONS.md) section G). Commands, raw output, the browser measurements and the four fixed defects are in [M05-EVIDENCE.md](M05-EVIDENCE.md). M05 is built and verified; its DoD row stays partial because the coverage item is measured but not met at the by-layer thresholds the document names, and because the tag is the owner's step. No ADR is Accepted, no vendor is selected, no OD row is closed, and nothing is committed or tagged by me.
 
 ## 1. Executive summary
 

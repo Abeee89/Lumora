@@ -25,4 +25,4 @@ Full list: [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md). Change history: [CH
 
 - IDs: FR, NFR, BR, EC, AC-FR-xxx-n, planned TC-FR-xxx-n, endpoint prefixes such as AUTH-01, pages PU, SY, A, B, C.
 - Numeric values not fixed by Phase 1 are proposals until approved.
-- Except for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record, the M03 approval, the M04 execution record and the M05 execution record, no document has repository evidence of owner approval. Approval requires an owner, date, baseline version and decision record.
+- Except for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record, the M03 approval, the M04 execution record, the M05 execution record and the M05 approval, no document has repository evidence of owner approval. Approval requires an owner, date, baseline version and decision record.

@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Status: Updated by the Phase 8 audit, the M00 close-out, M01, M02, M03, M04 and M05. This index covers 93 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 13 build records. Owner approval evidence exists only for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record and the M03 approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved. The M04 and M05 execution records are recorded in the same section and are not approvals.
+> Status: Updated by the Phase 8 audit, the M00 close-out, M01, M02, M03, M04 and M05. This index covers 93 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 13 build records. Owner approval evidence exists only for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record, the M03 approval, the M04 execution record and the M05 execution record, and the M05 approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved. The M04 execution record is recorded in the same section and is not an approval.
 
 Product name in all documents: Lumora (the planning prompts call it "Study Tracker").
 

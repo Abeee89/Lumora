@@ -6,6 +6,7 @@ Documentation changes and build evidence. M01 application code is tracked from 2
 
 ### Added
 - [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements, the four defects found and fixed, the registry order and the Definition of Done check.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G: the 2026-11-22 M05 approval row answering the delivery report, limited to M05 records and stating that M05 stays open.
 - [08-build/M05-COMPLETION-REPORT.md](08-build/M05-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
 - [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M36 (the header's Calendar item pointing at `/plan` until A-5 ships).
 - Application and tooling: `db/migrations/0005_plan_entries.sql`; `src/modules/plans/**` (3 files); `src/app/api/app/plan-entries/**` (3 route files) covering PLAN-01..PLAN-06; `src/app/plan/page.tsx` (A-6); `src/ui/forms/plan-{dialog,list}.tsx`; the plans entries in the container, the request schemas, the error catalogue, the UI copy, the nav and the coverage config.
