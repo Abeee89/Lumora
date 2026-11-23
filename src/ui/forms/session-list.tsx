@@ -36,6 +36,7 @@ function minutesOf(seconds: number): number {
 /** The form values that reproduce an existing session on the profile zone's clock. */
 function fieldsOf(session: StudySession, timeZone: string): SessionFields {
   return {
+    planEntryId: session.planEntryId ?? "",
     subjectId: session.subjectId,
     topicId: session.topicId,
     date: session.localDate,
@@ -47,8 +48,6 @@ function fieldsOf(session: StudySession, timeZone: string): SessionFields {
 /** A session touches a day with a positive slice; one row per local day (EC-009). */
 function spansText(session: StudySession): string | null {
   if (session.dayAllocations.length < 2) return null;
-  const [first, second] = session.dayAllocations;
-  if (first === undefined || second === undefined) return null;
   const sorted = [...session.dayAllocations].sort((a, b) => a.localDate.localeCompare(b.localDate));
   const [earlier, later] = sorted;
   if (earlier === undefined || later === undefined) return null;
@@ -114,6 +113,20 @@ export function SessionList({
     session: StudySession | null,
     fields: SessionFields,
   ): Promise<ApiFailure | null> => {
+    const startedAt = instantInZone(fields.date, fields.time, timeZone);
+    const endedAt = instantInZone(
+      fields.date,
+      fields.time,
+      timeZone,
+      fields.durationMin,
+    );
+    const body: Record<string, unknown> = {
+      subjectId: fields.subjectId,
+      topicId: fields.topicId,
+      startedAt,
+      endedAt,
+    };
+    if (fields.planEntryId !== "") body["planEntryId"] = fields.planEntryId;
     const body: Record<string, unknown> = {
       subjectId: fields.subjectId,
       topicId: fields.topicId,

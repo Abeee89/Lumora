@@ -39,19 +39,8 @@ export interface SessionFields {
   durationMin: number;
   /** The chosen plan entry id, or "" when none. */
   planEntryId: string;
-  /** The chosen plan entry id, or "" when none. */
-  planEntryId: string;
-  label: string;
 }
 
-/** The form speaks the profile zone's wall clock; the page turns it into an instant. */
-export interface SessionFields {
-  subjectId: string;
-  topicId: string | null;
-  date: string;
-  time: string;
-  durationMin: number;
-}
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_PATTERN = /^\d{2}:\d{2}$/;
@@ -81,7 +70,7 @@ export function SessionDialog({
   const [duration, setDuration] = useState(
     initial?.durationMin === undefined ? "30" : String(initial.durationMin),
   );
-  const [planEntryId, setPlanEntryId] = useState("");
+  const [planEntryId, setPlanEntryId] = useState(initial?.planEntryId ?? "");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -102,16 +91,15 @@ export function SessionDialog({
     }
     setErrors(found);
     setError(null);
-    if (Object.keys(found).length > 0) return;
-
-    setPending(true);
     const failure = await onSubmit({
       subjectId,
       topicId: topicId === "" ? null : topicId,
       date,
       time,
       durationMin: minutes,
+      planEntryId,
     });
+
     setPending(false);
     if (failure === null) return;
 
