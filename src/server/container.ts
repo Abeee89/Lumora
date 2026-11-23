@@ -18,7 +18,7 @@ import * as profile from "../modules/profile/public";
 import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
 import * as exams from "../modules/exams/public";
-import * as plans from "../modules/plans/public";
+import * as sessions from "../modules/sessions/public";
 
 export interface Container {
   readonly database: Database;
@@ -128,6 +128,17 @@ export function registerContributions(database: Database): void {
     exportContributors.register("plans", async (userId) => ({
       section: "plans",
       rows: await plans.exportPlans(userId, database),
+    }));
+  }
+  // Sessions purge before Plans: the plan link is SET NULL (EC-022) but the purge order
+  // stays consistent, and sessions must go before Subjects (FK NO ACTION).
+  if (!purgeHandlers.has("sessions")) {
+    purgeHandlers.register("sessions", (userId) => sessions.purgeSessions(userId, database));
+  }
+  if (!exportContributors.has("sessions")) {
+    exportContributors.register("sessions", async (userId) => ({
+      section: "sessions",
+      rows: await sessions.exportSessions(userId, database),
     }));
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is

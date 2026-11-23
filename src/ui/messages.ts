@@ -35,7 +35,10 @@ export const errorCopy: Readonly<Record<string, string>> = {
   overlap_confirmation_required: "This overlaps another planned session. Confirm to save anyway.",
   exam_date_warning_confirmation_required: "This is planned after an exam date. Confirm to save anyway.",
   past_entry_read_only: "This session has already started, so it can only be marked as missed.",
-  request_in_progress: "That save is already running. Wait a moment and check the list.",
+  manual_entry_in_future: "Choose a time in the past.",
+  manual_entry_too_long: "Choose a duration of 1 minute to 24 hours.",
+  daily_total_exceeded: "That day would exceed 24 hours of study.",
+  manual_entry_overlaps_session: "This overlaps another recorded session.",
 };
 
 /** Fallback for a code the UI has no copy for. */

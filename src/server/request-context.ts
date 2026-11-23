@@ -157,6 +157,42 @@ export const planEntryListQuery = z
   })
   .strict();
 
+/**
+ * M06 request bodies. SESS-01..SESS-05: the module owns the duration bounds, the day
+ * range and the future/past rules; the adapter asserts the shape (API-SCHEMAS section 9).
+ */
+export const createSessionSchema = z
+  .object({
+    subjectId: z.string(),
+    topicId: z.string().nullable().optional(),
+    planEntryId: z.string().nullable().optional(),
+    startedAt: z.string(),
+    endedAt: z.string(),
+  })
+  .strict();
+
+export const updateSessionSchema = z
+  .object({
+    subjectId: z.string().optional(),
+    topicId: z.string().nullable().optional(),
+    planEntryId: z.string().nullable().optional(),
+    startedAt: z.string().optional(),
+    endedAt: z.string().optional(),
+  })
+  .strict();
+
+export const sessionListQuery = z
+  .object({
+    from: z.string().optional(),
+    to: z.string().optional(),
+    subjectId: z.string().optional(),
+    topicId: z.string().optional(),
+    source: z.enum(["timer", "manual"]).optional(),
+    limit: z.coerce.number().int().optional(),
+    cursor: z.string().optional(),
+  })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {

@@ -9,7 +9,7 @@
  */
 import { config } from "../../kernel/config";
 import { uuidv7 } from "../../kernel/crypto";
-import type { Queryable } from "../../kernel/db";
+import type { Database, Queryable } from "../../kernel/db";
 import { AppError } from "../../kernel/errors";
 import { localDateOf, localDayRange, type LocalDate } from "../../kernel/time";
 import * as subjects from "../subjects/public";
@@ -447,14 +447,14 @@ export async function insertSession(
       ],
     );
   }
-  const row = await database.one<SessionRow>(`${SELECT_SESSION} WHERE s.id = $1`, [id]);
+  const rows = await database.query<SessionRow>(`${SELECT_SESSION} WHERE s.id = $1`, [id]);
+  const row = rows[0];
   if (row === undefined) throw new AppError("internal_error");
   return {
     session: { ...present(row), dayAllocations: allocations },
     event: eventOf("SessionCompleted", row),
   };
 }
-
 /** SESS-03 (FR-042, FR-048): a hand-recorded past session, idempotent by request key. */
 export async function createManualSession(
   database: Queryable,
@@ -490,8 +490,7 @@ export async function createManualSession(
     },
     null,
   );
-
-  return insertSession(database, userId, {
+  const result = await insertSession(database, userId, {
     subjectId: subject.id,
     topicId,
     planEntryId,
@@ -505,11 +504,13 @@ export async function createManualSession(
     rolloverHour: ctx.rolloverHour,
     requestKey,
   });
+  await publishSessionEvent(result.event);
+  return result;
 }
 
 /** SESS-04 (FR-043): correct subject, topic, plan link, start or end; days rewritten. */
 export async function editSession(
-  database: Queryable,
+  database: Database,
   userId: string,
   sessionId: string,
   expectedVersion: number | null,
@@ -569,7 +570,7 @@ export async function editSession(
       )
     : null;
 
-  return database.transaction(async (tx) => {
+  const result = await database.transaction(async (tx) => {
     if (timeChanged && allocations !== null) {
       // FR-043: the days are rewritten from the new range; the old rows disappear.
       await tx.query("DELETE FROM study_session_days WHERE session_id = $1", [sessionId]);
@@ -623,11 +624,14 @@ export async function editSession(
     if (row === undefined) {
       throw new AppError("stale_version", { details: { current: await getSession(database, userId, sessionId) } });
     }
-    const fresh = await tx.one<SessionRow>(`${SELECT_SESSION} WHERE s.id = $1`, [sessionId]);
+    const rows = await tx.query<SessionRow>(`${SELECT_SESSION} WHERE s.id = $1`, [sessionId]);
+    const fresh = rows[0];
     if (fresh === undefined) throw new AppError("internal_error");
     const session = await withAllocations(tx, present(fresh));
     return { session, event: eventOf("SessionEdited", row) };
   });
+  await publishSessionEvent(result.event);
+  return result;
 }
 
 /** SESS-05 (FR-044): hard delete; the day rows cascade. */

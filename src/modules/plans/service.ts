@@ -45,7 +45,10 @@ export interface PlanEntry {
   localDate: LocalDate;
   status: PlanEntryStatus;
   missedAt: string | null;
-  plannedMin: number;
+  /** Sum of the linked sessions' seconds; 0 when none are linked (BR-004, B-07). */
+  actualSeconds: number;
+  /** Actual seconds minus planned minutes, signed: negative means studied less. */
+  varianceSeconds: number;
   version: number;
   createdAt: string;
   updatedAt: string;
@@ -95,16 +98,51 @@ interface PlanEntryRow {
   version: number;
   created_at: Date;
   updated_at: Date;
+  actual_seconds: number;
+  variance_seconds: number;
 }
 
 const SELECT_PLAN_ENTRY = `
   SELECT p.id, p.user_id, p.subject_id, p.topic_id, p.starts_at, p.duration_min, p.timezone,
-         p.local_date::text, p.missed_at, p.version, p.created_at, p.updated_at
+         p.local_date::text, p.missed_at, p.version, p.created_at, p.updated_at,
+         (SELECT COALESCE(SUM(d.seconds), 0)::int FROM study_session_days d
+           JOIN study_sessions s ON s.id = d.session_id
+           WHERE s.plan_entry_id = p.id) AS actual_seconds,
+         (SELECT COALESCE(SUM(d.seconds), 0)::int FROM study_session_days d
+           JOIN study_sessions s ON s.id = d.session_id
+           WHERE s.plan_entry_id = p.id) - p.duration_min * 60 AS variance_seconds
   FROM plan_entries p`;
 
 function fieldsError(path: string, rule: string, extra: Record<string, unknown> = {}): AppError {
   return new AppError("validation_failed", { details: { fields: [{ path, rule, ...extra }] } });
+  return new AppError("validation_failed", { details: { fields: [{ path, rule, ...extra }] } });
 }
+
+function present(row: PlanEntryRow): PlanEntry {
+  return {
+    id: row.id,
+    subjectId: row.subject_id,
+    topicId: row.topic_id,
+    startsAt: row.starts_at.toISOString(),
+    durationMin: row.duration_min,
+    timezone: row.timezone,
+    localDate: row.local_date,
+    // BR-005: `missed` is stored; `done` is derived from a linked session's seconds.
+    status: row.missed_at !== null ? "missed" : row.actual_seconds > 0 ? "done" : "upcoming",
+    missedAt: row.missed_at === null ? null : row.missed_at.toISOString(),
+    plannedMin: row.duration_min,
+    actualSeconds: row.actual_seconds,
+    varianceSeconds: row.variance_seconds,
+    version: row.version,
+    createdAt: row.created_at.toISOString(),
+    updatedAt: row.updated_at.toISOString(),
+  };
+}
+    status: row.missed_at !== null ? "missed" : row.actual_seconds > 0 ? "done" : "upcoming",
+    missedAt: row.missed_at === null ? null : row.missed_at.toISOString(),
+    plannedMin: row.duration_min,
+    actualSeconds: row.actual_seconds,
+    varianceSeconds: row.variance_seconds,
 
 function present(row: PlanEntryRow): PlanEntry {
   return {
