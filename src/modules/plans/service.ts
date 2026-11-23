@@ -3,10 +3,9 @@
  * (BR-026), a read-only rule once an entry has started (BR-028, FR-035), the missed mark
  * (BR-005, FR-033) and the exam-date warning (FR-038, BR-025).
  *
- * Planned time is `duration_min` (BR-001). Actual time is the sum of the sessions linked
- * to an entry, which the Study sessions module owns: this milestone answers planned values
- * only, and the actual fields arrive with M06 (B-07), so `status` is `upcoming` or
- * `missed` and never `done` yet.
+ * Planned time is `duration_min` (BR-001). Actual time is the sum of the seconds of the
+ * sessions linked to an entry (BR-004), which the Study sessions module owns; `status`
+ * derives `done` from a positive actual sum (API-SCHEMAS section 8).
  *
  * `PlanEntry` is the wire shape of API-SCHEMAS section 8.
  */
@@ -45,6 +44,7 @@ export interface PlanEntry {
   localDate: LocalDate;
   status: PlanEntryStatus;
   missedAt: string | null;
+  plannedMin: number;
   /** Sum of the linked sessions' seconds; 0 when none are linked (BR-004, B-07). */
   actualSeconds: number;
   /** Actual seconds minus planned minutes, signed: negative means studied less. */
@@ -115,7 +115,6 @@ const SELECT_PLAN_ENTRY = `
 
 function fieldsError(path: string, rule: string, extra: Record<string, unknown> = {}): AppError {
   return new AppError("validation_failed", { details: { fields: [{ path, rule, ...extra }] } });
-  return new AppError("validation_failed", { details: { fields: [{ path, rule, ...extra }] } });
 }
 
 function present(row: PlanEntryRow): PlanEntry {
@@ -133,30 +132,6 @@ function present(row: PlanEntryRow): PlanEntry {
     plannedMin: row.duration_min,
     actualSeconds: row.actual_seconds,
     varianceSeconds: row.variance_seconds,
-    version: row.version,
-    createdAt: row.created_at.toISOString(),
-    updatedAt: row.updated_at.toISOString(),
-  };
-}
-    status: row.missed_at !== null ? "missed" : row.actual_seconds > 0 ? "done" : "upcoming",
-    missedAt: row.missed_at === null ? null : row.missed_at.toISOString(),
-    plannedMin: row.duration_min,
-    actualSeconds: row.actual_seconds,
-    varianceSeconds: row.variance_seconds,
-
-function present(row: PlanEntryRow): PlanEntry {
-  return {
-    id: row.id,
-    subjectId: row.subject_id,
-    topicId: row.topic_id,
-    startsAt: row.starts_at.toISOString(),
-    durationMin: row.duration_min,
-    timezone: row.timezone,
-    localDate: row.local_date,
-    // BR-005: `missed` is stored; `done` needs a linked session, which M06 adds (B-07).
-    status: row.missed_at === null ? "upcoming" : "missed",
-    missedAt: row.missed_at === null ? null : row.missed_at.toISOString(),
-    plannedMin: row.duration_min,
     version: row.version,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),

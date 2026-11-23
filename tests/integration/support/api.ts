@@ -389,6 +389,8 @@ export const planEntrySchema = z
     status: z.enum(["upcoming", "done", "missed"]),
     missedAt: z.string().nullable(),
     plannedMin: z.number(),
+    actualSeconds: z.number(),
+    varianceSeconds: z.number(),
     version: z.number(),
     createdAt: z.string(),
     updatedAt: z.string(),

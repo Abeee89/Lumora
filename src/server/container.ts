@@ -18,6 +18,7 @@ import * as profile from "../modules/profile/public";
 import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
 import * as exams from "../modules/exams/public";
+import * as plans from "../modules/plans/public";
 import * as sessions from "../modules/sessions/public";
 
 export interface Container {
