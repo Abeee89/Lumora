@@ -12,7 +12,7 @@ Actual time is deliberately absent. FR-036 and AC-FR-036-* belong to M06 under B
 
 Everything M05 claims is proven by a command run in this repository: typecheck, lint, the boundary check, 95 unit tests, 79 integration tests against PostgreSQL 18.6, a production build with a 46-route table, and browser checks on A-6 at four viewport widths against the production build.
 
-M05 is not a full pass. `DEFINITION-OF-DONE.md checked` is partial: the by-layer coverage floors the document names are neither enforced nor met, axe cannot run in this tree, and the `m05-done` tag is still the owner's to create. Those are named in section 9 and in the evidence record rather than ticked. Three defects were found by this pass and fixed; they are in section 7.
+M05 is not a full pass. `DEFINITION-OF-DONE.md checked` is partial: the by-layer coverage floors the document names are neither enforced nor met, axe cannot run in this tree, and the `m05-done` tag is still the owner's to create. Those are named in section 9 and in the evidence record rather than ticked. Four defects were found by this pass and fixed; they are in section 7.
 
 ## 2. Scope and authorization
 
@@ -114,6 +114,7 @@ Full commands, raw output and the measurement tables are in [M05-EVIDENCE.md](M0
 8. **The interval comparison is strict at both ends.** `p.starts_at < $3 AND $2 < p.starts_at + duration` makes 10:00-11:00 and 11:00-12:00 non-overlapping, which is AC-FR-034-3 and the behaviour the browser pass re-observed. A `<=` on either side would have produced a warning for a back-to-back schedule, the most common plan there is.
 9. **The empty state needed a second sentence and an action.** The browser pass found AC-FR-037-3 unimplemented: a filtered list that matched nothing said "No planned sessions" and offered no way back. The branch now distinguishes a filtered result and offers Clear filters, which resets the range, the subject and the status.
 10. **`PlanEntryDeleted` is published after the commit with no consumer.** M06's session link needs the event (BR-003, EC-022), and publishing it now keeps the delete path single and testable, exactly as M04 did with `ExamArchived`. Until M06 registers a subscriber, the event has no effect, which is recorded rather than hidden.
+11. **Tailwind v4 quietly dropped the pointer cursor on buttons, and the delivery gate caught it.** The global filter in `.claude/skills/antislop/SKILL.md` (R-39) asks whether any control lacks the pointer cursor, and the answer was yes for every `<button>` in the repository: v4's preflight, unlike v3's, sets no cursor, so the user agent's arrow showed on Save, Delete, the row menus and every other control. `src/ui/combobox.tsx` had hand-added `cursor-pointer` to one option row, which is how the intent was visible while the rule was missing. One base rule in `globals.css` fixes every milestone's UI at once; verified by computed style on `/plan` in the production build, where the enabled buttons read `pointer` and a disabled one does not.
 
 ## 8. Known limitations
 
@@ -140,7 +141,7 @@ Full commands, raw output and the measurement tables are in [M05-EVIDENCE.md](M0
 
 | Document | Change |
 |---|---|
-| [08-build/M05-EVIDENCE.md](M05-EVIDENCE.md) | new: commands, raw output, the browser measurements, the three defects found and fixed, the registry contributions and the DoD check |
+| [08-build/M05-EVIDENCE.md](M05-EVIDENCE.md) | new: commands, raw output, the browser measurements, the four defects found and fixed, the registry contributions, the coverage measurement and the Definition of Done check |
 | [08-build/M05-COMPLETION-REPORT.md](M05-COMPLETION-REPORT.md) | this file |
 | [07-roadmap/MILESTONES.md](../07-roadmap/MILESTONES.md) | three checklist rows ticked and an "As built" note on the M05 card |
 | [OPEN-DECISIONS.md](../OPEN-DECISIONS.md) | the M05 execution record in section G and the OD-M36 row in section C |
@@ -158,7 +159,7 @@ M06 Study sessions. It is the consumer this milestone prepared: `plan_entries` i
 
 ## 13. Not done, and not claimed
 
-1. Nothing is staged, committed or tagged by me. The owner committed the M05 build in `900a90b push profile` and `1931a0b push ui modules`, the ERROR-HANDLING edit in `51958f1 update architecture`, and the two UI fixes from E08 plus both M05 documents in `aff79f9 update ui forms` (2026-11-22 21:16). `git status` is clean at that commit, and the only step left to the owner is the `m05-done` tag.
+1. Nothing is staged, committed or tagged by me. The owner committed the M05 build in `900a90b push profile` and `1931a0b push ui modules`, the ERROR-HANDLING edit in `51958f1 update architecture`, and the two UI fixes E08 lists for that commit (the clear-filters action and the mobile sheet height) plus both M05 documents in `aff79f9 update ui forms` (2026-11-22 21:16). `git status` was clean at that commit. The cursor rule in E08 followed and the owner committed it in `4d9cfe2 push Milestone M5` (2026-11-22 21:28); the documents corrected after that commit are uncommitted, and the `m05-done` tag is the other step left to the owner.
 2. No axe run, no load test and no staging deploy: M05 claims none of them. The coverage command was run and its result is in E10.
-3. Three defects were found and fixed in this pass: the `date` cast in both exports, the missing clear-filters action and the 38 px short mobile sheet. No other defect is known as of this record.
+3. Four defects were found and fixed in this pass: the `date` cast in both exports, the missing clear-filters action, the 38 px short mobile sheet and the pointer cursor that Tailwind v4 no longer sets on buttons, fixed in `globals.css` and committed in `4d9cfe2 push Milestone M5`. No other defect is known as of this record.
 4. The overlap rule being user-wide, the omitted actual fields, the `body` path on `not_started_yet` and the Calendar item pointing at `/plan` are decisions, not gaps: the first three are argued in section 7 and the fourth is OD-M36, and any of them can be reversed cheaply if the owner disagrees.

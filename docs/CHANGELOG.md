@@ -5,7 +5,7 @@ Documentation changes and build evidence. M01 application code is tracked from 2
 ## 2026-11-22, M05 study plans
 
 ### Added
-- [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements, the three defects found and fixed, the registry order and the Definition of Done check.
+- [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E11) with the command and raw output, per-row checklist status, the browser measurements, the four defects found and fixed, the registry order and the Definition of Done check.
 - [08-build/M05-COMPLETION-REPORT.md](08-build/M05-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
 - [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M36 (the header's Calendar item pointing at `/plan` until A-5 ships).
 - Application and tooling: `db/migrations/0005_plan_entries.sql`; `src/modules/plans/**` (3 files); `src/app/api/app/plan-entries/**` (3 route files) covering PLAN-01..PLAN-06; `src/app/plan/page.tsx` (A-6); `src/ui/forms/plan-{dialog,list}.tsx`; the plans entries in the container, the request schemas, the error catalogue, the UI copy, the nav and the coverage config.
@@ -21,12 +21,14 @@ Documentation changes and build evidence. M01 application code is tracked from 2
 - A `date` column returned as a JavaScript `Date` shifted the exported dates by the host offset in both contributors; `exportPlans` and `exportExams` now select `local_date::text` and `exam_date::text`, and the exams test pins the text shape.
 - The filtered list had no way back: an empty result now reads "No planned sessions match these filters" and offers "Clear filters" (AC-FR-037-3).
 - The mobile dialog stopped 38 px short of the viewport because the user-agent `max-height` capped the sheet; `PlanDialog` now sets `max-sm:max-h-dvh` with `max-sm:overflow-y-auto`.
+- Tailwind v4 removed the pointer cursor that v3 put on buttons, so every enabled control read as non-interactive; a base rule now covers `button:not(:disabled)` and `[role="button"]:not([aria-disabled="true"])`, leaving disabled buttons and native selects alone.
 
 ### Results
 - `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 18 unit files and 95 tests, 9 integration files and 79 tests in 144.05 s.
 - `npx next build`: 46 routes, 29 under `/api/app` of which 3 are M05's, plus `/plan`; no static and dynamic sibling conflict.
 - `npm run test:coverage` exit 0: all three configured floors pass, the kernel at 94.94% lines, the exams module at 90.41% and the plans module at 94.57%; overall lines measure 49.96% because the UI layer is covered by the browser pass.
 - Browser checks in Chromium at 360, 768, 1280 and 2560 px on the production build: A-6 with both warnings behind one confirmation, the overlap-only warning, the touching-interval case, the read-only past row, the missed mark, the three filters, the clear-filters action, the loading skeleton, the error panel with its retry, the keyboard paths and the full-height mobile sheet; no horizontal overflow at any of the four widths.
+- A second `npm run verify` on the owner's commit `aff79f9` exited 0: 18 unit files and 95 tests in 12.12 s and 9 integration files and 79 tests in 204.14 s; the cursor rule above came after that commit and `npx next build` on it exited 0 in 37.93 s.
 
 ### Not changed
 - No actual value, no `done` status, no session link, no plan generation, no calendar page, no to-do and no statistics behaviour; FR-036 and AC-FR-036-* stay with M06 (B-07), and nothing is committed or tagged by the build session.

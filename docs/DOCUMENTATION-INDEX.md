@@ -31,7 +31,7 @@ Product name in all documents: Lumora (the planning prompts call it "Study Track
 | [08-build/M03-COMPLETION-REPORT.md](08-build/M03-COMPLETION-REPORT.md) | M03 functionality, files, database changes, tests, findings, limitations, remaining tasks and recommended next milestone |
 | [08-build/M04-EVIDENCE.md](08-build/M04-EVIDENCE.md) | M04 commands, raw output, checklist status, browser measurements, the four defects found and fixed, the registry contributions, the derived archive state and the Definition of Done check |
 | [08-build/M04-COMPLETION-REPORT.md](08-build/M04-COMPLETION-REPORT.md) | M04 functionality, files, database changes, tests, findings, limitations, remaining tasks and recommended next milestone |
-| [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md) | M05 commands, raw output, checklist status, browser measurements, the three defects found and fixed, the registry contributions, the coverage measurement and the Definition of Done check |
+| [08-build/M05-EVIDENCE.md](08-build/M05-EVIDENCE.md) | M05 commands, raw output, checklist status, browser measurements, the four defects found and fixed, the registry contributions, the coverage measurement and the Definition of Done check |
 | [08-build/M05-COMPLETION-REPORT.md](08-build/M05-COMPLETION-REPORT.md) | M05 functionality, files, database changes, tests, findings, limitations, remaining tasks and recommended next milestone |
 
 ## Root
