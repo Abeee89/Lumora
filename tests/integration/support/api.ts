@@ -40,6 +40,12 @@ import {
   PATCH as patchPlanEntry,
 } from "@/app/api/app/plan-entries/[entryId]/route";
 import { POST as markPlanEntryMissed } from "@/app/api/app/plan-entries/[entryId]/missed/route";
+import { GET as getSessions, POST as createSession } from "@/app/api/app/sessions/route";
+import {
+  DELETE as deleteSession,
+  GET as getSession,
+  PATCH as patchSession,
+} from "@/app/api/app/sessions/[sessionId]/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -224,6 +230,20 @@ async function dispatch(method: string, path: string, request: Request): Promise
       params: Promise.resolve({ entryId: planMissedPath[1] ?? "" }),
     });
   }
+  const sessionsPath = /^\/api\/app\/sessions$/.exec(path);
+  if (sessionsPath !== null) {
+    if (method === "GET") return getSessions(request);
+    if (method === "POST") return createSession(request);
+  }
+
+  const sessionPath = /^\/api\/app\/sessions\/([^/]+)$/.exec(path);
+  if (sessionPath !== null) {
+    const params = { params: Promise.resolve({ sessionId: sessionPath[1] ?? "" }) };
+    if (method === "GET") return getSession(request, params);
+    if (method === "PATCH") return patchSession(request, params);
+    if (method === "DELETE") return deleteSession(request, params);
+  }
+
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
   if (method === "DELETE" && signInPath !== null) {
@@ -409,6 +429,46 @@ export const planWarningSchema = z.union([
     .strict(),
   z.object({ code: z.literal("exam_date"), examId: z.string(), examDate: z.string() }).strict(),
 ]);
+
+export const dayAllocationSchema = z
+  .object({
+    localDate: z.string(),
+    seconds: z.number().int().min(1).max(86400),
+    isManual: z.boolean(),
+  })
+  .strict();
+
+/** API-SCHEMAS section 9. Strict: a field the spec does not list fails the test. */
+export const sessionSchema = z
+  .object({
+    id: z.string(),
+    subjectId: z.string(),
+    topicId: z.string().nullable(),
+    planEntryId: z.string().nullable(),
+    source: z.enum(["timer", "manual"]),
+    mode: z.enum(["stopwatch", "pomodoro"]).nullable(),
+    startedAt: z.string(),
+    endedAt: z.string(),
+    durationSeconds: z.number().int().min(60).max(86400),
+    pomodorosCompleted: z.number().int().min(0),
+    autoClosed: z.boolean(),
+    timezone: z.string(),
+    localDate: z.string(),
+    dayAllocations: z.array(dayAllocationSchema),
+    serverTime: z.string().optional(),
+    version: z.number(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .strict();
+
+export const sessionListSchema = z.object({
+  data: z.array(sessionSchema),
+  page: z.object({ nextCursor: z.string().nullable(), hasMore: z.boolean() }),
+});
+
+export type SessionWire = z.infer<typeof sessionSchema>;
+export type SessionListWire = z.infer<typeof sessionListSchema>;
 
 /** Create and update answer the entry with the advisories the caller confirmed. */
 export const planEntryWrittenSchema = planEntrySchema.extend({

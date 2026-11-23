@@ -276,11 +276,12 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (allocation: midnight, DST spring and fall, rollover hour); integration (idempotent replay, concurrent edits); ownership contract; AC-E2E-05.
 - **Acceptance criteria:** AC-FR-036-* (moved from M05, B-07), AC-FR-041-* (session side), AC-FR-042-* to AC-FR-044-*, AC-FR-047-*, AC-FR-048-*; AC-E2E-05, AC-E2E-06 (session part), AC-E2E-10 (session part).
 - **Completion checklist:**
-  - [ ] Manual add, edit, delete, list work; day allocations correct across midnight and DST
-  - [ ] Replay of the same request key returns the same result
-  - [ ] Plan actuals shown on plan list
-  - [ ] Purge handler and export contributor registered
+  - [x] Manual add, edit, delete, list work; day allocations correct across midnight and DST
+  - [x] Replay of the same request key returns the same result
+  - [x] Plan actuals shown on plan list
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-23):** evidence, per-row proof and the open rows are in [08-build/M06-EVIDENCE.md](../08-build/M06-EVIDENCE.md); the record is [08-build/M06-COMPLETION-REPORT.md](../08-build/M06-COMPLETION-REPORT.md). Shipped: `study_sessions` and `study_session_days`, the two SESS route files behind ids SESS-01..SESS-05, A-4 at `/sessions`, the day allocation across midnight, rollover and DST with the timezone frozen at start, the idempotent save by request key, the optimistic concurrency, the hard overlap exclusion that names the conflicting session, the manual flag excluded from future XP and leaderboards, the events SessionCompleted, SessionEdited and SessionDeleted, and the plan unlink via the foreign key. FR-036 is complete: a linked session moves a plan entry to `done` with `actualSeconds` and `varianceSeconds`. Two choices are recorded rather than assumed: archived subjects stay visible in the session list labelled "(archived)" (SESS-01 does not filter them), and the manual duration floor is 60 s per the API contract and the database check, not the timer's 300 s rule. The owner commits and tags; the `m06-done` tag does not exist at the time of writing.
 
 ### M07 Timer: Pomodoro and stopwatch
 

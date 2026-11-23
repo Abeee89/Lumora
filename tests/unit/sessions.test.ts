@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { allocateDays, dayIntervals, type DayAllocation, type SessionContext } from "@/modules/sessions/public";
+import { allocateDays, type DayAllocation } from "@/modules/sessions/public";
 
 /**
  * The session rules that are pure enough to pin without a database: the per-day split at
@@ -8,13 +8,7 @@ import { allocateDays, dayIntervals, type DayAllocation, type SessionContext } f
  * the ranking rule (BR-010, EC-025). The write-time checks (future, duration, daily cap,
  * overlap) run against the fake-Queryable harness in the integration tests.
  */
-const USER = "018c0000-0000-7000-8000-0000000000aa";
 
-const ctx = (timezone: string, rolloverHour = 0, now = "2026-11-22T10:00:00.000Z"): SessionContext => ({
-  now: new Date(now),
-  timezone,
-  rolloverHour,
-});
 const total = (allocations: readonly DayAllocation[]): number =>
   allocations.reduce((sum, allocation) => sum + allocation.seconds, 0);
 

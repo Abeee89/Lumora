@@ -37,7 +37,9 @@ describe("module boundaries (MODULE-BOUNDARIES section 8)", () => {
     expect(violations.some((violation) => violation.rule === "kernel-imports-module")).toBe(true);
   });
 
-  it("passes on this repository", async () => {
+  // The full repo scan parses every source file; under v8 coverage instrumentation that
+  // takes longer than the 5 s default, so this test gets its own budget.
+  it("passes on this repository", { timeout: 30_000 }, async () => {
     const violations = await checkBoundaries(process.cwd());
     expect(violations).toEqual([]);
   });

@@ -240,11 +240,12 @@ describe("profile endpoints", () => {
   it("registers a working purge handler and export contributor for every owned table group", async () => {
     const user = await signUpUser({ timezone: "America/New_York" });
 
-    // M04 adds the exams group and M05 the plans group; the per-table behaviour of both
-    // is covered by tests/integration/exams.test.ts and plans.test.ts. Plans purge before
-    // topics and subjects because plan_entries -> subjects is NO ACTION.
-    expect(purgeHandlers.keys()).toEqual(["profile", "auth", "exams", "plans", "topics", "subjects"]);
-    expect(exportContributors.keys()).toEqual(["profile", "exams", "plans", "subjects", "topics"]);
+    // M04 adds the exams group, M05 the plans group and M06 the sessions group; the
+    // per-table behaviour is covered by their own suites. Plans purge before topics and
+    // subjects because plan_entries -> subjects is NO ACTION; sessions purge before
+    // plans so the plan link (SET NULL, EC-022) never blocks the cascade.
+    expect(purgeHandlers.keys()).toEqual(["profile", "auth", "exams", "plans", "sessions", "topics", "subjects"]);
+    expect(exportContributors.keys()).toEqual(["profile", "exams", "plans", "sessions", "subjects", "topics"]);
 
     const contributor = exportContributors.entries().find(([key]) => key === "profile")?.[1];
     const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };

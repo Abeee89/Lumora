@@ -33,7 +33,6 @@ export async function GET(request: Request): Promise<Response> {
       });
     }
 
-    const clock = await profile.getUserClockContext(c.database, identity.userId);
     const query: sessions.SessionListQuery = {
       ...(parsed.data.from !== undefined ? { from: parsed.data.from } : {}),
       ...(parsed.data.to !== undefined ? { to: parsed.data.to } : {}),
@@ -43,11 +42,7 @@ export async function GET(request: Request): Promise<Response> {
       ...(parsed.data.limit !== undefined ? { limit: parsed.data.limit } : {}),
       ...(parsed.data.cursor !== undefined ? { cursor: parsed.data.cursor } : {}),
     };
-    const page = await sessions.listSessions(c.database, identity.userId, query, {
-      now: new Date(),
-      timezone: clock.timezone,
-      rolloverHour: clock.rolloverHour,
-    });
+    const page = await sessions.listSessions(c.database, identity.userId, query);
     return jsonResponse(
       200,
       { data: page.data, page: { nextCursor: page.nextCursor, hasMore: page.hasMore } },

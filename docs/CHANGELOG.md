@@ -1,6 +1,35 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, and M05 from 2026-11-22.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, and M06 from 2026-11-23.
+
+## 2026-11-23, M06 study sessions
+
+### Added
+- [08-build/M06-EVIDENCE.md](08-build/M06-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E08) with the command and raw output, per-row checklist status, the browser measurements, the three defects found and fixed, the registry order and the Definition of Done check.
+- [08-build/M06-COMPLETION-REPORT.md](08-build/M06-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M37 to OD-M41 (the session overlap exclusion, the manual duration floor, the archived-subject visibility, the `is_ranked` rule and the plan unlink). Section G: the 2026-11-23 M06 execution row, limited to M06 records and stating that M06 stays open.
+- Application and tooling: `db/migrations/0006_study_sessions.sql`; `src/modules/sessions/**` (3 files); `src/app/api/app/sessions/**` (2 route files) covering SESS-01..SESS-05; `src/app/sessions/page.tsx` (A-4); `src/ui/forms/session-{list,dialog}.tsx`; the sessions entries in the container, the request schemas, the error catalogue, the UI copy and the nav.
+- Tests: `tests/unit/sessions.test.ts` (6 cases) and `tests/integration/sessions.test.ts` (10 cases), taking the unit tier to 19 files and 101 tests and the integration tier to 10 files and 89 tests, plus the session block in `tests/integration/support/api.ts` and the plans actuals assertions.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): four M06 rows with evidence checked, the Definition of Done row left partial, and an "As built" note recording what shipped, the archived-subject rule, the duration floor and the open rows.
+- [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M06 execution paragraph and the authorization sentence naming M07 as the next step.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M06 execution row and the inventory at 95 documents (15 build records).
+- Application and tooling: `src/modules/plans/service.ts` (the actuals columns and the `done` status); `src/server/{container,request-context}.ts`; `src/ui/{messages,nav}.ts`; `tests/integration/{profile,api}.ts` and `tests/unit/{plans,boundaries}.test.ts`.
+
+### Fixed
+- The manual duration floor reused the timer's 300-second rule, refusing valid 1- to 5-minute sessions against a contract that allows 60..86400 s; `validateDuration` now checks the literal bound with `details: { minSeconds: 60, maxSeconds: 86_400 }` (API-ENDPOINTS line 1094, `chk_study_sessions_duration`).
+- `listSessions` carried an unused clock context parameter and the route read the clock for it; the signature is now `listSessions(database, userId, query)` and the GET route's dead read is gone.
+- The repo-scan boundary test exceeded the 5-second default under v8 coverage instrumentation; the case now carries `{ timeout: 30_000 }`.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 19 unit files and 101 tests in 12.03 s, 10 integration files and 89 tests in 167.66 s.
+- `npx next build`: 49 routes, 3 new in M06 (`/api/app/sessions`, `/api/app/sessions/[sessionId]`, `/sessions`); no static and dynamic sibling conflict.
+- `npm run test:coverage` exit 0: all configured floors pass; the sessions module measures 82.77% lines and 70.22% branches, the sessions API 92.59% statements; overall lines measure 50.44% because the UI layer is covered by the browser pass.
+- Browser checks in Chromium at 360, 768, 1280 and 2560 px on the production build: A-4 with the add, edit and delete dialogs, the overlap refusal naming the conflicting session, the midnight-crossing row "Spans two days: 30 min and 30 min", the archived-subject "(archived)" label, the three filters, the empty and loading states, the full-height mobile sheet and no horizontal overflow at any width.
+
+### Not changed
+- No auto-close, no timer route, no XP or leaderboard awarding, no calendar heatmap, no statistics; FR-040..FR-059 stay with M07 and later milestones, and nothing is committed or tagged by the build session.
 
 ## 2026-11-22, M05 study plans
 

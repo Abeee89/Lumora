@@ -7,7 +7,6 @@
  *
  * `StudySession` is the wire shape of API-SCHEMAS section 9.
  */
-import { config } from "../../kernel/config";
 import { uuidv7 } from "../../kernel/crypto";
 import type { Database, Queryable } from "../../kernel/db";
 import { AppError } from "../../kernel/errors";
@@ -131,9 +130,9 @@ function validateInstant(value: string, path: string): Date {
 }
 
 function validateDuration(seconds: number): number {
-  if (!Number.isInteger(seconds) || seconds < config.timer.completedFocusMinMinutes * 60 || seconds > 86_400) {
+  if (!Number.isInteger(seconds) || seconds < 60 || seconds > 86_400) {
     throw new AppError("manual_entry_too_long", {
-      details: { minSeconds: config.timer.completedFocusMinMinutes * 60, maxSeconds: 86_400 },
+      details: { minSeconds: 60, maxSeconds: 86_400 },
     });
   }
   return seconds;
@@ -687,7 +686,6 @@ export async function listSessions(
   database: Queryable,
   userId: string,
   query: SessionListQuery,
-  ctx: SessionContext,
 ): Promise<SessionPage> {
   const limit = query.limit ?? 50;
   if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
