@@ -129,8 +129,10 @@ const planRow = (overrides: Record<string, unknown> = {}) => ({
   missed_at: null,
   version: 1,
   created_at: new Date("2026-11-20T00:00:00.000Z"),
-  updated_at: new Date("2026-11-20T00:00:00.000Z"),
+  actual_seconds: 0,
+  variance_seconds: 0,
   ...overrides,
+  updated_at: new Date("2026-11-20T00:00:00.000Z"),
 });
 
 /** The AppError a call threw, or a test failure when it did not throw. */
@@ -214,21 +216,21 @@ describe("plan window (PLAN-01 bounds, EC-006)", () => {
 });
 
 describe("plan status filter (FR-037)", () => {
-  it("derives the status from the missed mark and filters it", async () => {
+  it("derives the status from the missed mark and the actual sum and filters it", async () => {
     const rows = [
       planRow(),
       planRow({ id: "018c0000-0000-7000-8000-0000000000ee", missed_at: new Date(NOW) }),
+      planRow({ id: "018c0000-0000-7000-8000-0000000000ff", actual_seconds: 1800 }),
     ];
     const { database } = fakeDatabase({ subjects: [subjectRow()], plan: rows });
     const all = await list(database, { from: "2026-11-22", to: "2026-11-30" });
-    expect(all.map((entry) => entry.status)).toEqual(["upcoming", "missed"]);
+    expect(all.map((entry) => entry.status)).toEqual(["upcoming", "missed", "done"]);
 
     const missed = await list(database, { from: "2026-11-22", to: "2026-11-30", status: "missed" });
     expect(missed.map((entry) => entry.id)).toEqual(["018c0000-0000-7000-8000-0000000000ee"]);
 
-    // `done` needs a linked session: M06 owns it (B-07), so nothing matches yet.
     const done = await list(database, { from: "2026-11-22", to: "2026-11-30", status: "done" });
-    expect(done).toEqual([]);
+    expect(done.map((entry) => entry.id)).toEqual(["018c0000-0000-7000-8000-0000000000ff"]);
   });
 });
 

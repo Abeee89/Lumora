@@ -114,12 +114,9 @@ export function SessionList({
     fields: SessionFields,
   ): Promise<ApiFailure | null> => {
     const startedAt = instantInZone(fields.date, fields.time, timeZone);
-    const endedAt = instantInZone(
-      fields.date,
-      fields.time,
-      timeZone,
-      fields.durationMin,
-    );
+    const endedAt = new Date(
+      Date.parse(startedAt) + fields.durationMin * 60 * 1000,
+    ).toISOString();
     const body: Record<string, unknown> = {
       subjectId: fields.subjectId,
       topicId: fields.topicId,
@@ -127,14 +124,6 @@ export function SessionList({
       endedAt,
     };
     if (fields.planEntryId !== "") body["planEntryId"] = fields.planEntryId;
-    const body: Record<string, unknown> = {
-      subjectId: fields.subjectId,
-      topicId: fields.topicId,
-      startedAt: instantInZone(fields.date, fields.time, timeZone),
-      endedAt: instantInZone(fields.date, fields.time, timeZone, fields.durationMin),
-    };
-    const planEntryId = dialog?.kind === "add" ? selectedPlanEntryId : null;
-    if (planEntryId !== null) body["planEntryId"] = planEntryId;
 
     const result =
       session === null
