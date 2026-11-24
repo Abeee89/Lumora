@@ -122,12 +122,16 @@ export const config = {
     /** BACKGROUND-JOBS section 2: "Exam auto-archive" (FR-124), hourly in UTC. */
     examAutoArchiveQueue: "exam_auto_archive",
     examAutoArchiveCron: "0 * * * *",
+    /** BACKGROUND-JOBS section 2: "Timer idle auto-close" (FR-047), every minute in UTC. */
+    timerIdleCloseQueue: "timer_idle_close",
+    timerIdleCloseCron: "* * * * *",
   },
   rateLimit: {
     windowSeconds: 60, // API-CONVENTIONS section 10
     publicApiPerMinute: 60, // PROPOSED: U-9
     readPerUserPerMinute: 300,
     heavyPerUserPerMinute: 30, // RL-HEAVY: statistics, calendar, exports, bulk topics
+    timerPerUserPerMinute: 120, // RL-TIMER: timer polling, heartbeat and commands
     writePerUserPerMinute: 120,
     signInPerIpPerMinute: 10,
     signUpPerIpPerMinute: 5,

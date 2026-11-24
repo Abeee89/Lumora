@@ -19,6 +19,7 @@ import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
 import * as exams from "../modules/exams/public";
 import * as plans from "../modules/plans/public";
+import * as timer from "../modules/timer/public";
 import * as sessions from "../modules/sessions/public";
 
 export interface Container {
@@ -131,6 +132,19 @@ export function registerContributions(database: Database): void {
       rows: await plans.exportPlans(userId, database),
     }));
   }
+  // Timer purges before Sessions and before Subjects: a live run references both with a
+  // NO ACTION edge, and a run is deleted outright on stop, so the runs go first.
+  if (!purgeHandlers.has("timer")) {
+    purgeHandlers.register("timer", (userId) => timer.purgeTimer(userId, database));
+  }
+  if (!exportContributors.has("timer")) {
+    exportContributors.register("timer", async (userId) => ({
+      section: "timer",
+      rows: await timer.exportTimer(userId, database),
+    }));
+  }
+  // EC-007, SUBJ-06: a live run on the subject blocks archiving and names the run.
+  timer.registerTimerArchiveGuard(database);
   // Sessions purge before Plans: the plan link is SET NULL (EC-022) but the purge order
   // stays consistent, and sessions must go before Subjects (FK NO ACTION).
   if (!purgeHandlers.has("sessions")) {

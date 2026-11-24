@@ -8,14 +8,15 @@ import { PgBoss } from "pg-boss";
 import pg from "pg";
 
 import { config } from "@/kernel/config";
-import { poolQueryable } from "@/kernel/db";
+import { createDatabase } from "@/kernel/db";
 import { requireDatabaseUrl, readEnv } from "@/kernel/env";
 import { logger } from "@/kernel/logger";
 import { relayOutbox, type JobQueue } from "@/kernel/outbox";
 import { authCleanupJob } from "@/modules/auth/public";
 import { examAutoArchiveJob } from "@/modules/exams/public";
+import { timerIdleCloseJob } from "@/modules/timer/public";
 
-const scheduledJobs = [authCleanupJob, examAutoArchiveJob];
+const scheduledJobs = [authCleanupJob, examAutoArchiveJob, timerIdleCloseJob];
 
 export interface WorkerHandle {
   stop(): Promise<void>;
@@ -35,7 +36,9 @@ export async function startWorker(
   await boss.start();
 
   const pool = new pg.Pool({ connectionString: databaseUrl });
-  const database = poolQueryable(pool);
+  // A job that closes stale runs needs a transaction of its own, so the scheduled jobs get
+  // a full Database; the raw pool stays for the outbox relay, which owns its transaction.
+  const jobs = createDatabase(databaseUrl);
   const queue: JobQueue = {
     send: (name, data, options) => boss.send(name, data, options),
   };
@@ -46,7 +49,7 @@ export async function startWorker(
     await boss.createQueue(job.name, { policy: "stately", retryLimit: 0 });
     await boss.work(job.name, async () => {
       try {
-        const result = await job.run(database, new Date());
+        const result = await job.run(jobs, new Date());
         logger.info({ job: job.name, result }, "job.ran");
       } catch (error) {
         logger.error({ err: error, job: job.name }, "job.failed");
@@ -87,6 +90,7 @@ export async function startWorker(
       clearInterval(timer);
       await inFlight;
       await boss.stop({ graceful: true });
+      await jobs.end();
       await pool.end();
       logger.info({}, "worker.stopped");
     },

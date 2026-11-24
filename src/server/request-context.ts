@@ -193,6 +193,31 @@ export const sessionListQuery = z
   })
   .strict();
 
+/**
+ * M07 request bodies. TIM-02 and TIM-08: the module owns the duration ranges and the
+ * single-timer rule; the adapter asserts the shape (API-SCHEMAS section 10).
+ */
+export const startTimerSchema = z
+  .object({
+    mode: z.enum(["stopwatch", "pomodoro"]),
+    subjectId: z.string(),
+    topicId: z.string().nullable().optional(),
+    planEntryId: z.string().nullable().optional(),
+    replaceRunning: z.boolean().optional(),
+  })
+  .strict();
+
+export const updateTimerSettingsSchema = z
+  .object({
+    focusMin: z.number().int().optional(),
+    breakMin: z.number().int().optional(),
+    longBreakMin: z.number().int().optional(),
+    cyclesBeforeLongBreak: z.number().int().optional(),
+    audioLoop: z.enum(["none", "rain", "white_noise", "cafe"]).optional(),
+    audioVolume: z.number().int().optional(),
+  })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {
@@ -287,12 +312,13 @@ export function includeArchivedQuery(url: URL): boolean {
 export async function enforceUserRate(
   c: Container,
   identity: auth.SessionIdentity,
-  kind: "read" | "write" | "heavy",
+  kind: "read" | "write" | "heavy" | "timer",
 ): Promise<void> {
   const limit = {
     read: config.rateLimit.readPerUserPerMinute,
     write: config.rateLimit.writePerUserPerMinute,
     heavy: config.rateLimit.heavyPerUserPerMinute,
+    timer: config.rateLimit.timerPerUserPerMinute,
   }[kind];
   try {
     const result = await c.authDeps.limiter.consume(

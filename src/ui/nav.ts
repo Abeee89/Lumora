@@ -53,6 +53,7 @@ export const shippedRoutes: ShippedRoutes = {
   "/subjects": true,
   "/exams": true,
   "/sessions": true,
+  "/timer": true,
 };
 
 export function visibleNav(
