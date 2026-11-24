@@ -384,9 +384,11 @@ async function validateWrite(
 }
 
 /**
- * The INSERT shared by the manual create and the timer stop: the overlap and daily cap
- * checks run inside the caller's transaction, and the exclusion constraint is the final
- * guard against a race between two writers (EC-011, ADR-011).
+ * The INSERT behind every session write: the manual create and the timer stop. The caller
+ * passes the focus intervals it measured (a manual entry: one; a timer run: one per focus
+ * segment), so a paused run's duration is its focus time and not its span (FR-040, FR-052,
+ * AC-FR-052-1), while the day allocation still splits every interval at the frozen day
+ * boundary (BR-016, FR-047).
  */
 export async function insertSession(
   database: Queryable,
@@ -397,8 +399,7 @@ export async function insertSession(
     planEntryId: string | null;
     source: SessionSource;
     mode: SessionMode | null;
-    startedAt: Date;
-    endedAt: Date;
+    intervals: readonly Interval[];
     pomodorosCompleted: number;
     autoClosed: boolean;
     timezone: string;
@@ -406,19 +407,44 @@ export async function insertSession(
     requestKey: string | null;
   },
 ): Promise<{ session: StudySession; event: SessionWrite["event"] }> {
-  const duration = Math.floor((input.endedAt.getTime() - input.startedAt.getTime()) / 1000);
+  const intervals = [...input.intervals].sort((a, b) => a.start.getTime() - b.start.getTime());
+  const first = intervals[0];
+  const last = intervals[intervals.length - 1];
+  if (
+    first === undefined ||
+    last === undefined ||
+    intervals.some((interval) => interval.end.getTime() <= interval.start.getTime())
+  ) {
+    throw fieldsError("intervals", "after_start");
+  }
+  const duration = intervals.reduce(
+    (total, interval) => total + Math.floor((interval.end.getTime() - interval.start.getTime()) / 1000),
+    0,
+  );
   if (duration < 60 || duration > 86_400) {
     throw new AppError("manual_entry_too_long", { details: { minSeconds: 60, maxSeconds: 86_400 } });
   }
-  const allocations = allocateDays(
-    input.startedAt,
-    input.endedAt,
-    input.timezone,
-    input.rolloverHour,
-    input.source === "manual",
-  );
+  const isManual = input.source === "manual";
+  // One row per local day: two focus intervals on the same day sum into that day.
+  const merged = new Map<string, DayAllocation>();
+  for (const interval of intervals) {
+    for (const part of allocateDays(
+      interval.start,
+      interval.end,
+      input.timezone,
+      input.rolloverHour,
+      isManual,
+    )) {
+      merged.set(part.localDate, {
+        localDate: part.localDate,
+        seconds: (merged.get(part.localDate)?.seconds ?? 0) + part.seconds,
+        isManual,
+      });
+    }
+  }
+  const allocations = [...merged.values()].sort((a, b) => (a.localDate < b.localDate ? -1 : 1));
   const id = uuidv7();
-  const localDate = localDateOf(input.startedAt, input.timezone, input.rolloverHour);
+  const localDate = localDateOf(first.start, input.timezone, input.rolloverHour);
   await database.query(
     `INSERT INTO study_sessions
        (id, user_id, subject_id, topic_id, plan_entry_id, source, mode, started_at, ended_at,
@@ -427,7 +453,7 @@ export async function insertSession(
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
     [
       id, userId, input.subjectId, input.topicId, input.planEntryId, input.source, input.mode,
-      input.startedAt, input.endedAt, duration, input.pomodorosCompleted, input.autoClosed,
+      first.start, last.end, duration, input.pomodorosCompleted, input.autoClosed,
       input.timezone, localDate, input.rolloverHour, input.requestKey,
     ],
   );
@@ -495,8 +521,7 @@ export async function createManualSession(
     planEntryId,
     source: "manual",
     mode: null,
-    startedAt,
-    endedAt,
+    intervals: [{ start: startedAt, end: endedAt }],
     pomodorosCompleted: 0,
     autoClosed: false,
     timezone: ctx.timezone,
