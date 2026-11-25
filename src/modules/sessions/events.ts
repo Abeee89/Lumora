@@ -1,7 +1,8 @@
 /**
  * MODULE-BOUNDARIES section 3: Study sessions owns the session-event contract. M06
  * publishes `SessionCompleted`, `SessionEdited` and `SessionDeleted` after their writes
- * commit; the XP, statistics and goal subscribers are later milestones (BR-018, FR-088).
+ * commit; M08 adds the Goals subscriber for progress and goal-met (FR-072, FR-073), and
+ * the XP and statistics subscribers are later milestones (BR-018, FR-088).
  *
  * Delivery is in process. Durable delivery belongs to the Phase 2 readiness job
  * (BACKGROUND-JOBS section 2), which is why no queue is involved in M06.

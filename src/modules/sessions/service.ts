@@ -254,6 +254,45 @@ async function dayTotals(
   return totals;
 }
 
+/**
+ * FR-072, BR-014: the seconds this user's sessions allocated to one frozen local date,
+ * grouped by subject. The Goals module asks this instead of reading the table itself
+ * (MODULE-BOUNDARIES section 2: Goals depends on Study sessions for progress).
+ */
+export async function daySeconds(
+  database: Queryable,
+  userId: string,
+  date: LocalDate,
+): Promise<{ subjectId: string; seconds: number }[]> {
+  const rows = await database.query<{ subject_id: string; seconds: number }>(
+    `SELECT d.subject_id, sum(d.seconds)::int AS seconds
+     FROM study_session_days d
+     WHERE d.user_id = $1 AND d.local_date = $2
+     GROUP BY d.subject_id`,
+    [userId, date],
+  );
+  return rows.map((row) => ({ subjectId: row.subject_id, seconds: row.seconds }));
+}
+
+/**
+ * The frozen local dates one session contributes to, with its own seconds on each. The
+ * Goals subscriber uses it to tell which days a write moved (FR-073, FR-074).
+ */
+export async function sessionDaySeconds(
+  database: Queryable,
+  userId: string,
+  sessionId: string,
+): Promise<{ localDate: LocalDate; seconds: number }[]> {
+  const rows = await database.query<{ local_date: string; seconds: number }>(
+    `SELECT d.local_date::text, d.seconds
+     FROM study_session_days d
+     WHERE d.user_id = $1 AND d.session_id = $2
+     ORDER BY d.local_date`,
+    [userId, sessionId],
+  );
+  return rows.map((row) => ({ localDate: row.local_date, seconds: row.seconds }));
+}
+
 function present(row: SessionRow): StudySession {
   return {
     id: row.id,

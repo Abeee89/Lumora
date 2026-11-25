@@ -16,7 +16,7 @@ import { uuidv7 } from "../../kernel/crypto";
 import type { Database, Queryable } from "../../kernel/db";
 import { AppError } from "../../kernel/errors";
 import { archiveGuards } from "../../kernel/registries";
-import { localDateOf } from "../../kernel/time";
+import { localDateOf, type LocalDate } from "../../kernel/time";
 import * as sessions from "../sessions/public";
 import * as subjects from "../subjects/public";
 import * as topics from "../topics/public";
@@ -319,6 +319,23 @@ function snapshotOf(run: RunRow): PhaseSnapshot {
 }
 
 /**
+ * BR-012: the measured study time behind the run's segments, the open one counted up to
+ * `now`. One owner for the rule, because the wire state (AC-FR-054-4) and the goal
+ * progress read (AC-FR-072-2) must never disagree about it.
+ */
+function measuredFocusSeconds(segments: readonly SegmentRow[], now: Date): number {
+  return segments.reduce(
+    (total, segment) =>
+      total +
+      Math.max(
+        Math.floor(((segment.ended_at ?? now).getTime() - segment.started_at.getTime()) / 1000),
+        0,
+      ),
+    0,
+  );
+}
+
+/**
  * The wire state. `focusSeconds` is the measured study time (BR-012): the open segment is
  * counted up to `serverTime`, never from a client clock (EC-010, AC-FR-054-4). It rides on
  * the segment summary because it is exactly that, the summary of the run's focus segments;
@@ -330,15 +347,7 @@ export function presentRun(
   now: Date,
 ): TimerState {
   const open = segments.find((segment) => segment.ended_at === null);
-  const focus = segments.reduce(
-    (total, segment) =>
-      total +
-      Math.max(
-        Math.floor(((segment.ended_at ?? now).getTime() - segment.started_at.getTime()) / 1000),
-        0,
-      ),
-    0,
-  );
+  const focus = measuredFocusSeconds(segments, now);
   return {
     id: run.id,
     state: run.state,
@@ -691,6 +700,26 @@ export async function getTimerState(
   if (run === undefined || isIdle(run, now)) return null;
   const projected = project(run, await loadSegments(database, run.id), now);
   return presentRun(projected.run, projected.segments, now);
+}
+
+/**
+ * AC-FR-072-2: the live run's measured focus for the local day its zone froze at start
+ * (BR-014). The Goals module adds it to a day's progress, because a run that has not been
+ * stopped yet is not a session and has no day allocation of its own (FR-072).
+ */
+export async function runningFocus(
+  database: Queryable,
+  userId: string,
+  now: Date,
+): Promise<{ localDate: LocalDate; subjectId: string; seconds: number } | null> {
+  const run = await readRun(database, userId, false);
+  if (run === undefined || isIdle(run, now)) return null;
+  const projected = project(run, await loadSegments(database, run.id), now);
+  return {
+    localDate: run.local_date,
+    subjectId: run.subject_id,
+    seconds: measuredFocusSeconds(projected.segments, now),
+  };
 }
 
 /**
