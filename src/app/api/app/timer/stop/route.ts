@@ -30,6 +30,9 @@ export async function POST(request: Request): Promise<Response> {
       timezone: clock.timezone,
       rolloverHour: clock.rolloverHour,
     };
+    // BR-006, AC-FR-059-1: an abandoned run is closed in a transaction of its own, so the
+    // refusal this command may return cannot roll the written session back.
+    await timer.settleIdleRun(c.database, identity.userId, context.now);
 
     const result = await runIdempotent({
       database: c.database,

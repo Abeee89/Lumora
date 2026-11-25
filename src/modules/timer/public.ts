@@ -20,6 +20,7 @@ export {
   purgeTimer,
   registerTimerArchiveGuard,
   resumeTimer,
+  settleIdleRun,
   startTimer,
   stopTimer,
   updateTimerSettings,

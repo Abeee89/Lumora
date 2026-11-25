@@ -636,23 +636,13 @@ async function finalizeRun(
 }
 
 /**
- * The caller's run under lock, or `session_already_closed`. An idle run is ended first at
- * its last heartbeat and flagged auto-closed (BR-006, FR-047), so the command that arrived
- * too late still leaves the session the owner expects.
+ * The caller's run under lock. An idle run is refused, not extended: `settleIdleRun` has
+ * already ended it at its last heartbeat in a transaction of its own (BR-006, FR-047), and
+ * a command that arrives after the deadline must not add watching time to it.
  */
-async function openRun(
-  database: Queryable,
-  userId: string,
-  now: Date,
-  events: sessions.SessionEvent[],
-): Promise<RunRow> {
+async function openRun(database: Queryable, userId: string, now: Date): Promise<RunRow> {
   const run = await readRun(database, userId, true);
-  if (run === undefined) throw new AppError("session_already_closed");
-  if (isIdle(run, now)) {
-    const closed = await finalizeRun(database, run, run.last_heartbeat_at, true, null);
-    if (closed.event !== null) events.push(closed.event);
-    throw new AppError("session_already_closed");
-  }
+  if (run === undefined || isIdle(run, now)) throw new AppError("session_already_closed");
   return run;
 }
 
@@ -800,8 +790,7 @@ export async function pauseTimer(
   expectedVersion: number | null,
   context: TimerContext,
 ): Promise<TimerState> {
-  const events: sessions.SessionEvent[] = [];
-  const run = await openRun(database, userId, context.now, events);
+  const run = await openRun(database, userId, context.now);
   const segments = await loadSegments(database, run.id);
   assertVersion(run, expectedVersion, presentRun(run, segments, context.now));
   const projected = project(run, segments, context.now);
@@ -834,7 +823,6 @@ export async function pauseTimer(
     if (updated === undefined) throw new AppError("internal_error");
     state = presentRun(updated, await loadSegments(database, run.id), context.now);
   }
-  for (const event of events) await sessions.publishSessionEvent(event);
   return state;
 }
 
@@ -849,8 +837,7 @@ export async function resumeTimer(
   expectedVersion: number | null,
   context: TimerContext,
 ): Promise<TimerState> {
-  const events: sessions.SessionEvent[] = [];
-  const run = await openRun(database, userId, context.now, events);
+  const run = await openRun(database, userId, context.now);
   const segments = await loadSegments(database, run.id);
   assertVersion(run, expectedVersion, presentRun(run, segments, context.now));
   let state: TimerState;
@@ -877,7 +864,6 @@ export async function resumeTimer(
     if (updated === undefined) throw new AppError("internal_error");
     state = presentRun(updated, await loadSegments(database, run.id), context.now);
   }
-  for (const event of events) await sessions.publishSessionEvent(event);
   return state;
 }
 
@@ -892,15 +878,12 @@ export async function stopTimer(
   context: TimerContext,
   requestKey: string | null,
 ): Promise<StopTimerResult> {
-  const events: sessions.SessionEvent[] = [];
-  const run = await openRun(database, userId, context.now, events);
+  const run = await openRun(database, userId, context.now);
   const segments = await loadSegments(database, run.id);
   assertVersion(run, expectedVersion, presentRun(run, segments, context.now));
   const finalized = await finalizeRun(database, run, context.now, false, requestKey);
-  if (finalized.event !== null) events.push(finalized.event);
-  const result = stopResult(finalized.outcome, finalized.session);
-  for (const event of events) await sessions.publishSessionEvent(event);
-  return result;
+  if (finalized.event !== null) await sessions.publishSessionEvent(finalized.event);
+  return stopResult(finalized.outcome, finalized.session);
 }
 
 /**
@@ -913,8 +896,7 @@ export async function heartbeatTimer(
   userId: string,
   context: TimerContext,
 ): Promise<TimerState> {
-  const events: sessions.SessionEvent[] = [];
-  const run = await openRun(database, userId, context.now, events);
+  const run = await openRun(database, userId, context.now);
   const projected = await persistProjection(database, run, context.now);
   await database.query("UPDATE timer_runs SET last_heartbeat_at = $2 WHERE id = $1", [
     run.id,
@@ -922,9 +904,7 @@ export async function heartbeatTimer(
   ]);
   const updated = await readRunById(database, run.id);
   if (updated === undefined) throw new AppError("internal_error");
-  const state = presentRun(updated, projected.segments, context.now);
-  for (const event of events) await sessions.publishSessionEvent(event);
-  return state;
+  return presentRun(updated, projected.segments, context.now);
 }
 
 /**
@@ -1034,10 +1014,32 @@ export async function updateTimerSettings(
 // ---------------------------------------------------------------------------------------
 
 /**
- * The job behind TIM-01's promise: a run silent for longer than the idle window ends at its
- * last heartbeat and is flagged auto-closed, never at `now` (BR-006, NFR-090). A run below a
- * minute of focus is discarded like any other stop (BR-007).
+ * BR-006, AC-FR-059-1: a run silent past the idle window ends at its last heartbeat and is
+ * flagged auto-closed, never at `now` (NFR-090); a run below a minute of focus is discarded
+ * like any other stop (BR-007). The close has a transaction of its own on purpose: the
+ * command that discovers an idle run refuses right after this, and that refusal must not
+ * roll the session back. Returns the outcome, or null when there was nothing to close.
  */
+export async function settleIdleRun(
+  database: Database,
+  userId: string,
+  now: Date,
+): Promise<StopOutcome | null> {
+  const candidate = await readRun(database, userId, false);
+  if (candidate === undefined || !isIdle(candidate, now)) return null;
+  const events: sessions.SessionEvent[] = [];
+  const outcome = await database.transaction(async (tx) => {
+    const run = await readRun(tx, userId, true);
+    if (run === undefined || !isIdle(run, now)) return null;
+    const finalized = await finalizeRun(tx, run, run.last_heartbeat_at, true, null);
+    if (finalized.event !== null) events.push(finalized.event);
+    return finalized.outcome;
+  });
+  for (const event of events) await sessions.publishSessionEvent(event);
+  return outcome;
+}
+
+/** The scheduled sweep: every user whose run passed the idle deadline, one at a time. */
 export async function closeIdleRuns(
   database: Database,
   now: Date,
@@ -1050,15 +1052,7 @@ export async function closeIdleRuns(
   let closed = 0;
   let discarded = 0;
   for (const row of rows) {
-    const events: sessions.SessionEvent[] = [];
-    const outcome = await database.transaction(async (tx) => {
-      const run = await readRun(tx, row.user_id, true);
-      if (run === undefined || !isIdle(run, now)) return null;
-      const finalized = await finalizeRun(tx, run, run.last_heartbeat_at, true, null);
-      if (finalized.event !== null) events.push(finalized.event);
-      return finalized.outcome;
-    });
-    for (const event of events) await sessions.publishSessionEvent(event);
+    const outcome = await settleIdleRun(database, row.user_id, now);
     if (outcome === null) continue;
     if (outcome === "discarded") discarded += 1;
     else closed += 1;

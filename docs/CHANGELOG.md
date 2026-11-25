@@ -1,6 +1,40 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, and M06 from 2026-11-23.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, and M07 from 2026-11-25.
+
+## 2026-11-25, M07 timer
+
+### Added
+- [08-build/M07-EVIDENCE.md](08-build/M07-EVIDENCE.md): environment and versions, one section per checkpoint (E01 to E08) with the command and raw output, per-row checklist status, the browser measurements at four widths, the twelve findings and fixed defects, the coverage measurement and the Definition of Done check.
+- [08-build/M07-COMPLETION-REPORT.md](08-build/M07-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M42 to OD-M45 (the segment summary shape, the heartbeat that never moves `updated_at`, the idle close that commits in its own transaction, and the timer write that skips the manual-path probes). Section G: the 2026-11-25 M07 execution row, limited to M07 records and stating that M07 stays open.
+- Application and tooling: `db/migrations/0007_timer.sql`; `src/modules/timer/**` (3 files); `src/app/api/app/timer/**` (7 route files) covering TIM-01..TIM-08; `src/app/timer/page.tsx` (A-3); `src/ui/forms/timer-{screen,dialogs}.tsx`; the timer block in the container, the `timerIdleClose` cron in the worker, the request schemas, the rate kind, the error copy and the nav entry.
+- Tests: `tests/integration/timer.test.ts` (30 cases) and the tracked `tests/unit/timer.test.ts` (15 cases), taking the unit tier to 20 files and 116 tests and the integration tier to 11 files and 119 tests, plus the timer block in `tests/integration/support/api.ts` and the registry keys in `tests/integration/profile.test.ts`.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): four M07 rows with evidence checked, the screen-reader row and the Definition of Done row left unchecked, and an "As built" note recording what shipped and why those two rows stay open.
+- [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M07 execution paragraph and the authorization sentence naming M08 as the next step.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M07 execution row and the inventory at 97 documents (17 build records).
+- Application and tooling: `src/modules/timer/{service,public}.ts` (the idle close that commits through `settleIdleRun` and the `focusSeconds` segment summary); the four timer action routes; `src/server/{container,request-context}.ts`; `src/kernel/config.ts`; `src/worker/index.ts`; `src/ui/{control,messages,nav}.ts(x)`; `vitest.config.ts` (the timer module floor).
+
+### Fixed
+- The idle close ran inside the action's transaction, so a late stop that answered 409 rolled the auto-close back and left the run open; `settleIdleRun` now finalizes and commits in its own transaction before the four write routes open theirs (OD-M44).
+- A heartbeat moved the row the ordinary way, which would have bumped `updated_at` (the pause instant `resumeTimer` reads) and the version every 60 s; TIM-06 now writes `last_heartbeat_at` alone (OD-M43).
+- A-3 rendered a disabled Start under the "Add a subject to start a session." empty state, because the controls row was gated on any subject rather than on a choosable one.
+- The durations dialog printed its range twice, once as a hint and once as the error; the form now prints one message per field.
+- The post-session summary took the mode from the run and the topic from the form, so a reload dropped the topic; it reads the run.
+- A discarded stop titled its panel "Session saved"; it now reads "Not saved" and names the one-minute rule.
+- The interval alert read "1 minutes"; the copy is now singular at one minute.
+- Recent sessions printed "Subject" for a session whose subject had since been archived; the page now loads archived subjects for the names while the picker still excludes them.
+
+### Results
+- `npm run verify` exit 0: typecheck, `eslint .`, `Boundary check passed.`, 20 unit files and 116 tests in 11.53 s, 11 integration files and 119 tests in 170.91 s.
+- `npx next build`: 58 route lines, 8 new in M07 (the seven TIM route files and `/timer`); no static and dynamic sibling conflict.
+- `npx vitest run --coverage` exit 0: 31 files and 235 tests; the timer module measures 87.78% statements, 80.86% branches, 94.33% functions and 90.56% lines against the floor M07 added; overall lines measure 50.06% because the UI layer is covered by the browser pass.
+- Browser checks in Chromium at 360, 768, 1280 and 2560 px on the production build: A-3 with the start, the reload that continued from the stored phase end, the pause and resume, the heartbeats at 60 s and at the interval boundary, the interval that advanced itself to the break with the alert, the three stop outcomes, the topic-status prompt, the durations dialog, the replace dialog from a stale tab, the two-tab agreement, the archive guard refusal that names the run, the auto-close panel and the no-subject empty state, with no horizontal overflow at any width.
+
+### Not changed
+- No statistics, streak or XP awarding, no goal control, no calendar page, no AI review; FR-060 and later and the Phase 2 work stay with their milestones, and nothing is committed or tagged by the build session.
 
 ## 2026-11-23, M06 study sessions
 

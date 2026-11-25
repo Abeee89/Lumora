@@ -16,9 +16,13 @@ export async function POST(request: Request): Promise<Response> {
     await enforceUserRate(c, identity, "timer");
 
     const clock = await profile.getUserClockContext(c.database, identity.userId);
+    const now = new Date();
+    // BR-006, AC-FR-059-1: an abandoned run is closed in a transaction of its own, so the
+    // refusal this command may return cannot roll the written session back.
+    await timer.settleIdleRun(c.database, identity.userId, now);
     const state = await c.database.transaction((tx) =>
       timer.pauseTimer(tx, identity.userId, ifMatchVersion(request), {
-        now: new Date(),
+        now,
         timezone: clock.timezone,
         rolloverHour: clock.rolloverHour,
       }),

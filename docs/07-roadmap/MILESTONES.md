@@ -301,12 +301,13 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (state machine, classification, auto-close threshold); integration (concurrent start, replace, late stop returns `session_already_closed`); E2E AC-E2E-02, AC-E2E-03, AC-E2E-04 with fault injection (refresh, tab close, offline up to 30 min); two-screen-reader pass; performance check on action acknowledgement.
 - **Acceptance criteria:** AC-FR-040-*, AC-FR-041-*, AC-FR-045-* to AC-FR-059-*; AC-E2E-02 (planned side), AC-E2E-03, AC-E2E-04, AC-E2E-07 (archive guard).
 - **Completion checklist:**
-  - [ ] Start, pause, resume, stop, discard under one minute, auto-close all work
-  - [ ] Refresh recovery and cross-device convergence verified
-  - [ ] Archive guard registered and tested
+  - [x] Start, pause, resume, stop, discard under one minute, auto-close all work
+  - [x] Refresh recovery and cross-device convergence verified
+  - [x] Archive guard registered and tested
   - [ ] Screen-reader pass with two readers recorded
-  - [ ] Purge handler and export contributor registered
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-25):** evidence, per-row proof and the open rows are in [08-build/M07-EVIDENCE.md](../08-build/M07-EVIDENCE.md); the record is [08-build/M07-COMPLETION-REPORT.md](../08-build/M07-COMPLETION-REPORT.md). Shipped: the three tables in `0007_timer.sql` (`timer_runs`, `timer_run_segments` with the partial unique open-segment index, `timer_settings` versioned with 25/5/15/4 defaults), the eight TIM endpoints across seven route files under `/api/app/timer`, A-3 at `/timer`, the server-authoritative phase machine that stores only `phase` and `phase_ends_at` and advances lazily, the focus-only segment ledger, the 60 s heartbeat, the idle auto-close cron with its 30-minute idle threshold, the one-running-timer rule with the replace promise, the stop classification (under 60 s discarded, stopwatch from 60 s saved with no Pomodoro, pomodoro saved from a stored Pomodoro or 300 s of open focus, else time only), the topics archive guard, and the purge handler and export contributor on `section: "timer"`. The two open rows stay open: no screen reader was driven, and the Definition of Done row is the owner's tag plus the coverage caveat recorded in E08. The screen-reader row is the only checklist row not claimed.
 
 ### M08 Daily and subject goals
 

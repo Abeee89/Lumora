@@ -77,6 +77,7 @@ export function Button({
   onClick,
   disabled = false,
   ariaLabel,
+  className,
 }: {
   children: ReactNode;
   variant?: keyof typeof buttonVariants | undefined;
@@ -87,6 +88,8 @@ export function Button({
   disabled?: boolean | undefined;
   /** Names a button whose label repeats on a row, for example `Actions for Physics`. */
   ariaLabel?: string | undefined;
+  /** Extra classes for a screen that sizes the control itself (A-3's 56 px Start). */
+  className?: string | undefined;
 }) {
   return (
     <button
@@ -95,7 +98,7 @@ export function Button({
       disabled={disabled || pending}
       aria-busy={pending || undefined}
       aria-label={ariaLabel}
-      className={`${buttonBase} ${buttonVariants[variant]} ${wide ? "w-full" : ""}`}
+      className={`${buttonBase} ${buttonVariants[variant]} ${wide ? "w-full" : ""} ${className ?? ""}`}
     >
       {pending && <Spinner />}
       {children}

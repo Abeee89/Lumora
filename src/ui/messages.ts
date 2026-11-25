@@ -39,6 +39,10 @@ export const errorCopy: Readonly<Record<string, string>> = {
   manual_entry_too_long: "Choose a duration of 1 minute to 24 hours.",
   daily_total_exceeded: "That day would exceed 24 hours of study.",
   manual_entry_overlaps_session: "This overlaps another recorded session.",
+  timer_already_running: "A timer is already running. Start this one to replace it.",
+  session_already_closed: "This session was already stopped.",
+  idempotency_key_required: "Reload the page and try again.",
+  request_in_progress: "That request is still running. Wait a moment and try again.",
 };
 
 /** Fallback for a code the UI has no copy for. */

@@ -46,6 +46,13 @@ import {
   GET as getSession,
   PATCH as patchSession,
 } from "@/app/api/app/sessions/[sessionId]/route";
+import { GET as getTimer } from "@/app/api/app/timer/route";
+import { POST as startTimer } from "@/app/api/app/timer/start/route";
+import { POST as pauseTimer } from "@/app/api/app/timer/pause/route";
+import { POST as resumeTimer } from "@/app/api/app/timer/resume/route";
+import { POST as stopTimer } from "@/app/api/app/timer/stop/route";
+import { POST as heartbeatTimer } from "@/app/api/app/timer/heartbeat/route";
+import { GET as getTimerSettings, PATCH as patchTimerSettings } from "@/app/api/app/timer/settings/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -242,6 +249,25 @@ async function dispatch(method: string, path: string, request: Request): Promise
     if (method === "GET") return getSession(request, params);
     if (method === "PATCH") return patchSession(request, params);
     if (method === "DELETE") return deleteSession(request, params);
+  }
+
+  const timerPath = /^\/api\/app\/timer$/.exec(path);
+  if (method === "GET" && timerPath !== null) return getTimer(request);
+
+  const timerActionPath = /^\/api\/app\/timer\/(start|pause|resume|stop|heartbeat)$/.exec(path);
+  if (method === "POST" && timerActionPath !== null) {
+    const action = timerActionPath[1] ?? "";
+    if (action === "start") return startTimer(request);
+    if (action === "pause") return pauseTimer(request);
+    if (action === "resume") return resumeTimer(request);
+    if (action === "stop") return stopTimer(request);
+    return heartbeatTimer(request);
+  }
+
+  const timerSettingsPath = /^\/api\/app\/timer\/settings$/.exec(path);
+  if (timerSettingsPath !== null) {
+    if (method === "GET") return getTimerSettings(request);
+    if (method === "PATCH") return patchTimerSettings(request);
   }
 
 
@@ -469,6 +495,74 @@ export const sessionListSchema = z.object({
 
 export type SessionWire = z.infer<typeof sessionSchema>;
 export type SessionListWire = z.infer<typeof sessionListSchema>;
+
+/**
+ * API-SCHEMAS section 10. Strict: a field the spec does not list fails the test.
+ * `segments.focusSeconds` is the measured study time (BR-012) and is what FR-021 and
+ * AC-FR-052-2 read for an elapsed value the documented pair cannot express when paused;
+ * the addition is recorded in M07-EVIDENCE.
+ */
+export const timerSegmentsSummarySchema = z
+  .object({
+    count: z.number().int().min(0),
+    openSegmentStartedAt: z.string().nullable(),
+    focusSeconds: z.number().int().min(0),
+  })
+  .strict();
+
+export const timerStateSchema = z
+  .object({
+    id: z.string(),
+    state: z.enum(["running", "paused"]),
+    mode: z.enum(["stopwatch", "pomodoro"]),
+    subjectId: z.string(),
+    topicId: z.string().nullable(),
+    planEntryId: z.string().nullable(),
+    phase: z.enum(["focus", "break", "long_break"]).nullable(),
+    phaseEndsAt: z.string().nullable(),
+    cycleIndex: z.number().int().min(1),
+    pomodorosCompleted: z.number().int().min(0),
+    focusMin: z.number().int(),
+    breakMin: z.number().int(),
+    longBreakMin: z.number().int(),
+    cyclesBeforeLongBreak: z.number().int(),
+    startedAt: z.string(),
+    segments: timerSegmentsSummarySchema,
+    lastHeartbeatAt: z.string(),
+    serverTime: z.string(),
+    version: z.number().int().min(1),
+  })
+  .strict();
+
+/** TIM-01 wraps the state with the clock the client computes elapsed time from. */
+export const timerStateResponseSchema = z
+  .object({ timer: timerStateSchema.nullable(), serverTime: z.string() })
+  .strict();
+
+export const stopTimerResultSchema = z
+  .object({
+    outcome: z.enum(["saved", "time_only", "discarded"]),
+    session: sessionSchema.optional(),
+    message: z.string(),
+  })
+  .strict();
+
+export const timerSettingsSchema = z
+  .object({
+    focusMin: z.number().int(),
+    breakMin: z.number().int(),
+    longBreakMin: z.number().int(),
+    cyclesBeforeLongBreak: z.number().int(),
+    audioLoop: z.enum(["none", "rain", "white_noise", "cafe"]),
+    audioVolume: z.number().int(),
+    version: z.number().int().min(0),
+    updatedAt: z.string().nullable(),
+  })
+  .strict();
+
+export type TimerWire = z.infer<typeof timerStateSchema>;
+export type StopTimerWire = z.infer<typeof stopTimerResultSchema>;
+export type TimerSettingsWire = z.infer<typeof timerSettingsSchema>;
 
 /** Create and update answer the entry with the advisories the caller confirmed. */
 export const planEntryWrittenSchema = planEntrySchema.extend({
