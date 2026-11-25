@@ -31,6 +31,16 @@ export function isLocalDate(value: string): value is LocalDate {
   return DATE_PATTERN.test(value);
 }
 
+/**
+ * A date that exists on the calendar: the shape check alone lets `2026-02-31` through,
+ * and Postgres then rejects it as a 500 instead of a validation answer.
+ */
+export function isRealLocalDate(value: string): value is LocalDate {
+  if (!isLocalDate(value)) return false;
+  const [year, month, day] = value.split("-").map(Number) as [number, number, number];
+  return new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10) === value;
+}
+
 export function assertIanaZone(timeZone: string): string {
   try {
     new Intl.DateTimeFormat("en-US", { timeZone }).format(0);

@@ -805,7 +805,7 @@ export async function startTimer(
   const run = await readRunById(database, id);
   if (run === undefined) throw new AppError("internal_error");
   const state = presentRun(run, await loadSegments(database, id), context.now);
-  for (const event of events) await sessions.publishSessionEvent(event);
+  for (const event of events) await sessions.publishSessionEvent(event, database);
   return state;
 }
 
@@ -911,7 +911,9 @@ export async function stopTimer(
   const segments = await loadSegments(database, run.id);
   assertVersion(run, expectedVersion, presentRun(run, segments, context.now));
   const finalized = await finalizeRun(database, run, context.now, false, requestKey);
-  if (finalized.event !== null) await sessions.publishSessionEvent(finalized.event);
+  if (finalized.event !== null) {
+    await sessions.publishSessionEvent(finalized.event, database);
+  }
   return stopResult(finalized.outcome, finalized.session);
 }
 
@@ -1064,7 +1066,7 @@ export async function settleIdleRun(
     if (finalized.event !== null) events.push(finalized.event);
     return finalized.outcome;
   });
-  for (const event of events) await sessions.publishSessionEvent(event);
+  for (const event of events) await sessions.publishSessionEvent(event, database);
   return outcome;
 }
 

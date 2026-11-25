@@ -21,6 +21,7 @@ export default defineConfig({
         "src/modules/exams/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
         "src/modules/plans/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
         "src/modules/timer/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
+        "src/modules/goals/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
       },
     },
     projects: [

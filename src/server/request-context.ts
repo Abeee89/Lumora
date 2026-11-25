@@ -8,7 +8,7 @@ import { z } from "zod";
 import { config } from "../kernel/config";
 import { AppError } from "../kernel/errors";
 import { clientIp, cookieHeader } from "../kernel/http";
-import { isLocalDate } from "../kernel/time";
+import { isRealLocalDate } from "../kernel/time";
 import * as auth from "../modules/auth/public";
 import { container, sessionCookieName, type Container } from "./container";
 
@@ -228,9 +228,12 @@ export const setDailyGoalSchema = z.object({ targetMinutes: z.number() }).strict
 
 export const setSubjectGoalSchema = z.object({ targetMinutes: z.number() }).strict();
 
-/** GOAL-05: `date` is a local calendar date; a missing one means today in the profile zone. */
+/**
+ * GOAL-05: `date` is a calendar date in the profile zone; a missing one means today. The
+ * check is the real-calendar one, so `2026-13-01` is a 400 and never reaches Postgres.
+ */
 export const goalProgressQuery = z
-  .object({ date: z.string().refine(isLocalDate, { message: "not a local date" }).optional() })
+  .object({ date: z.string().refine(isRealLocalDate, { message: "not a local date" }).optional() })
   .strict();
 
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;

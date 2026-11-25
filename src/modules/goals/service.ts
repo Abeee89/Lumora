@@ -95,13 +95,14 @@ export function assertTargetMinutes(value: number): number {
  */
 export function targetForDay(history: readonly DailyGoal[], date: LocalDate): DailyGoal {
   let inForce: DailyGoal | null = null;
+  let earliest: DailyGoal | null = null;
   for (const row of history) {
     if (row.effectiveFrom <= date && (inForce === null || row.effectiveFrom > inForce.effectiveFrom)) {
       inForce = row;
     }
+    if (earliest === null || row.effectiveFrom < earliest.effectiveFrom) earliest = row;
   }
   if (inForce !== null) return inForce;
-  const earliest = history[0];
   return {
     targetMinutes: earliest?.targetMinutes ?? config.goal.defaultMinutes,
     effectiveFrom: date,

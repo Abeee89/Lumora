@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { config } from "@/kernel/config";
 import { isUuid } from "@/kernel/crypto";
 import { getSubject, subjectPalette, type Subject } from "@/modules/subjects/public";
 import { container } from "@/server/container";
@@ -60,7 +61,11 @@ export default async function SubjectPage({ params }: RouteContext) {
 
   return (
     <div className="mx-auto max-w-[960px]">
-      <SubjectWorkspace subject={subject} palette={subjectPalette} />
+      <SubjectWorkspace
+        subject={subject}
+        palette={subjectPalette}
+        goalRange={{ min: config.goal.minMinutes, max: config.goal.maxMinutes }}
+      />
     </div>
   );
 }

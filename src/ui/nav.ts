@@ -49,6 +49,7 @@ export const shippedRoutes: ShippedRoutes = {
   "/welcome": true,
   "/settings/profile": true,
   "/settings/appearance": true,
+  "/settings/study": true,
   "/settings/security": true,
   "/subjects": true,
   "/exams": true,

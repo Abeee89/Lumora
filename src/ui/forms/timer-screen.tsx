@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import type { DailyGoal, GoalProgress } from "@/modules/goals/public";
 import type { StudySession } from "@/modules/sessions/public";
 import type { StopTimerResult, TimerSettings, TimerState } from "@/modules/timer/public";
 import { apiRequest, type ApiFailure } from "../api-client";
@@ -19,7 +20,9 @@ import {
 import { formatLocalDate, timeInZone } from "../format";
 import { messageFor } from "../messages";
 import { SubjectDot } from "../subject-dot";
+import { DailyGoalDialog } from "./daily-goal-dialog";
 import { failureBody } from "./feedback";
+import { goalLine } from "./goal-fields";
 import { ReplaceTimerDialog, TimerDurationsDialog, type DurationFields } from "./timer-dialogs";
 
 export interface TimerTopicOption {
@@ -189,12 +192,19 @@ export function TimerScreen({
   planEntries,
   settings: initialSettings,
   sessions: initialSessions,
+  goal: initialGoal,
+  goalMin,
+  goalMax,
   timeZone,
 }: {
   subjects: readonly TimerSubjectOption[];
   planEntries: readonly TimerPlanEntryOption[];
   settings: TimerSettings;
   sessions: readonly StudySession[];
+  /** FR-072: the day's figure against the goal, including the live run. */
+  goal: GoalProgress | null;
+  goalMin: number;
+  goalMax: number;
   timeZone: string;
 }) {
   const [settings, setSettings] = useState(initialSettings);
@@ -211,6 +221,8 @@ export function TimerScreen({
   const [replaceOpen, setReplaceOpen] = useState(false);
   const [conflict, setConflict] = useState<TimerState | null>(null);
   const [durationsOpen, setDurationsOpen] = useState(false);
+  const [goal, setGoal] = useState<GoalProgress | null>(initialGoal);
+  const [goalOpen, setGoalOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [alert, setAlert] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
@@ -261,6 +273,32 @@ export function TimerScreen({
     });
     if (result.ok) setSessions(result.data.data);
   }, []);
+
+  const refreshGoal = useCallback(async () => {
+    const result = await apiRequest<GoalProgress>("/api/app/goals/progress", { method: "GET" });
+    if (result.ok) setGoal(result.data);
+  }, []);
+
+  /**
+   * AC-FR-072-2: the figure includes the live run's focus, so it is re-read whenever the
+   * server hands the screen a new state: first paint, a heartbeat, a command, a phase end.
+   * The heartbeat cadence also keeps a running day current.
+   */
+  useEffect(() => {
+    void refreshGoal();
+  }, [refreshGoal, timer]);
+
+  /** GOAL-02 from A-3: the new target applies from today, so the figure is re-read at once. */
+  const saveDailyGoal = async (targetMinutes: number): Promise<ApiFailure | null> => {
+    const result = await apiRequest<DailyGoal>("/api/app/goals/daily", {
+      method: "PUT",
+      body: { targetMinutes },
+    });
+    if (!result.ok) return result.failure;
+    setGoalOpen(false);
+    await refreshGoal();
+    return null;
+  };
 
   const applyState = useCallback((next: TimerState | null) => {
     const previous = timerRef.current;
@@ -535,6 +573,33 @@ export function TimerScreen({
           onSave={saveDurations}
         />
       )}
+      {goalOpen && goal !== null && (
+        <DailyGoalDialog
+          current={goal.targetMinutes}
+          min={goalMin}
+          max={goalMax}
+          onClose={() => setGoalOpen(false)}
+          onSave={saveDailyGoal}
+        />
+      )}
+
+      <Panel className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-ink-2">
+            Today:{" "}
+            <span className="font-semibold text-ink">
+              {goal === null ? "Not loaded" : goalLine(goal)}
+            </span>
+          </p>
+          <Button
+            variant="secondary"
+            disabled={goal === null}
+            onClick={() => setGoalOpen(true)}
+          >
+            Edit goal
+          </Button>
+        </div>
+      </Panel>
       {replaceOpen && (
         <ReplaceTimerDialog
           summary={

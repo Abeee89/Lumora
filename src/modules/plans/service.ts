@@ -13,7 +13,7 @@ import { config } from "../../kernel/config";
 import { uuidv7 } from "../../kernel/crypto";
 import type { Queryable } from "../../kernel/db";
 import { AppError } from "../../kernel/errors";
-import { isLocalDate, localDateOf, localDayRange, type LocalDate } from "../../kernel/time";
+import { isRealLocalDate, localDateOf, localDayRange, type LocalDate } from "../../kernel/time";
 import * as exams from "../exams/public";
 import * as subjects from "../subjects/public";
 import * as topics from "../topics/public";
@@ -260,11 +260,6 @@ function utcDayNumber(date: LocalDate): number {
   return Date.UTC(year, month - 1, day);
 }
 
-/** A real calendar date: `2026-02-31` rolls into March in UTC and fails the round trip. */
-function isRealDate(date: LocalDate): boolean {
-  return isLocalDate(date) && new Date(utcDayNumber(date)).toISOString().slice(0, 10) === date;
-}
-
 /**
  * API-CONVENTIONS section 5: an inclusive range of at most 93 local dates of the current
  * profile zone (EC-006), so the filter never reads the frozen `local_date`. Day counting
@@ -273,10 +268,10 @@ function isRealDate(date: LocalDate): boolean {
 function rangeOf(query: PlanEntryListQuery, ctx: PlanContext): { start: Date; end: Date } {
   const { from, to } = query;
   const maxSpan = config.plan.maxRangeDays;
-  if (!isRealDate(from)) {
+  if (!isRealLocalDate(from)) {
     throw new AppError("validation_failed", { details: { fields: [{ path: "from", rule: "date" }] } });
   }
-  if (!isRealDate(to)) {
+  if (!isRealLocalDate(to)) {
     throw new AppError("validation_failed", { details: { fields: [{ path: "to", rule: "date" }] } });
   }
   const span = (utcDayNumber(to) - utcDayNumber(from)) / 86_400_000 + 1;

@@ -10,6 +10,7 @@ import { Dialog } from "../dialog";
 import { countText } from "../format";
 import { messageFor } from "../messages";
 import { failureBody } from "./feedback";
+import { SubjectGoalPanel } from "./subject-goal-panel";
 import { TopicEditDialog } from "./topic-edit-dialog";
 import { TopicPasteDialog } from "./topic-paste-dialog";
 
@@ -22,7 +23,13 @@ const statusOptions: readonly { value: string; label: string }[] = [
 type DialogState = { kind: "edit"; topic: Topic } | { kind: "archive"; topic: Topic } | { kind: "paste" } | null;
 
 /** A-8 topics column (FR-015 to FR-019, NFR-042). */
-export function TopicList({ subject }: { subject: Subject }) {
+export function TopicList({
+  subject,
+  goalRange,
+}: {
+  subject: Subject;
+  goalRange: { min: number; max: number };
+}) {
   const readOnly = subject.archivedAt !== null;
   const [topics, setTopics] = useState<Topic[] | null>(null);
   const [failure, setFailure] = useState<ApiFailure | null>(null);
@@ -378,10 +385,9 @@ export function TopicList({ subject }: { subject: Subject }) {
               )}
             </dl>
           )}
-          <p className="text-sm text-muted">
-            Studied time, the subject goal, notes and exams join this column later.
-          </p>
+          <p className="text-sm text-muted">Studied time, notes and exams join this column later.</p>
         </Panel>
+        <SubjectGoalPanel subjectId={subjectId} archived={readOnly} range={goalRange} />
       </aside>
 
       {dialog?.kind === "edit" && (

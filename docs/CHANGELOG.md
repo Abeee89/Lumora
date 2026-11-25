@@ -1,6 +1,28 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, and M07 from 2026-11-25.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, and M07 and M08 from 2026-11-25.
+
+## 2026-11-25, M08 daily and subject goals
+
+### Added
+- [08-build/M08-EVIDENCE.md](08-build/M08-EVIDENCE.md): environment and versions, one section per checkpoint with the command and raw output, per-row checklist status, the browser measurements at four widths, the registry contributions, the coverage measurement and the Definition of Done check.
+- [08-build/M08-COMPLETION-REPORT.md](08-build/M08-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section C: OD-M46 to OD-M49 (the subscriber that receives the writing connection, the derived target of a day, `GoalMet` in process with no MVP consumer, and the calendar-date check in the kernel). Section G: the 2026-11-25 M08 execution row, limited to M08 records and stating that M08 stays open.
+- Application and tooling: `db/migrations/0008_goals.sql`; `src/modules/goals/**` (service, events, subscribe, public); `src/app/api/app/goals/**` (4 route files) covering GOAL-01..GOAL-05; `src/app/settings/study/page.tsx` (A-15); `src/ui/forms/{study-form,daily-goal-dialog,subject-goal-panel,goal-fields}.tsx`; the daily-goal panel and dialog on A-3; the goals block in the container; the request schemas, the error copy and the `/settings/study` nav entry.
+- Tests: `tests/integration/goals.test.ts` (15 cases) and `tests/unit/goals.test.ts` (20 cases), taking the unit tier to 21 files and 136 tests and the integration tier to 12 files and 134 tests, plus the goals entries in `tests/integration/support/api.ts` and the registry keys in `tests/integration/profile.test.ts`.
+
+### Changed
+- `src/modules/sessions/{events,service}.ts` and `src/modules/timer/service.ts`: a session-event subscriber now receives the connection the write used (`publishSessionEvent(event, database)`), because the event is published inside the write's transaction (OD-M46); the container's Goals subscriber forwards it.
+- `src/kernel/time.ts` and `src/modules/plans/service.ts`: `isRealLocalDate` joins the kernel and Study plans uses it instead of its private copy (OD-M49).
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): three M08 rows checked, the Definition of Done row left unchecked, and an "As built" note recording what shipped.
+- [03-architecture/MODULE-BOUNDARIES.md](03-architecture/MODULE-BOUNDARIES.md): Goals now depends on Timer for the run in flight (rank row `2, 3, 7, 8`, the diagram edge and the section 6 note that a subscriber reads through the write's connection).
+- [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M08 execution paragraph and the authorization sentence naming M09 as the next step.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M08 execution row and the inventory at 99 documents (19 build records).
+- `vitest.config.ts`: the `src/modules/goals/**` coverage floor.
+
+### Fixed
+- `GoalMet` never fired from a session write: the Goals subscriber read through the container's connection while the route's transaction was still open, so it saw no day rows and returned early. The subscriber now receives the write's connection (OD-M46), and the integration case that crosses a target through POST `/api/app/sessions` is the regression.
+- GOAL-05 answered 500 for `2026-13-01`: `isLocalDate` matches the shape only, so the value reached Postgres. The query now uses `isRealLocalDate` and answers 400 `validation_failed` (OD-M49).
 
 ## 2026-11-25, M07 timer
 

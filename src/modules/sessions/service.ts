@@ -567,7 +567,7 @@ export async function createManualSession(
     rolloverHour: ctx.rolloverHour,
     requestKey,
   });
-  await publishSessionEvent(result.event);
+  await publishSessionEvent(result.event, database);
   return result;
 }
 
@@ -693,7 +693,7 @@ export async function editSession(
     const session = await withAllocations(tx, present(fresh));
     return { session, event: eventOf("SessionEdited", row) };
   });
-  await publishSessionEvent(result.event);
+  await publishSessionEvent(result.event, database);
   return result;
 }
 
@@ -716,7 +716,7 @@ export async function deleteSession(
     if (current === undefined) throw new AppError("not_found");
     throw new AppError("stale_version", { details: { current } });
   }
-  await publishSessionEvent(eventOf("SessionDeleted", row));
+  await publishSessionEvent(eventOf("SessionDeleted", row), database);
 }
 
 const CURSOR_BODY = Buffer.from("sess").toString("base64url");

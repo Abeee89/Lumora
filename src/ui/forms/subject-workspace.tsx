@@ -13,13 +13,14 @@ import { TopicList } from "./topic-list";
 
 type DialogState = "edit" | "archive" | "rename" | null;
 
-/** A-8 Subject detail (FR-010, FR-011, FR-015 to FR-019). */
 export function SubjectWorkspace({
   subject: initial,
   palette,
+  goalRange,
 }: {
   subject: Subject;
   palette: readonly PaletteEntry[];
+  goalRange: { min: number; max: number };
 }) {
   const [subject, setSubject] = useState(initial);
   const [dialog, setDialog] = useState<DialogState>(null);
@@ -130,7 +131,7 @@ export function SubjectWorkspace({
         />
       )}
 
-      <TopicList subject={subject} />
+      <TopicList subject={subject} goalRange={goalRange} />
 
       {dialog === "edit" && (
         <SubjectDialog

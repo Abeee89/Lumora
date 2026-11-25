@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { config } from "@/kernel/config";
 import { localDateOf } from "@/kernel/time";
+import { getGoalProgress } from "@/modules/goals/public";
 import { listPlanEntries } from "@/modules/plans/public";
 import { getUserClockContext } from "@/modules/profile/public";
 import { listSessions } from "@/modules/sessions/public";
@@ -61,9 +63,11 @@ export default async function TimerPage() {
       label: `${timeText(entry.startsAt, clock.timezone)} · ${entry.plannedMin} min`,
     }));
 
-  const [settings, sessions] = await Promise.all([
+  const context = { now: new Date(), ...clock };
+  const [settings, sessions, goal] = await Promise.all([
     getTimerSettings(database, session.userId),
     listSessions(database, session.userId, { limit: 5 }),
+    getGoalProgress(database, session.userId, today, context),
   ]);
 
   return (
@@ -82,6 +86,9 @@ export default async function TimerPage() {
         planEntries={planEntryOptions}
         settings={settings}
         sessions={sessions.data}
+        goal={goal}
+        goalMin={config.goal.minMinutes}
+        goalMax={config.goal.maxMinutes}
         timeZone={clock.timezone}
       />
     </div>

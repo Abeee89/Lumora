@@ -40,7 +40,7 @@ Phase column: MVP, 2, or 3 (when the module first ships features; a module may e
 | Tasks | To-dos with priority, due date, filter and sort | To-do | CreateTodo, EditTodo, DeleteTodo, SetTodoDone, ListTodos; event TodoCompleted | Subjects, Topics, User profile | MVP | FR-090..096 |
 | Notes | Markdown notes per subject or topic, autosave, version conflicts, sanitization | Note, version | CreateNote, EditNote, ResolveConflict, RenderNote, DeleteNote, ListNotes | Subjects, Topics, User profile | MVP | FR-100..104 |
 | Flashcards | Cards, daily review queue, rating, scheduling | Flashcard, rating history, next review date | CreateCard, EditCard, DeleteCard, GetReviewQueue, RateCard | Subjects, Topics, User profile | 2 | FR-107..112 |
-| Goals | Daily and per-subject targets, progress, goal-met state, target history | Target, effective date, progress view | SetDailyGoal, SetSubjectGoal, GetProgress, GetGoalMetState, GetTargetForDay; event GoalMet | Study sessions, Subjects, User profile | MVP | FR-070..074 |
+| Goals | Daily and per-subject targets, progress, goal-met state, target history | Target, effective date, progress view | SetDailyGoal, SetSubjectGoal, GetProgress, GetGoalMetState, GetTargetForDay; event GoalMet | Study sessions, Timer, Subjects, User profile | MVP | FR-070..074 |
 | Calendar | Read-only month heatmap, day detail, planned list | None (read models only) | GetMonthHeatmap, GetDayDetail, ListPlannedForRange | Study sessions, Study plans, Subjects, User profile | MVP | FR-060..062 |
 | Analytics | Totals by day, week, month and subject, goal-hit rate, planned versus actual, statistics ranges | None (read models only; future pre-computed aggregates) | GetDailyTotals, GetWeeklyTotals, GetMonthlyTotals, GetTotalsBySubject, GetGoalHitRate, GetPlannedVsActual | Study sessions, Study plans, Goals, Subjects, Topics, User profile | MVP | FR-080..089 (and FR-024 data) |
 | Gamification | Streaks, freezes, XP ledger, levels | Streak state, XP ledger entries, level | GetStreak, EvaluateDay, GetXpSummary, AwardForSession, AdjustForSessionChange, AwardForGoal, AwardForTodo | Study sessions, Goals, Tasks, User profile | 2 | FR-160..164, FR-170..177 |
@@ -85,7 +85,7 @@ Each module has a rank. A module may depend only on modules of strictly lower ra
 | 9 | Tasks | 2, 3, 4 |
 | 10 | Notes | 2, 3, 4 |
 | 11 | Flashcards | 2, 3, 4 |
-| 12 | Goals | 2, 3, 7 |
+| 12 | Goals | 2, 3, 7, 8 |
 | 13 | Analytics | 2, 3, 4, 6, 7, 12 |
 | 14 | Calendar | 2, 3, 6, 7 |
 | 15 | Gamification | 2, 7, 9, 12 |
@@ -101,7 +101,7 @@ Specific decisions behind the order:
 - **Timer depends on Study sessions, not the reverse.** Timer is a thin state machine; when a run completes it calls RecordSession with a client request key. Study sessions has no knowledge of the timer, so manual entries, edits and auto-close live there without a cycle (BR-011, FR-040, FR-048).
 - **Study plans depends on Exams** to warn when an entry is scheduled after the exam date (FR-038, BR-025); Exams never reads plans.
 - **Study sessions depends on Study plans** only to validate and store the optional link (FR-041, BR-003); plan deletion unlinks sessions through the plan module's event, not by editing sessions (EC-022).
-- **Goals depends on Study sessions** for progress; Gamification depends on Goals for goal-met awards (FR-171).
+- **Goals depends on Study sessions** for progress and **on Timer for the run in flight**: a session that is still running is not yet a row, so GOAL-05 asks Timer for its measured focus (AC-FR-072-2) instead of reading a run the Goals module does not own. Gamification depends on Goals for goal-met awards (FR-171).
 - **Notifications** reacts to events (SessionCompleted, GoalMet) and reads plans and goals for reminders; no lower module depends on it except through the port in section 3.
 
 ## 5. Dependency diagram
@@ -120,6 +120,7 @@ flowchart BT
   NOTE["10 Notes"] --> TOP
   FLASH["11 Flashcards"] --> TOP
   GOAL["12 Goals"] --> SESS
+  GOAL --> TIM
   ANA["13 Analytics"] --> GOAL
   CAL["14 Calendar"] --> SESS
   GAME["15 Gamification"] --> GOAL
@@ -151,7 +152,7 @@ The diagram shows the principal edges only; every module also depends on User pr
 | ExamArchived | Exams (by the exam auto-archive job) | Notifications (stop exam reminders) | EC-013 |
 | MemberLeft, GroupDissolved | Study groups | Notifications | EC-018 |
 
-Events are delivered in-process within the originating transaction when the effect must be atomic (for example the XP ledger entry with the session save, EC-017). Effects that may be delayed are recorded as outbox records and executed as jobs.
+Events are delivered in-process within the originating transaction when the effect must be atomic (for example the XP ledger entry with the session save, EC-017). A subscriber therefore receives the connection the write used and must read through it: the M08 Goals subscriber reads the session's day allocations at that point, and a second connection could not see the uncommitted rows. Effects that may be delayed are recorded as outbox records and executed as jobs.
 
 ## 7. Directory layout convention
 

@@ -5,8 +5,9 @@
  * section 7 step 5). A delete can only lower progress, so it publishes nothing, and the
  * day is simply reported as not met again (AC-FR-073-4).
  *
- * Registered at composition time from the Study sessions event contract; the event is
- * published after the write commits, so the allocations are always visible here.
+ * Registered at composition time from the Study sessions event contract. The event is
+ * published inside the write's transaction, so the listener reads through the connection
+ * the write used and sees the new allocations.
  */
 import type { Queryable } from "../../kernel/db";
 import * as sessions from "../sessions/public";

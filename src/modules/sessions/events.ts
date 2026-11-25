@@ -1,12 +1,17 @@
 /**
  * MODULE-BOUNDARIES section 3: Study sessions owns the session-event contract. M06
- * publishes `SessionCompleted`, `SessionEdited` and `SessionDeleted` after their writes
- * commit; M08 adds the Goals subscriber for progress and goal-met (FR-072, FR-073), and
- * the XP and statistics subscribers are later milestones (BR-018, FR-088).
+ * publishes `SessionCompleted`, `SessionEdited` and `SessionDeleted` after their write;
+ * M08 adds the Goals subscriber for progress and goal-met (FR-072, FR-073), and the XP
+ * and statistics subscribers are later milestones (BR-018, FR-088).
+ *
+ * The publish point is inside the write's transaction (a keyed write commits through
+ * `runIdempotent`), so each subscriber receives the connection the write used and must
+ * read through it: a subscriber on another connection cannot see the uncommitted rows.
  *
  * Delivery is in process. Durable delivery belongs to the Phase 2 readiness job
  * (BACKGROUND-JOBS section 2), which is why no queue is involved in M06.
  */
+import type { Queryable } from "../../kernel/db";
 import { logger } from "../../kernel/logger";
 import { createRegistry } from "../../kernel/registries";
 
@@ -33,17 +38,23 @@ export type SessionEvent =
       occurredAt: string;
     };
 
-export type SessionEventSubscriber = (event: SessionEvent) => Promise<void>;
+export type SessionEventSubscriber = (
+  event: SessionEvent,
+  database: Queryable,
+) => Promise<void>;
 
 export const sessionEventSubscribers = createRegistry<SessionEventSubscriber>("session event subscriber");
 
 /**
- * A failing subscriber is logged and dropped: the write it reports has already committed,
- * so raising would report success as failure.
+ * A failing subscriber is logged and dropped: the write it reports is already stored, so
+ * raising would report success as failure.
  */
-export async function publishSessionEvent(event: SessionEvent): Promise<void> {
+export async function publishSessionEvent(
+  event: SessionEvent,
+  database: Queryable,
+): Promise<void> {
   const results = await Promise.allSettled(
-    sessionEventSubscribers.entries().map(([, subscriber]) => subscriber(event)),
+    sessionEventSubscribers.entries().map(([, subscriber]) => subscriber(event, database)),
   );
   for (const [index, result] of results.entries()) {
     if (result.status === "rejected") {

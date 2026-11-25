@@ -327,10 +327,11 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (effective-date lookup, goal-met); AC-E2E-06 (progress counts frozen local date); ownership contract.
 - **Acceptance criteria:** AC-FR-070-* to AC-FR-074-*; AC-E2E-06.
 - **Completion checklist:**
-  - [ ] Set, change, remove goals; progress and goal-met reflect real sessions
-  - [ ] Changes apply from today forward only
-  - [ ] Purge handler and export contributor registered
+  - [x] Set, change, remove goals; progress and goal-met reflect real sessions
+  - [x] Changes apply from today forward only
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-25):** evidence, per-row proof and the open rows are in [08-build/M08-EVIDENCE.md](../08-build/M08-EVIDENCE.md); the record is [08-build/M08-COMPLETION-REPORT.md](../08-build/M08-COMPLETION-REPORT.md). Shipped: the two tables in `0008_goals.sql` (`daily_goal_history` keyed by `(user_id, effective_from)` with a 5..1440 check, and `subject_goals` keyed by `(user_id, subject_id)` with a composite foreign key to `subjects`), the five GOAL endpoints across four route files under `/api/app/goals`, the goal controls on A-15 at `/settings/study` and on A-8 in the subject workspace plus the daily-goal line on A-3, the target history whose changes apply from the current local day forward, progress derived from the frozen day allocations of Study sessions with the live run of Timer added for today, the `GoalMet` event published on the write that crosses a day's target, the guarded 120-minute seed on AUTH-01, and the purge handler and export contributor on `section: "goals"`. The Definition of Done row stays unchecked: the by-layer coverage floors are still neither enforced nor met beyond the per-module floor M08 added, and the owner tags. The three findings of the pass are in the record's section 7.
 
 ### M09 Calendar
 

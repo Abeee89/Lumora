@@ -53,6 +53,13 @@ import { POST as resumeTimer } from "@/app/api/app/timer/resume/route";
 import { POST as stopTimer } from "@/app/api/app/timer/stop/route";
 import { POST as heartbeatTimer } from "@/app/api/app/timer/heartbeat/route";
 import { GET as getTimerSettings, PATCH as patchTimerSettings } from "@/app/api/app/timer/settings/route";
+import { GET as getGoals } from "@/app/api/app/goals/route";
+import { PUT as putDailyGoal } from "@/app/api/app/goals/daily/route";
+import { GET as getGoalProgress } from "@/app/api/app/goals/progress/route";
+import {
+  DELETE as deleteSubjectGoal,
+  PUT as putSubjectGoal,
+} from "@/app/api/app/goals/subjects/[subjectId]/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -270,6 +277,21 @@ async function dispatch(method: string, path: string, request: Request): Promise
     if (method === "PATCH") return patchTimerSettings(request);
   }
 
+  const goalsPath = /^\/api\/app\/goals$/.exec(path);
+  if (method === "GET" && goalsPath !== null) return getGoals(request);
+
+  const dailyGoalPath = /^\/api\/app\/goals\/daily$/.exec(path);
+  if (method === "PUT" && dailyGoalPath !== null) return putDailyGoal(request);
+
+  const goalProgressPath = /^\/api\/app\/goals\/progress$/.exec(path);
+  if (method === "GET" && goalProgressPath !== null) return getGoalProgress(request);
+
+  const subjectGoalPath = /^\/api\/app\/goals\/subjects\/([^/]+)$/.exec(path);
+  if (subjectGoalPath !== null) {
+    const params = { params: Promise.resolve({ subjectId: subjectGoalPath[1] ?? "" }) };
+    if (method === "PUT") return putSubjectGoal(request, params);
+    if (method === "DELETE") return deleteSubjectGoal(request, params);
+  }
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
   if (method === "DELETE" && signInPath !== null) {
@@ -563,6 +585,51 @@ export const timerSettingsSchema = z
 export type TimerWire = z.infer<typeof timerStateSchema>;
 export type StopTimerWire = z.infer<typeof stopTimerResultSchema>;
 export type TimerSettingsWire = z.infer<typeof timerSettingsSchema>;
+
+/**
+ * API-SCHEMAS section 14. Strict: a field the spec does not list fails the test.
+ * `SubjectGoal.subjectArchived` is the flag GOAL-01 promises for an archived subject's
+ * suspended goal (API-ENDPOINTS GOAL-01, AC-FR-071-4); the schema table omits it.
+ */
+export const dailyGoalSchema = z
+  .object({ targetMinutes: z.number().int().min(5).max(1440), effectiveFrom: z.string() })
+  .strict();
+
+export const subjectGoalSchema = z
+  .object({
+    subjectId: z.string(),
+    targetMinutes: z.number().int().min(5).max(1440),
+    subjectArchived: z.boolean(),
+  })
+  .strict();
+
+export const goalSetSchema = z
+  .object({ daily: dailyGoalSchema, subjects: z.array(subjectGoalSchema) })
+  .strict();
+
+export const subjectGoalProgressSchema = z
+  .object({
+    subjectId: z.string(),
+    minutes: z.number().int().min(0),
+    targetMinutes: z.number().int().min(5).max(1440),
+    percent: z.number().int().min(0),
+    goalMet: z.boolean(),
+  })
+  .strict();
+
+export const goalProgressSchema = z
+  .object({
+    date: z.string(),
+    minutes: z.number().int().min(0),
+    targetMinutes: z.number().int().min(5).max(1440),
+    percent: z.number().int().min(0),
+    goalMet: z.boolean(),
+    subjects: z.array(subjectGoalProgressSchema),
+  })
+  .strict();
+
+export type GoalSetWire = z.infer<typeof goalSetSchema>;
+export type GoalProgressWire = z.infer<typeof goalProgressSchema>;
 
 /** Create and update answer the entry with the advisories the caller confirmed. */
 export const planEntryWrittenSchema = planEntrySchema.extend({

@@ -171,8 +171,8 @@ export function registerContributions(database: Database): void {
   // MODULE-BOUNDARIES section 6: Goals consumes the Study sessions events, because a
   // session write is what moves a day's progress and can cross its target (FR-072, FR-073).
   if (!sessions.sessionEventSubscribers.has("goals")) {
-    sessions.sessionEventSubscribers.register("goals", (event) =>
-      goals.goalMetAfterSessionWrite(event, database),
+    sessions.sessionEventSubscribers.register("goals", (event, writeDatabase) =>
+      goals.goalMetAfterSessionWrite(event, writeDatabase),
     );
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is
