@@ -1,6 +1,7 @@
 import { AppError } from "@/kernel/errors";
 import { cookieHeader } from "@/kernel/http";
 import * as auth from "@/modules/auth/public";
+import * as goals from "@/modules/goals/public";
 import * as profile from "@/modules/profile/public";
 import { container, type Container } from "@/server/container";
 import { sessionCookieFor, sessionMaxAgeSeconds } from "@/server/request-context";
@@ -79,7 +80,17 @@ export async function GET(request: Request): Promise<Response> {
           createSession: (userId, sessionContext, now) =>
             auth.createSession(tx, userId, sessionContext, now),
           createUser: (email, now) => auth.createVerifiedUser(tx, email, now),
-          ensureProfile: (input) => profile.ensureProfile(tx, input),
+          // This port only runs for an account created here (auth/google.ts), so the
+          // starting rows for a new user are created together: the profile and, on
+          // BR-013, the daily goal row dated by the registration local date.
+          ensureProfile: async (input) => {
+            await profile.ensureProfile(tx, input);
+            await goals.seedDailyGoal(tx, {
+              userId: input.userId,
+              timezone: input.timezone,
+              now: new Date(),
+            });
+          },
         },
         { code, stateCookie, context },
       ),

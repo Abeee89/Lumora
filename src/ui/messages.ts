@@ -43,6 +43,7 @@ export const errorCopy: Readonly<Record<string, string>> = {
   session_already_closed: "This session was already stopped.",
   idempotency_key_required: "Reload the page and try again.",
   request_in_progress: "That request is still running. Wait a moment and try again.",
+  goal_out_of_range: "Choose a whole number of minutes from 5 to 1440.",
 };
 
 /** Fallback for a code the UI has no copy for. */

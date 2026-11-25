@@ -372,7 +372,9 @@ export async function getGoalProgress(
 
 /**
  * AUTH-01 (BR-013): the row an account starts with, on its registration local date. The
- * profile row is created with the default rollover hour 0, so the zone alone decides.
+ * profile row is created with the default rollover hour 0, so the zone alone decides. The
+ * guard makes this safe to call on every sign-in path: an account that already has history
+ * keeps it, so a later visit can never reset the target to the default.
  */
 export async function seedDailyGoal(
   database: Queryable,
@@ -380,8 +382,8 @@ export async function seedDailyGoal(
 ): Promise<void> {
   await database.query(
     `INSERT INTO daily_goal_history (user_id, effective_from, target_minutes)
-     VALUES ($1, $2, $3)
-     ON CONFLICT (user_id, effective_from) DO NOTHING`,
+     SELECT $1, $2, $3
+     WHERE NOT EXISTS (SELECT 1 FROM daily_goal_history WHERE user_id = $1)`,
     [input.userId, localDateOf(input.now, input.timezone, 0), config.goal.defaultMinutes],
   );
 }

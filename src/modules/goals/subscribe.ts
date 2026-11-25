@@ -29,6 +29,7 @@ export async function goalMetAfterSessionWrite(
   for (const [date, written] of writtenSeconds) {
     const targetMinutes = await targetMinutesFor(database, event.userId, date);
     const targetSeconds = targetMinutes * 60;
+    const allocations = await sessions.daySeconds(database, event.userId, date);
     const total = allocations.reduce((sum, row) => sum + row.seconds, 0);
     // Only the write that crosses the target publishes: at or above it now, below it
     // without these seconds (BR-015, FR-073).
@@ -38,7 +39,7 @@ export async function goalMetAfterSessionWrite(
       userId: event.userId,
       localDate: date,
       minutes: Math.floor(total / 60),
-      targetMinutes: targetSeconds / 60,
+      targetMinutes,
       occurredAt: event.occurredAt,
     });
   }

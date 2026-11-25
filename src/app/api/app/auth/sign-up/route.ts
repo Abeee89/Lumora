@@ -1,5 +1,6 @@
 import * as auth from "@/modules/auth/public";
 import * as profile from "@/modules/profile/public";
+import * as goals from "@/modules/goals/public";
 import { assertSameOrigin, handleRoute, jsonResponse, readJson } from "@/kernel/http";
 import { container } from "@/server/container";
 import {
@@ -23,6 +24,12 @@ export async function POST(request: Request): Promise<Response> {
         userId: created.userId,
         email: created.email,
         timezone: input.timezone,
+      });
+      // BR-013: the account starts on the default target, on its registration local date.
+      await goals.seedDailyGoal(tx, {
+        userId: created.userId,
+        timezone: input.timezone,
+        now: new Date(),
       });
       return created;
     });

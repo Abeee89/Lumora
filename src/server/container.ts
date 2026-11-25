@@ -21,6 +21,7 @@ import * as exams from "../modules/exams/public";
 import * as plans from "../modules/plans/public";
 import * as timer from "../modules/timer/public";
 import * as sessions from "../modules/sessions/public";
+import * as goals from "../modules/goals/public";
 
 export interface Container {
   readonly database: Database;
@@ -155,6 +156,24 @@ export function registerContributions(database: Database): void {
       section: "sessions",
       rows: await sessions.exportSessions(userId, database),
     }));
+  }
+  // Goals registers before Topics and Subjects: subject_goals -> subjects is NO ACTION
+  // (BR-029 keeps an archived subject), so the goal rows must go before the subjects.
+  if (!purgeHandlers.has("goals")) {
+    purgeHandlers.register("goals", (userId) => goals.purgeGoals(userId, database));
+  }
+  if (!exportContributors.has("goals")) {
+    exportContributors.register("goals", async (userId) => ({
+      section: "goals",
+      rows: await goals.exportGoals(userId, database),
+    }));
+  }
+  // MODULE-BOUNDARIES section 6: Goals consumes the Study sessions events, because a
+  // session write is what moves a day's progress and can cross its target (FR-072, FR-073).
+  if (!sessions.sessionEventSubscribers.has("goals")) {
+    sessions.sessionEventSubscribers.register("goals", (event) =>
+      goals.goalMetAfterSessionWrite(event, database),
+    );
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is
   // NO ACTION (BR-029 keeps archived subjects), so a purge must remove the children first.
