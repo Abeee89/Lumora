@@ -236,6 +236,13 @@ export const goalProgressQuery = z
   .object({ date: z.string().refine(isRealLocalDate, { message: "not a local date" }).optional() })
   .strict();
 
+/**
+ * CAL-01: `month` is required `YYYY-MM` in the profile zone; a malformed value is a 400.
+ */
+export const monthQuerySchema = z
+  .object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "YYYY-MM") })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {

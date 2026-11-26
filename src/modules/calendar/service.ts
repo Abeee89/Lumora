@@ -56,7 +56,7 @@ export interface CalendarContext {
   rolloverHour: number;
 }
 
-/** AC-FR-060-1: cells sort into the four ranges, minutes always included (AC-FR-060-2). */
+/** AC-FR-060-1: a day sorts into one of the four ranges, minutes always kept (AC-FR-060-2). */
 export function bucketOf(minutes: number): Bucket {
   if (minutes >= 120) return "120_plus";
   if (minutes >= 60) return "60_119";
@@ -68,6 +68,8 @@ function wholeMinutes(seconds: number): number {
   return Math.floor(seconds / 60);
 }
 
+const pad = (number: number): string => String(number).padStart(2, "0");
+
 /** The cell helper the fixed-now reads share; `today` is the profile zone's current day. */
 export function calendarDay(date: LocalDate, minutes: number, today: LocalDate): CalendarDay {
   return { date, minutes, bucket: bucketOf(minutes), isToday: date === today };
@@ -75,24 +77,20 @@ export function calendarDay(date: LocalDate, minutes: number, today: LocalDate):
 
 /**
  * The 7x6 weekday grid backing the heatmap (decision U-D9), Monday first and zero-filled:
- * leading days from the previous month, then the month's days, then trailing days from the
- * next month. Exactly 42 cells. A leading/trailing cell is `<missing>` for the `_`.
+ * leading and trailing slots are "" so the month's days land in their weekday columns.
+ * Exactly 42 slots, every calendar day of the month present once.
  */
-export function monthGrid(year: number, month: number): LocalDate[] {
-  const pad = (day: number): string =>
-    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+export function monthGrid(year: number, month: number): (LocalDate | "")[] {
+  const date = (day: number): string =>
+    `${year}-${pad(month)}-${pad(day)}`;
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
   const mondayOfFirst = (new Date(Date.UTC(year, month - 1, 1)).getUTCDay() + 6) % 7;
-  for (let i = 0; i < mondayOfFirst; i += 1) cells.push("_");
-  for (let day = 1; day <= daysInMonth; day += 1) cells.push(pad(day));
-  for (let day = daysInMonth + 1; cells.length < 42; day += 1) {
-    cells.push(pad(day));
-  }
-CUT 94.=95 @padFn
+  const cells: (LocalDate | "")[] = [];
+  for (let i = 0; i < mondayOfFirst; i += 1) cells.push("");
+  for (let day = 1; day <= daysInMonth; day += 1) cells.push(date(day));
+  while (cells.length < 42) cells.push("");
   return cells;
 }
-
-const pad = (n: number): string => String(n).padStart(2, "0");
 
 /**
  * CAL-01 (FR-060): one zero-filled `CalendarDay` per calendar day of the month, with the
@@ -108,18 +106,20 @@ export async function getMonthHeatmap(
 ): Promise<CalendarMonth> {
   const [year, monthNumber] = month.split("-").map(Number) as [number, number];
   const today = localDateOf(context.now, context.timezone, context.rolloverHour);
+  const daysInMonth = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
   const days: CalendarDay[] = [];
-  for (let day = 1; day <= new Date(Date.UTC(year, monthNumber, 0)).getUTCDate(); day += 1) {
+  for (let day = 1; day <= daysInMonth; day += 1) {
     days.push(calendarDay(`${month}-${pad(day)}`, 0, today));
   }
 
+  const next = monthNumber === 12 ? `${year + 1}-01` : `${year}-${pad(monthNumber + 1)}`;
   const totals = new Map<string, number>();
   const rows = await database.query<{ local_date: string; seconds: number }>(
     `SELECT d.local_date::text, sum(d.seconds)::int AS seconds
      FROM study_session_days d
      WHERE d.user_id = $1 AND d.local_date >= $2 AND d.local_date < $3
      GROUP BY d.local_date`,
-    [userId, `${month}-01`, nextMonth(month)],
+    [userId, `${month}-01`, next],
   );
   for (const row of rows) totals.set(row.local_date, wholeMinutes(row.seconds));
 
@@ -208,12 +208,9 @@ export async function getDayDetail(
       { now: context.now, timezone: context.timezone, rolloverHour: context.rolloverHour },
     ),
     subjects.listSubjects(database, userId, true),
-    // keep the dependency visible to the boundary checker:
-    void localDayRange(date, context.timezone, context.rolloverHour),
   ]);
 
-  void blocks;
-  const sessionsByDay = new Map<string, { local_date: string; seconds: number }[]>();
+  const sessionsByDay = new Map<string, { local_date: string; seconds: number; is_manual: boolean }[]>();
   if (sessionRows.length > 0) {
     const ids = [...new Set(sessionRows.map((row) => row.id))];
     const allocationRows = await database.query<{
@@ -230,30 +227,32 @@ export async function getDayDetail(
     );
     for (const row of allocationRows) {
       const list = sessionsByDay.get(row.session_id) ?? [];
-      list.push({ local_date: row.local_date, seconds: row.seconds });
+      list.push({ local_date: row.local_date, seconds: row.seconds, is_manual: row.is_manual });
       sessionsByDay.set(row.session_id, list);
     }
   }
 
   let totalSeconds = 0;
-  const calendarSessions: CalendarDaySession[] = sessionRows.map((row) => {
+  const sessionsForDay: CalendarDaySession[] = sessionRows.map((row) => {
     totalSeconds += row.day_seconds;
     return {
       ...presentBoundSession(row),
       dayAllocations: (sessionsByDay.get(row.id) ?? []).map((allocation) => ({
         localDate: allocation.local_date,
         seconds: allocation.seconds,
-        isManual: true,
+        isManual: allocation.is_manual,
       })),
     };
   });
 
-  const archived = new Set(blocks.filter((subject) => subject.archivedAt !== null).map((s) => s.id));
+  const archived = new Set(
+    blocks.filter((subject) => subject.archivedAt !== null).map((subject) => subject.id),
+  );
 
   return {
     date,
     totalMinutes: wholeMinutes(totalSeconds),
-    sessions: calendarSessions,
+    sessions: sessionsForDay,
     planEntries: entries
       .filter((entry) => !archived.has(entry.subjectId))
       .map((entry) => ({
