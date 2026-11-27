@@ -94,7 +94,7 @@ The integration environment migrates an empty database through all nine migratio
 | `npx vitest run --project unit tests/unit/tasks.test.ts` | 8 tests passed |
 | `npx vitest run --project integration tests/integration/tasks.test.ts` | 26 tests passed against PostgreSQL 18.6 |
 | `npx next build` | exit 0, compiled successfully, 48 of 48 static pages generated, 69 route lines of which four are new in M10 (`/api/app/todos`, `/api/app/todos/[todoId]`, `/api/app/todos/[todoId]/completion` and `/todos`) |
-| `npm run test:coverage` | exit 0, 37 files / 320 tests; `src/modules/tasks` at 90.05% statements, 85.71% branches, 100% functions and 91.71% lines against the 80 / 70 / 70 / 80 floor; the six earlier floors pass |
+| `npm run test:coverage` | exit 0, 37 files / 320 tests; `src/modules/tasks` at 90.05% statements, 85.79% branches, 100% functions and 91.71% lines against the 80 / 70 / 70 / 80 floor; the six earlier floors pass |
 | Browser checks | every check in the evidence record E06 passed, including quick add, the due text, the AND filters, the in-place done toggle, the priority chips, the empty state, the edit dialog, the delete confirm, the empty-title guard, focus return, the simulated failure with Retry, and the four-width layout pass |
 
 Full commands, raw output and the measurement tables are in [M10-EVIDENCE.md](M10-EVIDENCE.md).
@@ -143,7 +143,7 @@ DATA-DICTIONARY and API-ENDPOINTS are unchanged: M10 implements `todos`, TODO-01
 
 ## 11. Definition of Done level
 
-The milestone-level check is in [M10-EVIDENCE.md](M10-EVIDENCE.md) E08. FR-090 to FR-096 are delivered with no stub or placeholder, typecheck, lint and the boundary check pass, 151 unit and 169 integration tests pass, the production build succeeds with the three new route files and `/todos`, the tasks module clears the floor M10 added at 90.05 / 85.71 / 100 / 91.71, both registries carry `tasks` and both pinned lists are updated, the ownership contract holds, idempotency and `If-Match` are verified, and the four-width browser pass shows no horizontal scroll with every state (loading, empty, error, data) present. Three rows are not fully checked: the by-layer coverage floors, the axe and screen-reader half of the accessibility row, and the `m10-done` tag. The card's two functional rows are checked on the evidence above.
+The milestone-level check is in [M10-EVIDENCE.md](M10-EVIDENCE.md) E08. FR-090 to FR-096 are delivered with no stub or placeholder, typecheck, lint and the boundary check pass, 151 unit and 169 integration tests pass, the production build succeeds with the three new route files and `/todos`, the tasks module clears the floor M10 added at 90.05 / 85.79 / 100 / 91.71, both registries carry `tasks` and both pinned lists are updated, the ownership contract holds, idempotency and `If-Match` are verified, and the four-width browser pass shows no horizontal scroll with every state (loading, empty, error, data) present. Three rows are not fully checked: the by-layer coverage floors, the axe and screen-reader half of the accessibility row, and the `m10-done` tag. The card's two functional rows are checked on the evidence above.
 
 ## 12. Recommended next milestone
 

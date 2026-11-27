@@ -1,6 +1,31 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, M07 and M08 from 2026-11-25, and M09 from 2026-11-27.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, M07 and M08 from 2026-11-25, and M09 and M10 from 2026-11-27.
+
+## 2026-11-27, M10 tasks and priorities
+
+### Added
+- [08-build/M10-EVIDENCE.md](08-build/M10-EVIDENCE.md): environment and versions, one section per checkpoint with the command and raw output, per-row checklist status, the 8 unit and 26 integration cases by area, the coverage measurement, the browser measurements at four widths, the registry keys and the Definition of Done check.
+- [08-build/M10-COMPLETION-REPORT.md](08-build/M10-COMPLETION-REPORT.md): functionality, files, database changes, tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G: the 2026-11-27 M10 execution row, limited to M10 records and stating that M10 stays open.
+- Application and tooling: `db/migrations/0009_todos.sql`; `src/modules/tasks/**` (service, events, public) with the priority helpers, the keyset cursor and the purge and export hooks; `src/app/api/app/todos/route.ts`, `src/app/api/app/todos/[todoId]/route.ts` and `src/app/api/app/todos/[todoId]/completion/route.ts` covering TODO-01 to TODO-06; `src/app/todos/page.tsx` (A-9); `src/ui/forms/todo-list.tsx`; the To-dos nav entry; the `todos` block in `src/kernel/config.ts`; the to-do request schemas in `src/server/request-context.ts`; the `tasks` purge handler and export contributor in `src/server/container.ts`.
+- Tests: `tests/integration/tasks.test.ts` (26 cases) and `tests/unit/tasks.test.ts` (8 cases), taking the unit tier to 23 files and 151 tests and the integration tier to 14 files and 169 tests, plus the to-do routes in `tests/integration/support/api.ts` and the `tasks` registry keys in `tests/integration/profile.test.ts`.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): the two M10 functional rows checked, the Definition of Done row left unchecked, and an "As built" note recording what shipped.
+- [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M10 execution paragraph and the authorization sentence naming M11 as the next step.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M10 execution row and the inventory at 103 documents (23 build records).
+- `vitest.config.ts`: the `src/modules/tasks/**` coverage floor.
+- `src/ui/control.tsx`: `TextInput` forwards a `ref` to the underlying `<input>` so the quick-add title can take the focus back after a submit.
+
+### Fixed
+- A due date read back one day early under a positive-offset process: `due_date` is a `DATE` that node-postgres parses into a local-midnight `Date`, and `present` formatted it with `toISOString`, so a UTC+07 process shifted every date back a day. The select casts `t.due_date::text`, `TodoRow.due_date` is a string, and the cursor carries the date string; the integration case reads `medium-may3` back as `2026-05-03`.
+- The quick-add title never regained focus: `titleRef` was never bound to an input and `TextInput` did not accept a `ref`, so both `focus()` calls were no-ops; `TextInput` forwards the ref and the title passes it, and the browser pass reads `document.activeElement` on the title input after an empty submit and after a successful add.
+- The keyset dropped rows on every page: the row comparison returned NULL for a dateless to-do and a NULL predicate drops the row; both keysets compare `COALESCE(t.due_date, 'infinity')` in the predicate and the ORDER BY.
+- The first page of a list was empty: it used `infinity` as the due sentinel, so `(0, realDate, ...) > (0, infinity, ...)` excluded every real-dated row; the first page now uses `-infinity`.
+- `created_at` in the keyset repeated the cursor row: Postgres timestamps hold microseconds and a JS `Date` holds milliseconds, so the cursor never matched; `created_at` left both keysets and the UUIDv7 `id` stands in for it.
+- The list route answered the bare page object, which the wire schema rejected with "invalid_type path: page"; the GET wraps it as `{ data, page: { nextCursor, hasMore } }`.
+- A unit cursor case passed a `Date` after `encodeCursor` was retyped to a date string; the case now passes `2026-05-01` and the round-trip assertion is unchanged.
 
 ## 2026-11-27, M09 calendar
 

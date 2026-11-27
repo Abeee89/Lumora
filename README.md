@@ -6,23 +6,24 @@ The product, architecture, database, UI and API contracts live in [`docs/`](docs
 
 ## Build state
 
-M09 (calendar) is built on the M08 goals and reads the frozen day allocations of the M06
-sessions, never storing its own rows. The month heatmap at `/calendar` sums each local date into
-one of the four intensity buckets with the minute figure printed in every non-zero cell, so the
-fill is never the only carrier (NFR-043); the day panel answers the sessions of a day with their
-own minutes, the archived label, the midnight split and the planned entries of the day with their
-derived status, and "Add plan entry for this day" hands off to the plan list. The grid is one tab
-stop with roving focus and full keyboard travel, and the server computes today from the profile
-timezone. Underneath sit the daily and subject goals of M08, the timer of M07, the sessions of M06,
-the plans and warnings of M05, the exams, checklists and the derived archive rule of M04, the
-subjects, topics and bulk paste of M03, the accounts, sign-in, profile and appearance work of M02,
-and the shell, the shared kernel, the boundary checker, the outbox relay and the three scheduled
-jobs of M01. Readiness scoring is Phase 2 and is not in this build. Google sign-in needs an OAuth
-client (U-5) and the reset email needs a provider (U-A2); no staging host exists (U-A1).
-The navigation carries the shipped pages only: Calendar, Exams, Subjects, Sessions, Timer and
-Settings ([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2, OD-M36).
-Evidence and the open rows are in [M09-EVIDENCE](docs/08-build/M09-EVIDENCE.md) and
-[M09-COMPLETION-REPORT](docs/08-build/M09-COMPLETION-REPORT.md).
+M10 (tasks and priorities) is built on the subjects and topics of M03 and needs nothing newer: the
+A-9 list at `/todos` creates, edits, deletes and completes to-dos, filters by status, subject,
+priority and due state with AND, and orders by priority rank, then due date with null last, then age
+(FR-095). Completion is idempotent and only the false-to-true transition publishes `TodoCompleted`.
+The calendar at `/calendar` is the M09 month heatmap over the frozen day allocations of the M06
+sessions, which stores no rows of its own: each local date sums into one of four intensity buckets
+with the minute figure printed in every non-zero cell, so the fill is never the only carrier
+(NFR-043), and the day panel answers the sessions and the planned entries of a day. Underneath sit
+the daily and subject goals of M08, the timer of M07, the sessions of M06, the plans and warnings of
+M05, the exams, checklists and the derived archive rule of M04, the subjects, topics and bulk paste
+of M03, the accounts, sign-in, profile and appearance work of M02, and the shell, the shared kernel,
+the boundary checker, the outbox relay and the three scheduled jobs of M01. Readiness scoring is
+Phase 2 and is not in this build. Google sign-in needs an OAuth client (U-5) and the reset email
+needs a provider (U-A2); no staging host exists (U-A1).
+The navigation carries the shipped pages only: Calendar, Exams, Subjects, Sessions, Timer, To-dos
+and Settings ([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2, OD-M36).
+Evidence and the open rows are in [M10-EVIDENCE](docs/08-build/M10-EVIDENCE.md) and
+[M10-COMPLETION-REPORT](docs/08-build/M10-COMPLETION-REPORT.md).
 
 ## Commands
 

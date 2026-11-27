@@ -1,6 +1,6 @@
 # Documentation Index
 
-> Status: Updated by the Phase 8 audit, the M00 close-out, M01, M02, M03, M04, M05, M06, M07, M08 and M09. This index covers 101 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 21 build records. Owner approval evidence exists only for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record, the M03 approval, the M04 execution record and the M05 execution record, and the M05 approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved. The M04, M05, M06, M07, M08 and M09 execution records are recorded in the same section and are not approvals.
+> Status: Updated by the Phase 8 audit, the M00 close-out, M01, M02, M03, M04, M05, M06, M07, M08, M09 and M10. This index covers 103 Markdown documents: 73 baseline planning documents, 7 Phase 8 governance documents and 23 build records. Owner approval evidence exists only for the M00 charter, the M01 authorization, the M01 close-out record, the M02 execution record, the M02 approval, the M03 execution record, the M03 approval, the M04 execution record and the M05 execution record, and the M05 approval (see [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G); the product baseline remains unapproved. The M04, M05, M06, M07, M08, M09 and M10 execution records are recorded in the same section and are not approvals.
 
 Product name in all documents: Lumora (the planning prompts call it "Study Tracker").
 
@@ -41,6 +41,8 @@ Product name in all documents: Lumora (the planning prompts call it "Study Track
 | [08-build/M08-COMPLETION-REPORT.md](08-build/M08-COMPLETION-REPORT.md) | M08 functionality, files, database changes, tests, findings, limitations, remaining tasks and recommended next milestone |
 | [08-build/M09-EVIDENCE.md](08-build/M09-EVIDENCE.md) | M09 commands, raw output, checklist status, the browser measurements at four widths, the unchanged registry keys, the coverage measurement and the Definition of Done check |
 | [08-build/M09-COMPLETION-REPORT.md](08-build/M09-COMPLETION-REPORT.md) | M09 functionality, files, database changes (none), tests, findings, limitations, remaining tasks and recommended next milestone |
+| [08-build/M10-EVIDENCE.md](08-build/M10-EVIDENCE.md) | M10 commands, raw output, checklist status, the 8 unit and 26 integration cases by area, the browser measurements at four widths, the registry keys, the coverage measurement and the Definition of Done check |
+| [08-build/M10-COMPLETION-REPORT.md](08-build/M10-COMPLETION-REPORT.md) | M10 functionality, files, database changes, tests, findings, limitations, remaining tasks and recommended next milestone |
 
 ## Root
 

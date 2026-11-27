@@ -133,13 +133,13 @@ What the 26 cases cover, by area:
 
 | Scope | % Stmts | % Branch | % Funcs | % Lines | Floor | State |
 |---|---|---|---|---|---|---|
-| `src/modules/tasks/**` | 90.05 | 85.71 | 100 | 91.71 | 80 / 70 / 70 / 80 | PASS |
-| `src/modules/kernel/**` (via `src/kernel/**`) | 94.94 | 88.51 | 100 | 94.94 | 80 / 70 / 70 / 80 | PASS |
+| `src/modules/tasks/**` | 90.05 | 85.79 | 100 | 91.71 | 80 / 70 / 70 / 80 | PASS |
+| `src/kernel/**` | 88.95 | 77.16 | 89.28 | 93.92 | 80 / 70 / 70 / 80 | PASS |
 | `src/modules/calendar/**` | 100 | 83.33 | 100 | 100 | 80 / 70 / 70 / 80 | PASS |
 | `src/modules/plans/**` | 95.27 | 88.98 | 100 | 94.53 | 80 / 70 / 70 / 80 | PASS |
 | `src/modules/goals/**` | 94.17 | 84.48 | 94.11 | 96.73 | 80 / 70 / 70 / 80 | PASS |
 
-The overall figure is 49.03% statements, 38.29% branches, 46.88% functions and 49.99% lines across `src/**`; the uncovered remainder is the UI components and screens, which no unit test renders. The by-layer floors the Definition of Done names (domain 90%, application 80%, overall 80%) are still neither enforced nor met, which is the OD-M31 gap M01 to M09 recorded.
+The overall figure is 49.03% statements, 38.22% branches, 46.88% functions and 49.99% lines across `src/**`; the uncovered remainder is the UI components and screens, which no unit test renders. The by-layer floors the Definition of Done names (domain 90%, application 80%, overall 80%) are still neither enforced nor met, which is the OD-M31 gap M01 to M09 recorded.
 
 ## E06 Browser pass
 
@@ -194,7 +194,7 @@ Milestone level, [DEFINITION-OF-DONE.md](../07-roadmap/DEFINITION-OF-DONE.md) se
 | Every FR in scope has implemented behavior | PASS | FR-090 (create), FR-091 (edit and read), FR-092 (delete), FR-093 (idempotent completion), FR-094 (filters), FR-095 (order), FR-096 (priority default) across TODO-01 to TODO-06 and A-9; no stub, placeholder, mock or `TODO` is left in `src/modules/tasks/**`, the three route files, `src/app/todos/page.tsx` or the client |
 | Tests per the TESTING-STRATEGY matrix are green | PASS | E01: unit 151 and integration 169, both green, of which 8 and 26 are M10 |
 | Typecheck, lint and boundary check pass | PASS | E01 |
-| Coverage floors met and not lower than before | PARTIAL | E05: the `src/modules/tasks/**` floor (80 / 70 / 70 / 80) is met at 90.05 / 85.71 / 100 / 91.71 and the six earlier floors still pass. The by-layer floors this item names (domain 90%, application 80%, overall 80%) are still neither enforced nor met, the OD-M31 gap unchanged since M01 |
+| Coverage floors met and not lower than before | PARTIAL | E05: the `src/modules/tasks/**` floor (80 / 70 / 70 / 80) is met at 90.05 / 85.79 / 100 / 91.71 and the six earlier floors still pass. The by-layer floors this item names (domain 90%, application 80%, overall 80%) are still neither enforced nor met, the OD-M31 gap unchanged since M01 |
 | Ownership contract test per new resource | PASS | E04: every to-do read and write is scoped by `user_id`; a foreign user answers 404 on a read and never sees the owner's rows in a list |
 | Purge handler and export contributor per new user-data table | PASS | E07: `tasks` is registered in both registries before `topics` and `subjects`, and both pinned key lists carry it |
 | Idempotency and concurrency requirements verified | PASS | E04: TODO-02 replays on the same `Idempotency-Key`; TODO-04 and TODO-06 require `If-Match` and answer `stale_version` with `details.current`; TODO-05 changes nothing, bumps nothing and publishes nothing when the state is unchanged (AC-FR-093-3) |
