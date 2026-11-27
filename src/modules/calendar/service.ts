@@ -9,7 +9,7 @@
 import type { Queryable } from "../../kernel/db";
 import { localDateOf, type LocalDate } from "../../kernel/time";
 import * as plans from "../plans/public";
-import * as sessions from "../sessions/public";
+import type * as sessions from "../sessions/public";
 import * as subjects from "../subjects/public";
 
 export type Bucket = "0" | "1_59" | "60_119" | "120_plus";
@@ -36,6 +36,7 @@ export interface CalendarDaySession extends sessions.StudySession {
 export interface CalendarPlanEntry {
   id: string;
   subjectId: string;
+  subjectName: string;
   startsAt: string;
   plannedMin: number;
   actualSeconds: number;
@@ -112,7 +113,8 @@ export async function getMonthHeatmap(
     days.push(calendarDay(`${month}-${pad(day)}`, 0, today));
   }
 
-  const next = monthNumber === 12 ? `${year + 1}-01` : `${year}-${pad(monthNumber + 1)}`;
+  const nextOf = monthNumber === 12 ? `${year + 1}-01` : `${year}-${pad(monthNumber + 1)}`;
+  const next = `${nextOf}-01`;
   const totals = new Map<string, number>();
   const rows = await database.query<{ local_date: string; seconds: number }>(
     `SELECT d.local_date::text, sum(d.seconds)::int AS seconds
@@ -125,7 +127,10 @@ export async function getMonthHeatmap(
 
   return {
     month,
-    days: days.map((day) => ({ ...day, minutes: totals.get(day.date) ?? 0 })),
+    days: days.map((day) => {
+      const minutes = totals.get(day.date) ?? 0;
+      return { ...day, minutes, bucket: bucketOf(minutes) };
+    }),
   };
 }
 
@@ -193,7 +198,8 @@ export async function getDayDetail(
       `SELECT s.id, s.subject_id, s.topic_id, s.plan_entry_id, s.source, s.mode,
               s.started_at, s.ended_at, s.duration_seconds, s.pomodoros_completed, s.auto_closed,
               s.timezone, s.local_date::text, s.version, s.created_at, s.updated_at,
-              d.seconds AS day_seconds, subj.name AS subject_name, subj.archived_at AS subject_archived
+              d.seconds AS day_seconds, subj.name AS subject_name,
+              (subj.archived_at IS NOT NULL) AS subject_archived
        FROM study_session_days d
        JOIN study_sessions s ON s.id = d.session_id
        JOIN subjects subj ON subj.id = d.subject_id
@@ -245,23 +251,22 @@ export async function getDayDetail(
     };
   });
 
-  const archived = new Set(
-    blocks.filter((subject) => subject.archivedAt !== null).map((subject) => subject.id),
-  );
+  const subjectName = (subjectId: string): string =>
+    blocks.find((subject) => subject.id === subjectId)?.name ?? "another subject";
+  const planEntries: CalendarPlanEntry[] = entries.map((entry) => ({
+    id: entry.id,
+    subjectId: entry.subjectId,
+    subjectName: subjectName(entry.subjectId),
+    startsAt: entry.startsAt,
+    plannedMin: entry.plannedMin,
+    actualSeconds: entry.actualSeconds,
+    status: entry.status,
+  }));
 
   return {
     date,
     totalMinutes: wholeMinutes(totalSeconds),
     sessions: sessionsForDay,
-    planEntries: entries
-      .filter((entry) => !archived.has(entry.subjectId))
-      .map((entry) => ({
-        id: entry.id,
-        subjectId: entry.subjectId,
-        startsAt: entry.startsAt,
-        plannedMin: entry.plannedMin,
-        actualSeconds: entry.actualSeconds,
-        status: entry.status,
-      })),
+    planEntries,
   };
 }

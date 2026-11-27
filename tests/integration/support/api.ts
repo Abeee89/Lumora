@@ -60,6 +60,8 @@ import {
   DELETE as deleteSubjectGoal,
   PUT as putSubjectGoal,
 } from "@/app/api/app/goals/subjects/[subjectId]/route";
+import { GET as getCalendarHeatmap } from "@/app/api/app/calendar/heatmap/route";
+import { GET as getCalendarDay } from "@/app/api/app/calendar/days/[date]/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -291,6 +293,14 @@ async function dispatch(method: string, path: string, request: Request): Promise
     const params = { params: Promise.resolve({ subjectId: subjectGoalPath[1] ?? "" }) };
     if (method === "PUT") return putSubjectGoal(request, params);
     if (method === "DELETE") return deleteSubjectGoal(request, params);
+  }
+
+  const calendarHeatmapPath = /^\/api\/app\/calendar\/heatmap$/.exec(path);
+  if (method === "GET" && calendarHeatmapPath !== null) return getCalendarHeatmap(request);
+
+  const calendarDayPath = /^\/api\/app\/calendar\/days\/([^/]+)$/.exec(path);
+  if (method === "GET" && calendarDayPath !== null) {
+    return getCalendarDay(request, { params: Promise.resolve({ date: calendarDayPath[1] ?? "" }) });
   }
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
@@ -640,6 +650,50 @@ export const planEntryListSchema = z.object({ data: z.array(planEntrySchema) });
 
 export type PlanEntryWire = z.infer<typeof planEntrySchema>;
 export type PlanWarningWire = z.infer<typeof planWarningSchema>;
+
+/** API-SCHEMAS section 15. Strict: a field the spec does not list fails the test. */
+export const calendarDaySchema = z
+  .object({
+    date: z.string(),
+    minutes: z.number().int().min(0),
+    bucket: z.enum(["0", "1_59", "60_119", "120_plus"]),
+    isToday: z.boolean(),
+  })
+  .strict();
+
+export const calendarMonthSchema = z
+  .object({ month: z.string(), days: z.array(calendarDaySchema) })
+  .strict();
+
+export const calendarDaySessionSchema = sessionSchema.extend({
+  daySeconds: z.number().int().min(0),
+  subjectName: z.string(),
+  subjectArchived: z.boolean(),
+});
+
+export const calendarPlanEntrySchema = z
+  .object({
+    id: z.string(),
+    subjectId: z.string(),
+    subjectName: z.string(),
+    startsAt: z.string(),
+    plannedMin: z.number().int().min(5).max(480),
+    actualSeconds: z.number().int().min(0),
+    status: z.enum(["upcoming", "done", "missed"]),
+  })
+  .strict();
+
+export const calendarDayDetailSchema = z
+  .object({
+    date: z.string(),
+    totalMinutes: z.number().int().min(0),
+    sessions: z.array(calendarDaySessionSchema),
+    planEntries: z.array(calendarPlanEntrySchema),
+  })
+  .strict();
+
+export type CalendarMonthWire = z.infer<typeof calendarMonthSchema>;
+export type CalendarDayDetailWire = z.infer<typeof calendarDayDetailSchema>;
 
 export const bulkPreviewSchema = z.object({
   valid: z.array(z.string()),

@@ -34,6 +34,12 @@ export async function startTestDatabase(): Promise<TestDatabase> {
     password: "lumora",
     port,
     persistent: false,
+    // UTC keeps the suite hermetic: the server timezone and the native timestamp
+    // formatting used by `now()::date` match the UTC sign-ups in every suite.
+    initdbFlags: ["--no-locale", "--encoding=UTF8"],
+    // The embedded server starts without a timezone; pinning it here keeps `now()::date`
+    // on the UTC clock the sign-ups use, so date assertions never drift with the host.
+    postgresFlags: ["-c", "timezone=UTC"],
   });
   await postgres.initialise();
   await postgres.start();

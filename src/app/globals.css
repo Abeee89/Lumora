@@ -36,6 +36,13 @@
   --error-soft: light-dark(#fbe3e0, #3c1a18);
   --focus: light-dark(#0b6b68, #7ad6ce);
 
+  /* M09 A-5 heatmap buckets (NFR-043): the minute figure carries the value, the fill
+     only reinforces it; each level stays legible against both light and dark. */
+  --bucket-0: light-dark(#ece8df, #0c1012);
+  --bucket-1: light-dark(#d7e5e2, #173433);
+  --bucket-2: light-dark(#b4d3ce, #22504d);
+  --bucket-3: light-dark(#6faea7, #2e6b66);
+
   /* COLOR-TYPOGRAPHY section 6: the ten subject colours (user content). Only a 12 px dot
      or a 4 px bar may use them, and the subject name always carries the meaning. */
   --subject-teal: light-dark(#0e5a58, #5cc8bf);
@@ -82,7 +89,10 @@
   --color-on-accent: var(--on-accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-soft: var(--accent-soft);
-  --color-on-accent-soft: var(--on-accent-soft);
+  --color-bucket-0: var(--bucket-0);
+  --color-bucket-1: var(--bucket-1);
+  --color-bucket-2: var(--bucket-2);
+  --color-bucket-3: var(--bucket-3);
   --color-error: var(--error);
   --color-error-soft: var(--error-soft);
   --color-focus: var(--focus);

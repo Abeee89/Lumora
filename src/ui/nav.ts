@@ -12,9 +12,9 @@ export interface NavItem {
 export const primaryNav: readonly NavItem[] = [
   { group: null, label: "Dashboard", href: "/dashboard" },
   { group: null, label: "Timer", href: "/timer" },
-  // NAVIGATION-STRUCTURE section 2: A-6 Plan list is a Calendar tab and has no item of
-  // its own, so this entry carries it until M09 ships `/calendar` and the tab strip.
-  { group: "Plan", label: "Calendar", href: "/plan" },
+  // NAVIGATION-STRUCTURE section 2: A-6 Plan list is a Calendar tab with no item of its
+  // own; the A-5/A-6 tab strip keeps `/plan` reachable from the Calendar page.
+  { group: "Plan", label: "Calendar", href: "/calendar" },
   { group: "Plan", label: "To-dos", href: "/todos" },
   { group: "Plan", label: "Exams", href: "/exams" },
   { group: "Library", label: "Subjects", href: "/subjects" },
@@ -52,7 +52,8 @@ export const shippedRoutes: ShippedRoutes = {
   "/settings/study": true,
   "/settings/security": true,
   "/subjects": true,
-  "/exams": true,
+  "/plan": true,
+  "/calendar": true,
   "/sessions": true,
   "/timer": true,
 };
