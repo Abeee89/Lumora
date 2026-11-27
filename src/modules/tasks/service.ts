@@ -81,7 +81,7 @@ interface TodoRow {
   subject_id: string | null;
   topic_id: string | null;
   title: string;
-  due_date: Date | null;
+  due_date: string | null;
   priority: TodoPriority;
   done: boolean;
   completed_at: Date | null;
@@ -91,12 +91,12 @@ interface TodoRow {
 }
 
 const SELECT_TODO = `
-  SELECT t.id, t.title, t.subject_id, t.topic_id, t.due_date, t.priority, t.done,
+  SELECT t.id, t.title, t.subject_id, t.topic_id, t.due_date::text AS due_date, t.priority, t.done,
          t.completed_at, t.version, t.created_at, t.updated_at
   FROM todos t`;
 
 function present(row: TodoRow, today: LocalDate): Todo {
-  const dueDate = row.due_date === null ? null : row.due_date.toISOString().slice(0, 10);
+  const dueDate = row.due_date;
   return {
     id: row.id,
     title: row.title,
@@ -328,20 +328,19 @@ export async function listTodos(
   conditions.push(
     `t.done = false AND
      (CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-      COALESCE(t.due_date, 'infinity'), t.created_at, t.id)
-     > ($${values.length + 1}, $${values.length + 2}, $${values.length + 3},
-       $${values.length + 4})`,
+      COALESCE(t.due_date, 'infinity'), t.id)
+     > ($${values.length + 1}, $${values.length + 2}, $${values.length + 3})`,
   );
   if (query.cursor !== undefined) {
     const decoded = decodeCursor(query.cursor);
-    values.push(decoded.priorityRank, decoded.dueDate ?? "infinity", new Date(decoded.createdAtMs), decoded.id);
+    values.push(decoded.priorityRank, decoded.dueDate ?? "infinity", decoded.id);
   } else {
-    values.push(0, "-infinity", new Date(0), "00000000-0000-0000-0000-000000000000");
+    values.push(0, "-infinity", "00000000-0000-0000-0000-000000000000");
   }
   const rows = await database.query<TodoRow>(
     `${SELECT_TODO} WHERE ${conditions.join(" AND ")}
      ORDER BY CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-              COALESCE(t.due_date, 'infinity'), t.created_at, t.id
+              COALESCE(t.due_date, 'infinity'), t.id
      LIMIT $${values.length + 1}`,
     [...values, limit + 1],
   );
@@ -363,13 +362,13 @@ const CURSOR_BODY = Buffer.from("todo").toString("base64url");
 /** `priorityRank|dueDate|null|createdAtMs|id|done` with a marker, base64url (API-CONVENTIONS 4). */
 export function encodeCursor(
   priorityRankValue: number,
-  dueDate: Date | null,
+  dueDate: LocalDate | null,
   createdAtMs: number,
   id: string,
   done: boolean,
 ): string {
   return Buffer.from(
-    `${CURSOR_BODY}|${priorityRankValue}|${dueDate === null ? "" : dueDate.toISOString().slice(0, 10)}|${createdAtMs}|${id}|${done ? "1" : "0"}`,
+    `${CURSOR_BODY}|${priorityRankValue}|${dueDate === null ? "" : dueDate}|${createdAtMs}|${id}|${done ? "1" : "0"}`,
   ).toString("base64url");
 }
 
@@ -403,7 +402,7 @@ export function decodeCursor(cursor: string): {
   if (
     encodeCursor(
       Number(rank),
-      dueDate === null ? null : new Date(`${dueDate}T00:00:00Z`),
+      dueDate,
       Number(createdAt),
       id,
       done === "1",
@@ -457,7 +456,7 @@ export async function editTodo(
 
   const title = input.title === undefined ? current.title : validateTitle(input.title);
   const priority = input.priority === undefined ? current.priority : validatePriority(input.priority);
-  const dueDate = input.dueDate === undefined ? (current.due_date === null ? null : current.due_date.toISOString().slice(0, 10)) : validateDueDate(input.dueDate);
+  const dueDate = input.dueDate === undefined ? current.due_date : validateDueDate(input.dueDate);
   // A new subject needs a topic of its own; `subjectId: null` drops both (AC-FR-091-2).
   const subjectId = input.subjectId === undefined ? current.subject_id : input.subjectId;
   const subject = subjectId === null ? null : await requireActiveSubject(database, userId, subjectId);

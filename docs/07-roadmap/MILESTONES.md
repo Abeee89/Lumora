@@ -375,9 +375,10 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** unit (ordering); ownership contract; cursor pagination.
 - **Acceptance criteria:** AC-FR-090-* to AC-FR-096-*.
 - **Completion checklist:**
-  - [ ] CRUD, filter, sort and done toggle work
-  - [ ] Purge handler and export contributor registered
+  - [x] CRUD, filter, sort and done toggle work
+  - [x] Purge handler and export contributor registered
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-27):** evidence, per-row proof and the open rows are in [08-build/M10-EVIDENCE.md](../08-build/M10-EVIDENCE.md); the record is [08-build/M10-COMPLETION-REPORT.md](../08-build/M10-COMPLETION-REPORT.md). Shipped: the Tasks module at rank 9 with `createTodo`, `getTodo`, `listTodos`, `editTodo`, `setTodoCompletion`, `deleteTodo`, `purgeTodos` and `exportTodos`; the three route files behind TODO-01 to TODO-06 under `/api/app/todos`; the A-9 page at `/todos` with the quick add, the four filters, the priority chip and the delete and edit dialogs; the `todos` table in `0009_todos.sql`; and the `tasks` purge handler and export contributor registered before `topics` and `subjects`. The FR-095 order is priority rank, then due date with null last, then `id`; completion is idempotent and publishes `TodoCompleted` on the false-to-true transition only. The Definition of Done row stays unchecked for the same three reasons M09 records: the by-layer coverage floors, axe and the screen-reader half of the accessibility row, and the `m10-done` tag, which is the owner's step.
 
 ### M11 Notes
 

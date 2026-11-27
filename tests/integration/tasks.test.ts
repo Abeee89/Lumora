@@ -254,6 +254,9 @@ describe("todo endpoints", () => {
         "medium-may3",
         "low-tomorrow",
       ]);
+      // The date the client sent must come back unchanged: a `date` column read through a
+      // local-midnight Date would shift a positive-offset process back one day.
+      expect(list.data.find((todo) => todo.title === "medium-may3")?.dueDate).toBe("2026-05-03");
       expect(list.page).toEqual({ nextCursor: null, hasMore: false });
     });
 
@@ -592,8 +595,7 @@ describe("todo endpoints", () => {
       const purge = purgeHandlers.entries().find(([key]) => key === "tasks")?.[1];
       expect(await purge?.(user.userId)).toBe(1);
       expect(await database().query("SELECT 1 FROM todos WHERE id = $1", [todo.id])).toEqual([]);
-
-      const kept = await createTodo(user, { title: "Export me" });
+      await createTodo(user, { title: "Export me" });
       const contributor = exportContributors.entries().find(([key]) => key === "tasks")?.[1];
       const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };
       expect(section.section).toBe("tasks");

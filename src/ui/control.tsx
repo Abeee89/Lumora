@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 
 /**
  * Token-styled controls (DESIGN-SYSTEM section 2.1 and 2.2). No "use client": every
@@ -194,6 +194,7 @@ export function TextInput({
   invalid = false,
   describedBy,
   placeholder,
+  ref,
 }: {
   id: string;
   type: "text" | "email" | "password" | "number" | "date";
@@ -204,9 +205,11 @@ export function TextInput({
   invalid?: boolean | undefined;
   describedBy?: string | undefined;
   placeholder?: string | undefined;
+  ref?: Ref<HTMLInputElement> | undefined;
 }) {
   return (
     <input
+      ref={ref}
       id={id}
       name={id}
       type={type}

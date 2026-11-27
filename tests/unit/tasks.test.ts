@@ -57,7 +57,7 @@ describe("cursor encode/decode (API-CONVENTIONS section 4)", () => {
   const id = "018f0000-0000-7000-8000-000000000001";
 
   it("round-trips a dated open cursor", () => {
-    const cursor = encodeCursor(0, new Date("2026-05-01T00:00:00Z"), 1730000000000, id, false);
+    const cursor = encodeCursor(0, "2026-05-01", 1730000000000, id, false);
     expect(decodeCursor(cursor)).toEqual({
       priorityRank: 0,
       dueDate: "2026-05-01",
