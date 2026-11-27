@@ -288,28 +288,26 @@ export async function listTodos(
   if (query.status === "done") {
     conditions.push("t.done = true");
   } else if (query.status === "all") {
-    // FR-095: open to-dos precede done ones; the cursor carries the group.
-    conditions.push(`(t.done, CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-                     t.due_date IS NOT NULL, t.due_date, t.created_at, t.id)
-                    > ($${values.length + 1}, $${values.length + 2}, $${values.length + 3},
-                      $${values.length + 4}, $${values.length + 5}, $${values.length + 6})`);
+    // FR-095: open to-dos precede done ones; the cursor carries the done group.
+    // `COALESCE(due_date, 'infinity')` keeps nulls last without a nullable keyset
+    // column: a NULL in a row comparison makes the comparison NULL and drops the row.
+    conditions.push(
+      `(t.done, CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
+        COALESCE(t.due_date, 'infinity'), t.id)
+       > ($${values.length + 1}, $${values.length + 2}, $${values.length + 3},
+         $${values.length + 4})`,
+    );
     if (query.cursor !== undefined) {
       const decoded = decodeCursor(query.cursor);
-      values.push(
-        decoded.done,
-        decoded.priorityRank,
-        decoded.dueDate !== null,
-        decoded.dueDate,
-        new Date(decoded.createdAtMs),
-        decoded.id,
-      );
+      values.push(decoded.done, decoded.priorityRank, decoded.dueDate ?? "infinity", decoded.id);
     } else {
-      values.push(false, 0, false, null, new Date(0), "00000000-0000-0000-0000-000000000000");
+      values.push(false, 0, "-infinity", "00000000-0000-0000-0000-000000000000");
     }
     const rows = await database.query<TodoRow>(
       `${SELECT_TODO} WHERE ${conditions.join(" AND ")}
-       ORDER BY t.done, CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-                (t.due_date IS NOT NULL), t.due_date, t.created_at, t.id
+       ORDER BY t.done,
+                CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
+                COALESCE(t.due_date, 'infinity'), t.id
        LIMIT $${values.length + 1}`,
       [...values, limit + 1],
     );
@@ -330,20 +328,20 @@ export async function listTodos(
   conditions.push(
     `t.done = false AND
      (CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-      t.due_date IS NOT NULL, t.due_date, t.created_at, t.id)
+      COALESCE(t.due_date, 'infinity'), t.created_at, t.id)
      > ($${values.length + 1}, $${values.length + 2}, $${values.length + 3},
-       $${values.length + 4}, $${values.length + 5})`,
+       $${values.length + 4})`,
   );
   if (query.cursor !== undefined) {
     const decoded = decodeCursor(query.cursor);
-    values.push(decoded.priorityRank, decoded.dueDate !== null, decoded.dueDate, new Date(decoded.createdAtMs), decoded.id);
+    values.push(decoded.priorityRank, decoded.dueDate ?? "infinity", new Date(decoded.createdAtMs), decoded.id);
   } else {
-    values.push(0, false, null, new Date(0), "00000000-0000-0000-0000-000000000000");
+    values.push(0, "-infinity", new Date(0), "00000000-0000-0000-0000-000000000000");
   }
   const rows = await database.query<TodoRow>(
     `${SELECT_TODO} WHERE ${conditions.join(" AND ")}
      ORDER BY CASE t.priority WHEN 'high' THEN 0 WHEN 'medium' THEN 1 ELSE 2 END,
-              (t.due_date IS NOT NULL), t.due_date, t.created_at, t.id
+              COALESCE(t.due_date, 'infinity'), t.created_at, t.id
      LIMIT $${values.length + 1}`,
     [...values, limit + 1],
   );

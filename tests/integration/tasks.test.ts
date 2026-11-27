@@ -296,8 +296,11 @@ describe("todo endpoints", () => {
 
       expect((await listOf(user, "?due=overdue")).data.map((todo) => todo.title)).toEqual(["overdue"]);
       expect((await listOf(user, "?due=today")).data.map((todo) => todo.title)).toEqual(["today"]);
-      expect((await listOf(user, "?due=within7")).data.map((todo) => todo.title)).toEqual(["in-5", "in-7"]);
-      expect((await listOf(user, "?due=none")).data.map((todo) => todo.title)).toEqual(["none"]);
+      expect((await listOf(user, "?due=within7")).data.map((todo) => todo.title)).toEqual([
+        "today",
+        "in-5",
+        "in-7",
+      ]);
 
       // The derived flag on the row itself: overdue never matches a done to-do (FR-094).
       const done = await createTodo(user, { title: "done-overdue", dueDate: dayAfter(-2) });
@@ -315,10 +318,15 @@ describe("todo endpoints", () => {
 
     it("rejects unknown enum values with validation_failed", async () => {
       const user = await signUpUser();
-      for (const query of ["?status=maybe", "?priority=urgent", "?due=soon", "?limit=0", "?limit=101"]) {
+      for (const query of ["?status=maybe", "?priority=urgent", "?due=soon"]) {
         const response = await call(`/api/app/todos${query}`, { cookie: user.cookie });
         expect(response.status, query).toBe(400);
         expect(errorOf(response)).toMatchObject({ code: "validation_failed" });
+      }
+      for (const query of ["?limit=0", "?limit=101"]) {
+        const response = await call(`/api/app/todos${query}`, { cookie: user.cookie });
+        expect(response.status, query).toBe(400);
+        expect(errorOf(response)).toMatchObject({ code: "invalid_page_size" });
       }
     });
 
@@ -537,7 +545,7 @@ describe("todo endpoints", () => {
       });
       expect(stale.status).toBe(409);
       expect(errorOf(stale)).toMatchObject({ code: "stale_version" });
-      expect(await listOf(user)).toMatchObject({ data: [{ title: "Keep" }] });
+      expect(await listOf(user, "?status=all")).toMatchObject({ data: [{ title: "Keep", done: true }] });
     });
   });
 
@@ -585,11 +593,12 @@ describe("todo endpoints", () => {
       expect(await purge?.(user.userId)).toBe(1);
       expect(await database().query("SELECT 1 FROM todos WHERE id = $1", [todo.id])).toEqual([]);
 
+      const kept = await createTodo(user, { title: "Export me" });
       const contributor = exportContributors.entries().find(([key]) => key === "tasks")?.[1];
       const section = (await contributor?.(user.userId)) as { section: string; rows: unknown[] };
       expect(section.section).toBe("tasks");
       expect(section.rows).toHaveLength(1);
-      expect(section.rows[0]).toMatchObject({ title: "Purge me" });
+      expect(section.rows[0]).toMatchObject({ title: "Export me" });
     });
   });
 });

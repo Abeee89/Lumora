@@ -80,13 +80,13 @@ describe("cursor encode/decode (API-CONVENTIONS section 4)", () => {
 
   it("rejects a tampered or malformed cursor with invalid_cursor", () => {
     const cursor = encodeCursor(0, null, 1730000000000, id, false);
-    expect(() => decodeCursor(cursor.slice(0, -4))).toThrowError(/invalid_cursor/);
+    expect(() => decodeCursor(cursor.slice(0, -4))).toThrowError(/page cursor is invalid/);
     expect(() => decodeCursor(Buffer.from("todo|0||1730000000000|not-a-uuid|0").toString("base64url"))).toThrowError(
-      /invalid_cursor/,
+      /page cursor is invalid/,
     );
     expect(() => decodeCursor(Buffer.from("todo|3||1730000000000|" + id + "|0").toString("base64url"))).toThrowError(
-      /invalid_cursor/,
+      /page cursor is invalid/,
     );
-    expect(() => decodeCursor("not base64url")).toThrowError(/invalid_cursor/);
+    expect(() => decodeCursor("not base64url")).toThrowError(/page cursor is invalid/);
   });
 });

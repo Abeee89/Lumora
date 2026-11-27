@@ -39,7 +39,12 @@ export async function GET(request: Request): Promise<Response> {
       timezone: clock.timezone,
       rolloverHour: clock.rolloverHour,
     });
-    return jsonResponse(200, page, requestId, { "cache-control": "no-store" });
+    return jsonResponse(
+      200,
+      { data: page.data, page: { nextCursor: page.nextCursor, hasMore: page.hasMore } },
+      requestId,
+      { "cache-control": "no-store" },
+    );
   });
 }
 
