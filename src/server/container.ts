@@ -19,6 +19,7 @@ import * as subjects from "../modules/subjects/public";
 import * as topics from "../modules/topics/public";
 import * as exams from "../modules/exams/public";
 import * as plans from "../modules/plans/public";
+import * as tasks from "../modules/tasks/public";
 import * as timer from "../modules/timer/public";
 import * as sessions from "../modules/sessions/public";
 import * as goals from "../modules/goals/public";
@@ -174,6 +175,17 @@ export function registerContributions(database: Database): void {
     sessions.sessionEventSubscribers.register("goals", (event, writeDatabase) =>
       goals.goalMetAfterSessionWrite(event, writeDatabase),
     );
+  }
+  // Tasks purge before Topics and Subjects: todos -> subjects and -> topics are both
+  // NO ACTION (BR-029 keeps archived subjects), so the to-dos must go first.
+  if (!purgeHandlers.has("tasks")) {
+    purgeHandlers.register("tasks", (userId) => tasks.purgeTodos(userId, database));
+  }
+  if (!exportContributors.has("tasks")) {
+    exportContributors.register("tasks", async (userId) => ({
+      section: "tasks",
+      rows: await tasks.exportTodos(userId, database),
+    }));
   }
   // Topics registers before Subjects: the composite foreign key from topics to subjects is
   // NO ACTION (BR-029 keeps archived subjects), so a purge must remove the children first.

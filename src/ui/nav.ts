@@ -55,6 +55,7 @@ export const shippedRoutes: ShippedRoutes = {
   "/plan": true,
   "/calendar": true,
   "/sessions": true,
+  "/todos": true,
   "/timer": true,
 };
 

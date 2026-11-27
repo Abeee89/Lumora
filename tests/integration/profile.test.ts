@@ -255,6 +255,7 @@ describe("profile endpoints", () => {
       "timer",
       "sessions",
       "goals",
+      "tasks",
       "topics",
       "subjects",
     ]);
@@ -265,6 +266,7 @@ describe("profile endpoints", () => {
       "timer",
       "sessions",
       "goals",
+      "tasks",
       "subjects",
       "topics",
     ]);

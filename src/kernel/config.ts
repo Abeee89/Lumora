@@ -66,6 +66,13 @@ export const config = {
     archivePageSize: 50,
     archiveMaxPageSize: 100,
   },
+  todos: {
+    /** DATA-DICTIONARY todos.title. */
+    titleMaxLength: 200,
+    /** API-CONVENTIONS section 4: the to-do list page size (FR-095, NFR-002). */
+    pageSize: 50,
+    maxPageSize: 100,
+  },
   timer: {
     /** BR-009 defaults. */
     focusMinutes: 25,

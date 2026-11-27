@@ -62,6 +62,13 @@ import {
 } from "@/app/api/app/goals/subjects/[subjectId]/route";
 import { GET as getCalendarHeatmap } from "@/app/api/app/calendar/heatmap/route";
 import { GET as getCalendarDay } from "@/app/api/app/calendar/days/[date]/route";
+import { GET as getTodos, POST as createTodo } from "@/app/api/app/todos/route";
+import {
+  DELETE as deleteTodo,
+  GET as getTodo,
+  PATCH as patchTodo,
+} from "@/app/api/app/todos/[todoId]/route";
+import { PUT as setTodoCompletion } from "@/app/api/app/todos/[todoId]/completion/route";
 import type { Database } from "@/kernel/db";
 import { container } from "@/server/container";
 
@@ -297,10 +304,31 @@ async function dispatch(method: string, path: string, request: Request): Promise
 
   const calendarHeatmapPath = /^\/api\/app\/calendar\/heatmap$/.exec(path);
   if (method === "GET" && calendarHeatmapPath !== null) return getCalendarHeatmap(request);
-
   const calendarDayPath = /^\/api\/app\/calendar\/days\/([^/]+)$/.exec(path);
   if (method === "GET" && calendarDayPath !== null) {
     return getCalendarDay(request, { params: Promise.resolve({ date: calendarDayPath[1] ?? "" }) });
+  }
+
+
+  const todosPath = /^\/api\/app\/todos$/.exec(path);
+  if (todosPath !== null) {
+    if (method === "GET") return getTodos(request);
+    if (method === "POST") return createTodo(request);
+  }
+
+  const todoPath = /^\/api\/app\/todos\/([^/]+)$/.exec(path);
+  if (todoPath !== null) {
+    const params = { params: Promise.resolve({ todoId: todoPath[1] ?? "" }) };
+    if (method === "GET") return getTodo(request, params);
+    if (method === "PATCH") return patchTodo(request, params);
+    if (method === "DELETE") return deleteTodo(request, params);
+  }
+
+  const todoCompletionPath = /^\/api\/app\/todos\/([^/]+)\/completion$/.exec(path);
+  if (method === "PUT" && todoCompletionPath !== null) {
+    return setTodoCompletion(request, {
+      params: Promise.resolve({ todoId: todoCompletionPath[1] ?? "" }),
+    });
   }
 
   const signInPath = /^\/api\/app\/auth\/sign-ins\/([^/]+)$/.exec(path);
@@ -694,6 +722,32 @@ export const calendarDayDetailSchema = z
 
 export type CalendarMonthWire = z.infer<typeof calendarMonthSchema>;
 export type CalendarDayDetailWire = z.infer<typeof calendarDayDetailSchema>;
+
+/** API-SCHEMAS section 11. Strict: a field the spec does not list fails the test. */
+export const todoSchema = z
+  .object({
+    id: z.string(),
+    title: z.string(),
+    subjectId: z.string().nullable(),
+    topicId: z.string().nullable(),
+    dueDate: z.string().nullable(),
+    priority: z.enum(["high", "medium", "low"]),
+    done: z.boolean(),
+    completedAt: z.string().nullable(),
+    overdue: z.boolean(),
+    version: z.number().int().min(1),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  })
+  .strict();
+
+export const todoListSchema = z.object({
+  data: z.array(todoSchema),
+  page: z.object({ nextCursor: z.string().nullable(), hasMore: z.boolean() }),
+});
+
+export type TodoWire = z.infer<typeof todoSchema>;
+export type TodoListWire = z.infer<typeof todoListSchema>;
 
 export const bulkPreviewSchema = z.object({
   valid: z.array(z.string()),

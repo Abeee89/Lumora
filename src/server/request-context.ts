@@ -243,6 +243,46 @@ export const monthQuerySchema = z
   .object({ month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "YYYY-MM") })
   .strict();
 
+/**
+ * M10 request bodies and query. TODO-02..TODO-06: the module owns the title bounds, the
+ * enum membership and the topic-belongs-to-subject rule; the adapter asserts the shape
+ * (API-SCHEMAS section 11). `dueDate` and `subjectId` are nullable on update so a null
+ * clears them (AC-FR-091-2); `done` is not accepted on PATCH (use TODO-05).
+ */
+export const createTodoSchema = z
+  .object({
+    title: z.string(),
+    subjectId: z.string().optional(),
+    topicId: z.string().nullable().optional(),
+    dueDate: z.string().nullable().optional(),
+    priority: z.enum(["high", "medium", "low"]).optional(),
+  })
+  .strict();
+
+export const updateTodoSchema = z
+  .object({
+    title: z.string().optional(),
+    subjectId: z.string().nullable().optional(),
+    topicId: z.string().nullable().optional(),
+    dueDate: z.string().nullable().optional(),
+    priority: z.enum(["high", "medium", "low"]).optional(),
+  })
+  .strict();
+
+export const setTodoCompletionSchema = z.object({ done: z.boolean() }).strict();
+
+/** TODO-01 query: PageQuery plus the FR-094 filters, all optional (API-SCHEMAS 11). */
+export const todoListQuery = z
+  .object({
+    status: z.enum(["open", "done", "all"]).optional(),
+    subjectId: z.string().optional(),
+    priority: z.enum(["high", "medium", "low"]).optional(),
+    due: z.enum(["overdue", "today", "within7", "none"]).optional(),
+    limit: z.coerce.number().int().optional(),
+    cursor: z.string().optional(),
+  })
+  .strict();
+
 export const sessionMaxAgeSeconds = config.auth.sessionLifetimeDays * 24 * 60 * 60;
 
 export function defaultContainer(): Container {

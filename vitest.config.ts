@@ -23,6 +23,7 @@ export default defineConfig({
         "src/modules/timer/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
         "src/modules/goals/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
         "src/modules/calendar/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
+        "src/modules/tasks/**": { lines: 80, functions: 70, branches: 70, statements: 80 },
       },
     },
     projects: [
