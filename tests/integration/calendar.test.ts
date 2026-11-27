@@ -5,10 +5,8 @@ import {
   calendarDayDetailSchema,
   calendarMonthSchema,
   database,
-  errorEnvelopeSchema,
   parseBody,
   planEntryWrittenSchema,
-  planEntrySchema,
   sessionSchema,
   signUpUser,
   subjectSchema,
@@ -49,17 +47,11 @@ describe("calendar endpoints", () => {
 
   /** This suite signs up in UTC, so the profile local date is the UTC date. */
   const now = (): Date => new Date();
-  const month = (): string => now().toISOString().slice(0, 7);
 
   /** `hours` before now on the UTC clock, so a created row is always in the past. */
   const agoIso = (hours: number): string =>
     new Date(now().getTime() - hours * 3_600_000).toISOString();
 
-  /** A fixed earlier day of the current UTC month, so the heatmap read covers it. */
-  const dayInMonth = (): string => {
-    const day = Math.max(1, now().getUTCDate() - 2);
-    return `${month()}-${String(day).padStart(2, "0")}`;
-  };
 
   /** The current UTC date plus `days`. */
   const dayAfter = (days: number): string => {
