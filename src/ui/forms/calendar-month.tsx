@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { CalendarDay, CalendarDayDetail, CalendarMonth } from "@/modules/calendar/public";
 import { apiRequest, type ApiFailure } from "../api-client";
@@ -35,6 +35,12 @@ function shiftMonth(month: string, delta: number): string {
   const [year, number] = month.split("-").map(Number) as [number, number];
   const date = new Date(Date.UTC(year, number - 1 + delta, 1));
   return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+function clampToMonth(month: string, date: string): string {
+  const [year, number] = month.split("-").map(Number) as [number, number];
+  const daysInMonth = new Date(Date.UTC(year, number, 0)).getUTCDate();
+  const day = Math.min(Number(date.slice(8)), daysInMonth);
+  return `${month}-${String(day).padStart(2, "0")}`;
 }
 function dayGrid(month: string, today: string): (CalendarDay | "")[] {
   const [year, number] = month.split("-").map(Number) as [number, number];
@@ -77,6 +83,7 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
   const [detail, setDetail] = useState<CalendarDayDetail | null>(null);
   const [detailFailure, setDetailFailure] = useState<ApiFailure | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLHeadingElement>(null);
 
   const loadMonth = async (requested: string): Promise<void> => {
     setLoading(true);
@@ -114,10 +121,14 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
     const current = dayIndex;
     if (current < 0) return;
     if (event.key === "PageUp") {
+      event.preventDefault();
+      selectDay(clampToMonth(shiftMonth(month, -1), selected));
       changeMonth(-1);
       return;
     }
     if (event.key === "PageDown") {
+      event.preventDefault();
+      selectDay(clampToMonth(shiftMonth(month, 1), selected));
       changeMonth(1);
       return;
     }
@@ -142,6 +153,16 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
     selectDay(target.date);
   };
 
+  useEffect(() => {
+    const cell = gridRef.current?.querySelector<HTMLButtonElement>(
+      `[role="gridcell"][aria-label^="${selected}, "]`,
+    );
+    cell?.focus();
+  }, [loading, month, selected]);
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 900px)").matches) return;
+    panelRef.current?.focus();
+  }, [selected]);
   const heatmapByDate = new Map(heatmap.days.map((day) => [day.date, day]));
   const grid = dayGrid(month, today).map((cell) => {
     if (cell === "") return cell;
@@ -224,6 +245,7 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
                   type="button"
                   role="gridcell"
                   aria-selected={cell.date === selected}
+                  tabIndex={cell.date === selected ? 0 : -1}
                   aria-label={activeLabel(cell)}
                   onClick={() => selectDay(cell.date)}
                   className={`flex min-h-11 flex-col items-center justify-center rounded border text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary ${
@@ -250,7 +272,7 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
       </div>
 
       <Panel className="min-w-0 space-y-4">
-        <h2 tabIndex={-1} className="text-base font-semibold text-ink">
+        <h2 ref={panelRef} tabIndex={-1} className="text-base font-semibold text-ink">
           {panelHeading}
         </h2>
 
