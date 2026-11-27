@@ -251,10 +251,10 @@ export function CalendarClient({ initialMonth, today, timeZone }: CalendarClient
                   className={`flex min-h-11 flex-col items-center justify-center rounded border text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                     cell.date === selected ? "border-primary bg-primary-soft" : "border-line"
                   } ${bucketClass(cell.bucket)}`}
-                  style={cell.isToday ? { outline: "2px solid var(--fg)" } : undefined}
+                  style={cell.isToday ? { outline: "2px solid var(--ink)" } : undefined}
                 >
                   <span className="text-xs">{Number(cell.date.slice(8))}</span>
-                  {cell.minutes > 0 && <span className="text-[10px]">{minutesText(cell.minutes)}</span>}
+                  {cell.minutes > 0 && <span className="text-xs">{minutesText(cell.minutes)}</span>}
                 </button>
               ),
             )}

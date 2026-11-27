@@ -6,25 +6,23 @@ The product, architecture, database, UI and API contracts live in [`docs/`](docs
 
 ## Build state
 
-M08 (daily and subject goals) is built on the M07 timer. A daily target lives in a dated history,
-so raising or lowering it applies from the current local day forward and leaves past days with
-the target they were measured against; each subject can carry its own target, and a target of an
-archived subject is suspended until the subject is restored. Progress is derived, never stored: it
-is the frozen day allocation of the sessions on that local date, split across midnight, rollover
-and timezone changes, plus the measured focus of a run still in flight. The day's percent and
-goal-met state come from the same numbers, and the write that pushes a day to its target publishes
-one `GoalMet` for that day. The daily goal can be changed from the timer page, and A-15 at
-`/settings/study` holds the goal and the timer durations. Underneath sit the timer of M07, the
-sessions of M06, the plans and warnings of M05, the exams, checklists and the derived archive rule
-of M04, the subjects, topics and bulk paste of M03, the accounts, sign-in, profile and appearance
-work of M02, and the shell, the shared kernel, the boundary checker, the outbox relay and the three
-scheduled jobs of M01. Readiness scoring is Phase 2 and is not in this build. Google sign-in needs
-an OAuth client (U-5) and the reset email needs a provider (U-A2); no staging host exists (U-A1).
+M09 (calendar) is built on the M08 goals and reads the frozen day allocations of the M06
+sessions, never storing its own rows. The month heatmap at `/calendar` sums each local date into
+one of the four intensity buckets with the minute figure printed in every non-zero cell, so the
+fill is never the only carrier (NFR-043); the day panel answers the sessions of a day with their
+own minutes, the archived label, the midnight split and the planned entries of the day with their
+derived status, and "Add plan entry for this day" hands off to the plan list. The grid is one tab
+stop with roving focus and full keyboard travel, and the server computes today from the profile
+timezone. Underneath sit the daily and subject goals of M08, the timer of M07, the sessions of M06,
+the plans and warnings of M05, the exams, checklists and the derived archive rule of M04, the
+subjects, topics and bulk paste of M03, the accounts, sign-in, profile and appearance work of M02,
+and the shell, the shared kernel, the boundary checker, the outbox relay and the three scheduled
+jobs of M01. Readiness scoring is Phase 2 and is not in this build. Google sign-in needs an OAuth
+client (U-5) and the reset email needs a provider (U-A2); no staging host exists (U-A1).
 The navigation carries the shipped pages only: Calendar, Exams, Subjects, Sessions, Timer and
-Settings, where Calendar opens the plan list until the calendar page ships
-([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2, OD-M36). Evidence and the
-open rows are in [M08-EVIDENCE](docs/08-build/M08-EVIDENCE.md) and
-[M08-COMPLETION-REPORT](docs/08-build/M08-COMPLETION-REPORT.md).
+Settings ([NAVIGATION-STRUCTURE](docs/05-ui-ux/NAVIGATION-STRUCTURE.md) rule 2, OD-M36).
+Evidence and the open rows are in [M09-EVIDENCE](docs/08-build/M09-EVIDENCE.md) and
+[M09-COMPLETION-REPORT](docs/08-build/M09-COMPLETION-REPORT.md).
 
 ## Commands
 

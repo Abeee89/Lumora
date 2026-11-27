@@ -1,6 +1,26 @@
 # Changelog
 
-Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, and M07 and M08 from 2026-11-25.
+Documentation changes and build evidence. M01 application code is tracked from 2026-11-19, M02 from 2026-11-20, M03 and M04 from 2026-11-21, M05 from 2026-11-22, M06 from 2026-11-23, M07 and M08 from 2026-11-25, and M09 from 2026-11-27.
+
+## 2026-11-27, M09 calendar
+
+### Added
+- [08-build/M09-EVIDENCE.md](08-build/M09-EVIDENCE.md): environment and versions, one section per checkpoint with the command and raw output, per-row checklist status, the browser measurements at four widths, the unchanged registry keys, the coverage measurement and the Definition of Done check.
+- [08-build/M09-COMPLETION-REPORT.md](08-build/M09-COMPLETION-REPORT.md): functionality, files, database changes (none), tests executed, technical findings, known limitations, remaining tasks, documents updated, Definition of Done level and recommended next milestone.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md) section G: the 2026-11-27 M09 execution row, limited to M09 records and stating that M09 stays open.
+- Application and tooling: `src/modules/calendar/**` (service, public); `src/app/api/app/calendar/{heatmap,days/[date]}/route.ts` covering CAL-01 and CAL-02; `src/app/calendar/page.tsx` (A-5); `src/ui/forms/calendar-month.tsx`; the Calendar nav entry; the `--bucket-*` theme variables; the `monthQuerySchema` in `src/server/request-context.ts`.
+- Tests: `tests/integration/calendar.test.ts` (9 cases) and `tests/unit/calendar.test.ts` (7 cases), taking the unit tier to 21 files and 143 tests and the integration tier to 13 files and 143 tests, plus the calendar entries in `tests/integration/support/api.ts`.
+
+### Changed
+- [07-roadmap/MILESTONES.md](07-roadmap/MILESTONES.md): three M09 rows checked, the Definition of Done row left unchecked, and an "As built" note recording what shipped.
+- [IMPLEMENTATION-READINESS.md](IMPLEMENTATION-READINESS.md) sections 6 and 7: the M09 execution paragraph and the authorization sentence naming M10 as the next step.
+- [OPEN-DECISIONS.md](OPEN-DECISIONS.md), [README.md](../README.md), [docs/README.md](README.md), [DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md): build state, the M09 execution row and the inventory at 101 documents (21 build records).
+- `vitest.config.ts`: the `src/modules/calendar/**` coverage floor.
+
+### Fixed
+- The keyboard moved the selection but not the focus: the arrow handler only set the selected date and the cells had no tab order, so the ARIA grid pattern held a single tab stop in name only. The selected cell is now `tabIndex={0}` with the rest `-1`, the handler moves the date, and an effect focuses the matching cell on `[loading, month, selected]`, so PageUp and PageDown keep selection and focus on the same day of the neighbouring month; the browser pass drives arrows, Home, End, PageUp and PageDown.
+- The today outline never rendered: the cell used `outline: 2px solid var(--fg)`, and `--fg` is not defined in this theme (the foreground variable is `--ink`), so at computed-value time the declaration was dropped and the outline stayed `none`. The style uses `var(--ink)` and the browser pass reads `2px solid` on the today cell.
+- The heatmap month upper bound was a `YYYY-MM` string, which PostgreSQL rejected as "invalid input syntax for type date"; the bound is now the first of the following month and the October integration case pins it.
 
 ## 2026-11-25, M08 daily and subject goals
 

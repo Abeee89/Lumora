@@ -351,10 +351,11 @@ M00 close-out is complete for evidence and teardown, but M00 is not a full pass 
 - **Tests:** timezone/DST month boundaries; keyboard navigation; grayscale review.
 - **Acceptance criteria:** AC-FR-060-* to AC-FR-062-*; AC-E2E-05 (day totals).
 - **Completion checklist:**
-  - [ ] Heatmap and day detail match session data
-  - [ ] Keyboard-operable at 360 px and 1280 px
-  - [ ] No table owned, nothing to purge (documented)
+  - [x] Heatmap and day detail match session data
+  - [x] Keyboard-operable at 360 px and 1280 px
+  - [x] No table owned, nothing to purge (documented)
   - [ ] DEFINITION-OF-DONE.md checked
+- **As built (2026-11-27):** evidence, per-row proof and the open rows are in [08-build/M09-EVIDENCE.md](../08-build/M09-EVIDENCE.md); the record is [08-build/M09-COMPLETION-REPORT.md](../08-build/M09-COMPLETION-REPORT.md). Shipped: the Calendar module (rank 14, read models only) with `bucketOf`, `calendarDay`, `monthGrid`, the month heatmap and the day detail; the two routes under `/api/app/calendar` answering CAL-01 and CAL-02; the A-5 page at `/calendar` with the Monday-first 42-cell grid, the legend, the day panel and the Month/Plan list tab strip; the nav entry and the A-6 `presetSubjectId` handoff through "Add plan entry for this day". No table is owned, so nothing is registered in the purge and export registries (the card row is ticked on documentation alone). The Definition of Done row stays unchecked for the same three reasons M08 records: the by-layer coverage floors, axe and the screen-reader half of the accessibility row, and the `m09-done` tag, which is the owner's step.
 
 ### M10 Tasks and priorities
 
