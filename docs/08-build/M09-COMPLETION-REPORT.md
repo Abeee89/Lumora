@@ -75,11 +75,11 @@ None. M09 owns no table and adds no migration. The calendar reads `study_session
 
 | Command | Result |
 |---|---|
-| `npm run verify` | exit 0. `tsc --noEmit` clean; `eslint .` clean; "Boundary check passed"; unit 21 files / 143 tests passed; integration 13 files / 143 tests passed |
+| `npm run verify` | exit 0. `tsc --noEmit` clean; `eslint .` clean; "Boundary check passed"; unit 22 files / 143 tests passed; integration 13 files / 143 tests passed |
 | `npx vitest run --project unit tests/unit/calendar.test.ts` | 7 tests passed |
 | `npx vitest run --project integration tests/integration/calendar.test.ts` | 9 tests passed against PostgreSQL 18.6 |
 | `npx vitest run --project integration tests/integration/plans.test.ts` | 20 tests passed (the suite the harness fix protects, rerun after the UTC-pin removal) |
-| `npx next build` | exit 0, compiled successfully, 46 of 46 static pages generated, 71 route lines of which two are new (the two calendar route files and `/calendar`) |
+| `npx next build` | exit 0, compiled successfully, 46 of 46 static pages generated, 65 route lines of which three are new in M09 (`/api/app/calendar/heatmap`, `/api/app/calendar/days/[date]` and `/calendar`) |
 | `npm run test:coverage` | exit 0, 35 files / 286 tests; `src/modules/calendar` at 100% statements, 83.33% branches, 100% functions and 100% lines against the 80 / 70 / 70 / 80 floor; the plans and goals floors pass at 95.27 / 88.98 / 100 / 94.53 and 94.17 / 84.48 / 94.11 / 96.73 |
 | Browser checks | every check in the evidence record E06 passed, including the two-day data grid, the legend, the day totals, the planned entry with its chip, the empty day, the today outline, the keyboard pass at 360 and 1280, the mobile panel focus and the four-width layout pass |
 

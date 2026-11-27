@@ -63,7 +63,7 @@ Boundary check passed.
 > lumora@0.1.0 test
 > vitest run --project unit
 
- Test Files  21 passed (21)
+ Test Files  22 passed (22)
       Tests  143 passed (143)
 
 > lumora@0.1.0 test:integration
@@ -73,7 +73,7 @@ Boundary check passed.
       Tests  143 passed (143)
 ```
 
-- The unit tier went from 136 to 143 cases: `tests/unit/calendar.test.ts` adds 7, the other suites are unchanged. The integration tier went from 12 files / 134 cases to 13 files / 143 cases: `tests/integration/calendar.test.ts` adds 9, the other suites are unchanged.
+- The unit tier went from 21 files / 136 cases to 22 files / 143 cases: `tests/unit/calendar.test.ts` adds 7, the other suites are unchanged. The integration tier went from 12 files / 134 cases to 13 files / 143 cases: `tests/integration/calendar.test.ts` adds 9, the other suites are unchanged.
 - One harness fix is folded into this run: the embedded Postgres instance runs with its original options (`databaseDir`, `user`, `password`, `port`, `persistent: false`). A temporary session change that pinned the cluster timezone (`postgresFlags: ["-c", "timezone=UTC"]`) shifted `now()::date` in the plans suite's `backdate` helper by a day relative to the host zone and pushed a missed entry out of its window on the UTC clock; the pin was removed and the plans suite (29 cases including the 9 calendar ones) passes again. The calendar suite does not need a timezone pin: it signs up in UTC and uses fixed 2026-10 dates.
 
 ## E02 Production build
@@ -90,7 +90,7 @@ Boundary check passed.
 ✓ Generating static pages using 7 workers (46/46) in 1266ms
 ```
 
-- The route table now holds 71 lines, two of them new in M09: `ƒ /api/app/calendar/heatmap`, `ƒ /api/app/calendar/days/[date]` and `ƒ /calendar`. The `[date]` dynamic route appears as `ƒ /api/app/calendar/days/[date]` in the dynamic table.
+- The route table now holds 65 lines: M08's 62 plus the three M09 routes, `ƒ /api/app/calendar/heatmap`, `ƒ /api/app/calendar/days/[date]` and `ƒ /calendar` (the `[date]` route appears under the dynamic section).
 - The build turns the browser checks in E06 into checks against the production server: the same artifacts were served by `npx next start -p 3000`, not by `next dev`.
 
 ## E03 Unit tests
